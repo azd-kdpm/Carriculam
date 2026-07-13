@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Course Presentations Hub</title>
+<style>
+  :root {
+    --bg-color: #0b0f19;
+    --card-bg: rgba(20, 30, 55, 0.6);
+    --accent-m1: #3b82f6;
+    --accent-m2: #10b981;
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    padding: 50px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  h1 {
+    font-size: 38px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+  }
+
+  h2.sub {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  /* Tabs styling */
+  .tabs-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 40px;
+  }
+
+  .tab-btn {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .tab-btn.active[data-tab="m1"] {
+    background: var(--accent-m1);
+    color: #fff;
+    border-color: var(--accent-m1);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+  }
+
+  .tab-btn.active[data-tab="m2"] {
+    background: var(--accent-m2);
+    color: #fff;
+    border-color: var(--accent-m2);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+  }
+
+  .tab-btn.active[data-tab="m3"] {
+    background: #8b5cf6;
+    color: #fff;
+    border-color: #8b5cf6;
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+  }
+
+  .tab-btn.active[data-tab="m4"] {
+    background: #f97316;
+    color: #fff;
+    border-color: #f97316;
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.4);
+  }
+
+  .tab-btn:hover:not(.active) {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-main);
+  }
+
+  .tab-content {
+    display: none;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .tab-content.active {
+    display: block;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    text-decoration: none;
+    color: var(--text-main);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    outline: none;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--accent-color);
+    opacity: 0.8;
+  }
+
+  .card:hover, .card.focused, .card:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 10px 25px var(--accent-glow);
+    transform: translateY(-4px);
+    outline: 3px solid var(--accent-color);
+  }
+
+  .day-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+  }
+
+  .title {
+    font-size: 19px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #ffffff;
+  }
+
+  .desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 20px;
+    flex-grow: 1;
+  }
+
+  .btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    text-align: center;
+    transition: all 0.2s ease;
+    font-size: 13px;
+  }
+
+  .card:hover .btn, .card.focused .btn, .card:focus .btn {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+
+<h1>Course Presentations Hub</h1>
+<h2 class="sub">Use Arrow Keys to Navigate Cards, Enter to Select. Returning Tracks Last Session.</h2>
+
+<div class="tabs-container">
+  <button class="tab-btn active" data-tab="m1">Module 1: Electrical & Networking</button>
+  <button class="tab-btn" data-tab="m2">Module 2: Professional CCTV Systems</button>
+  <button class="tab-btn" data-tab="m3">Module 3: Security & Building Automation</button>
+  <button class="tab-btn" data-tab="m4">Module 4: Smart Home, IoT & Business</button>
+</div>
+
+<!-- MODULE 1 TAB -->
+<div id="m1" class="tab-content active">
+  <div class="grid">
+    <!-- Session 1 -->
+    <a href="m1_s01_electrical_fundamentals_ac_dc.html" class="card" tabindex="0" style="--accent-color: var(--accent-m1); --accent-glow: rgba(59, 130, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 1</div>
+        <div class="title">Electrical Fundamentals</div>
+        <div class="desc">Voltage, Current, Resistance, Ohm's Law, SPDT Staircase switches, and crimping standards.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 2 -->
+    <a href="m1_s02_earthing_surge_protection.html" class="card" tabindex="0" style="--accent-color: var(--accent-m2); --accent-glow: rgba(16, 185, 129, 0.3);">
+      <div>
+        <div class="day-tag">Session 2</div>
+        <div class="title">Earthing & Surge Protection</div>
+        <div class="desc">GI ground pipe pit layers, SPDs down-conductors, and test lamp earth conductivity checks.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 3 -->
+    <a href="m1_s03_multimeter_diagnostics.html" class="card" tabindex="0" style="--accent-color: #f59e0b; --accent-glow: rgba(245, 158, 11, 0.3);">
+      <div>
+        <div class="day-tag">Session 3</div>
+        <div class="title">Multimeter & Diagnostics</div>
+        <div class="desc">DMM probe ports and selector dials, continuity trace loops, and short circuit fault-finding practicals.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 4 -->
+    <a href="m1_s04_electrical_safety_breakers.html" class="card" tabindex="0" style="--accent-color: #ef4444; --accent-glow: rgba(239, 68, 68, 0.3);">
+      <div>
+        <div class="day-tag">Session 4</div>
+        <div class="title">Electrical Safety & Breakers</div>
+        <div class="desc">Shock current impact thresholds, LOTO safety guidelines, MCB/RCCB and series test lamp trip tests.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 5 -->
+    <a href="m1_s05_power_supply_smps.html" class="card" tabindex="0" style="--accent-color: var(--accent-m1); --accent-glow: rgba(59, 130, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 5</div>
+        <div class="title">Power Supply & SMPS</div>
+        <div class="desc">High-frequency converters, specification plates, SLA battery runtime formulas, and SMPS pot calibrations.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 6 -->
+    <a href="m1_s06_reading_drawings.html" class="card" tabindex="0" style="--accent-color: #f59e0b; --accent-glow: rgba(245, 158, 11, 0.3);">
+      <div>
+        <div class="day-tag">Session 6</div>
+        <div class="title">Reading Drawings</div>
+        <div class="desc">Legend symbols, single line diagrams, wire ferruling tags, relays working, dry/wet contacts and lock blueprints.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 7 -->
+    <a href="m1_s07_cable_selection_conduits.html" class="card" tabindex="0" style="--accent-color: var(--accent-m1); --accent-glow: rgba(59, 130, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 7</div>
+        <div class="title">Cable Selection & Conduits</div>
+        <div class="desc">AWG vs Metric, conduit fill calculations, AC/DC line separation, and manual spring bending practicals.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 8 -->
+    <a href="m1_s08_ip_addressing_subnetting.html" class="card" tabindex="0" style="--accent-color: var(--accent-m1); --accent-glow: rgba(59, 130, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 8</div>
+        <div class="title">IP Addressing & Subnetting</div>
+        <div class="desc">IPv4 Octets, CIDR slash masks, gateway routes, Static vs DHCP and network mapping.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 9 -->
+    <a href="m1_s09_router_switch_configuration.html" class="card" tabindex="0" style="--accent-color: var(--accent-m2); --accent-glow: rgba(16, 185, 129, 0.3);">
+      <div>
+        <div class="day-tag">Session 9</div>
+        <div class="title">Router & Switch Configuration</div>
+        <div class="desc">WAN vs LAN, NAT translation flows, port forwarding tunnels, and Wi-Fi SSID channels setup.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 10 -->
+    <a href="m1_s10_vlan_basics.html" class="card" tabindex="0" style="--accent-color: #f59e0b; --accent-glow: rgba(245, 158, 11, 0.3);">
+      <div>
+        <div class="day-tag">Session 10</div>
+        <div class="title">VLAN Basics</div>
+        <div class="desc">Virtual LAN segments, 802.1Q tagged trunks, L2/L3 routes and port access groups.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 11 -->
+    <a href="m1_s11_poe_poe_switches.html" class="card" tabindex="0" style="--accent-color: #ef4444; --accent-glow: rgba(239, 68, 68, 0.3);">
+      <div>
+        <div class="day-tag">Session 11</div>
+        <div class="title">PoE & PoE Switches</div>
+        <div class="desc">802.3af/at/bt standards, active vs passive handshakes, power budgets and pinout wiring modes.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 12 -->
+    <a href="m1_s12_fiber_optic_basics.html" class="card" tabindex="0" style="--accent-color: var(--accent-m1); --accent-glow: rgba(59, 130, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 12</div>
+        <div class="title">Fiber Optic Basics</div>
+        <div class="desc">SM vs MM cores, SFP modular ports, SC/LC fiber links, media converters and laser safety rules.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 13 -->
+    <a href="m1_s13_network_troubleshooting.html" class="card" tabindex="0" style="--accent-color: #f59e0b; --accent-glow: rgba(245, 158, 11, 0.3);">
+      <div>
+        <div class="day-tag">Session 13</div>
+        <div class="title">Network Troubleshooting</div>
+        <div class="desc">RJ45 T568B and RJ11 crimping, wiremap tester diagnostic commands, IP collisions and switch loop storms.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+  </div>
+</div>
+
+<!-- MODULE 2 TAB -->
+<div id="m2" class="tab-content">
+  <div class="grid">
+    <!-- Session 14 -->
+    <a href="m2_s14_analog_ip_cctv.html" class="card" tabindex="0" style="--accent-color: var(--accent-m1); --accent-glow: rgba(59, 130, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 14</div>
+        <div class="title">Analog & IP CCTV</div>
+        <div class="desc">Coaxial BNC transmission vs Cat6 UTP, HD-TVI protocol, video baluns and XVR hybrids.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 15 -->
+    <a href="m2_s15_camera_selection_design.html" class="card" tabindex="0" style="--accent-color: var(--accent-m2); --accent-glow: rgba(16, 185, 129, 0.3);">
+      <div>
+        <div class="day-tag">Session 15</div>
+        <div class="title">Camera Selection & Design</div>
+        <div class="desc">Dome, Bullet, and Turret shapes, IP ratings, True WDR contrast calibration and DORI targets.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 16 -->
+    <a href="m2_s16_lens_field_of_view.html" class="card" tabindex="0" style="--accent-color: #f59e0b; --accent-glow: rgba(245, 158, 11, 0.3);">
+      <div>
+        <div class="day-tag">Session 16</div>
+        <div class="title">Lens & Field of View</div>
+        <div class="desc">Focal lengths wide vs telephoto, motorized varifocals, optical zoom, and FOV calculator layouts.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 17 -->
+    <a href="m2_s17_dvr_nvr_hybrid_systems.html" class="card" tabindex="0" style="--accent-color: #ef4444; --accent-glow: rgba(239, 68, 68, 0.3);">
+      <div>
+        <div class="day-tag">Session 17</div>
+        <div class="title">DVR, NVR & Hybrids</div>
+        <div class="desc">BNC matrix processing vs PoE switch chassis, SATA connections, thermal cooling and recording profiles.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 18 -->
+    <a href="m2_s18_raid_storage_design.html" class="card" tabindex="0" style="--accent-color: var(--accent-m1); --accent-glow: rgba(59, 130, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 18</div>
+        <div class="title">RAID & Storage Design</div>
+        <div class="desc">RAID 0 striping, RAID 1 mirror, RAID 5 parity, hot-swapping rebuilds and surveillance-grade HDDs.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 19 -->
+    <a href="m2_s19_onvif_standards.html" class="card" tabindex="0" style="--accent-color: var(--accent-m2); --accent-glow: rgba(16, 185, 129, 0.3);">
+      <div>
+        <div class="day-tag">Session 19</div>
+        <div class="title">ONVIF Standards</div>
+        <div class="desc">Profiles S, G, and T differences, third-party user creation, discovery ports and ODM debugging.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 20 -->
+    <a href="m2_s20_video_compression.html" class="card" tabindex="0" style="--accent-color: #f59e0b; --accent-glow: rgba(245, 158, 11, 0.3);">
+      <div>
+        <div class="day-tag">Session 20</div>
+        <div class="title">Video Compression</div>
+        <div class="desc">H.264 vs H.265 compression, smart codecs (H.265+), CBR vs VBR profiles, FPS and megapixel scaling.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 21 -->
+    <a href="m2_s21_ai_analytics.html" class="card" tabindex="0" style="--accent-color: #ef4444; --accent-glow: rgba(239, 68, 68, 0.3);">
+      <div>
+        <div class="day-tag">Session 21</div>
+        <div class="title">AI Analytics</div>
+        <div class="desc">Line crossing, intrusion zones, target object classification, and AcuSense false alarm filters.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 22 -->
+    <a href="m2_s22_anpr.html" class="card" tabindex="0" style="--accent-color: var(--accent-m1); --accent-glow: rgba(59, 130, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 22</div>
+        <div class="title">ANPR (Plate Recognition)</div>
+        <div class="desc">1/1000s shutter speeds, mounting angles, whitelists, and barrier relay wiring links.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 23 -->
+    <a href="m2_s23_facial_recognition.html" class="card" tabindex="0" style="--accent-color: var(--accent-m2); --accent-glow: rgba(16, 185, 129, 0.3);">
+      <div>
+        <div class="day-tag">Session 23</div>
+        <div class="title">Facial Recognition</div>
+        <div class="desc">Eye distance pixel sizing, database enrollment, similarity thresholds, and blacklist alarm links.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 24 -->
+    <a href="m2_s24_colorvu_acusense_thermal.html" class="card" tabindex="0" style="--accent-color: #f59e0b; --accent-glow: rgba(245, 158, 11, 0.3);">
+      <div>
+        <div class="day-tag">Session 24</div>
+        <div class="title">ColorVu, AcuSense & Thermal</div>
+        <div class="desc">F1.0 night color Warm Light, bi-spectrum thermal overlays, and fire hot spot detection.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 25 -->
+    <a href="m2_s25_ptz_cameras.html" class="card" tabindex="0" style="--accent-color: #ef4444; --accent-glow: rgba(239, 68, 68, 0.3);">
+      <div>
+        <div class="day-tag">Session 25</div>
+        <div class="title">PTZ Cameras</div>
+        <div class="desc">Servo motors, slip rings, zoom multipliers, presets coordination, scanning tours and joystick desk setups.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 26 -->
+    <a href="m2_s26_remote_viewing_cloud.html" class="card" tabindex="0" style="--accent-color: var(--accent-m1); --accent-glow: rgba(59, 130, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 26</div>
+        <div class="title">Remote Viewing & Cloud</div>
+        <div class="desc">P2P cloud engines, QR code mobile links, DDNS hostname mappings and stream profiles main vs sub.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 27 -->
+    <a href="m2_s27_cybersecurity.html" class="card" tabindex="0" style="--accent-color: var(--accent-m2); --accent-glow: rgba(16, 185, 129, 0.3);">
+      <div>
+        <div class="day-tag">Session 27</div>
+        <div class="title">Cybersecurity</div>
+        <div class="desc">Hardening ports (80/8000/554), password rules, disabling UPnP, and HTTPS encryption certificates.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 28 -->
+    <a href="m2_s28_troubleshooting_maintenance.html" class="card" tabindex="0" style="--accent-color: #ef4444; --accent-glow: rgba(239, 68, 68, 0.3);">
+      <div>
+        <div class="day-tag">Session 28</div>
+        <div class="title">Troubleshooting & Maintenance</div>
+        <div class="desc">No-video diagnostic loops, ground loop hum bars, IR halo cleaning, and NVR recovery loops.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+  </div>
+</div>
+
+<!-- MODULE 3 TAB -->
+<div id="m3" class="tab-content">
+  <div class="grid">
+    <!-- Session 29 -->
+    <a href="m3_s29_video_door_phone.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 29</div>
+        <div class="title">Video Door Phone</div>
+        <div class="desc">2-wire vs IP VDP layouts, lock relay integrations, and SIP mobile calling configurations.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 30 -->
+    <a href="m3_s30_access_control.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 30</div>
+        <div class="title">Access Control</div>
+        <div class="desc">Wiegand reader interface, REX exit buttons, and EM lock NC/NO power relay terminations.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 31 -->
+    <a href="m3_s31_biometric_systems.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 31</div>
+        <div class="title">Biometric Systems</div>
+        <div class="desc">Fingerprint and facial templates math hashes, anti-spoofing, and local network log sync.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 32 -->
+    <a href="m3_s32_smart_locks.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 32</div>
+        <div class="title">Smart Locks</div>
+        <div class="desc">Fail-safe vs Fail-secure setups, L/Z brackets, and 1N4007 kickback protection diode wiring.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 33 -->
+    <a href="m3_s33_boom_barrier.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 33</div>
+        <div class="title">Boom Barrier</div>
+        <div class="desc">Ground loop vehicle detectors, counterweight balance springs, and active IR photo-beams.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 34 -->
+    <a href="m3_s34_gate_automation.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 34</div>
+        <div class="title">Gate Automation</div>
+        <div class="desc">Sliding vs swing motors, pinion gear rack alignment rules, and rolling code RF keyfobs.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 35 -->
+    <a href="m3_s35_intruder_alarm_systems.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 35</div>
+        <div class="title">Intruder Alarm Systems</div>
+        <div class="desc">EOL/DEOL sensor loop resistor logic, PIR motion zone settings, and stay/away arm profiles.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 36 -->
+    <a href="m3_s36_fire_alarm_systems.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 36</div>
+        <div class="title">Fire Alarm Systems</div>
+        <div class="desc">Conventional zones vs addressable loops, photoelectric smoke chambers, and hooter wiring.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 37 -->
+    <a href="m3_s37_pa_bgm_systems.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 37</div>
+        <div class="title">PA/BGM Systems</div>
+        <div class="desc">100V audio step-up distribution, LMT speaker tap selection, and paging mic priority overrides.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 38 -->
+    <a href="m3_s38_intercom_systems.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 38</div>
+        <div class="title">Intercom Systems</div>
+        <div class="desc">PABX analog extensions, RJ11 wiring pins, SIP IP PBX loops, and IVR routing rules.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 39 -->
+    <a href="m3_s39_elevator_access_control.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 39</div>
+        <div class="title">Elevator Access Control</div>
+        <div class="desc">Floor selector relay controls, software permission matrix, and fire override releases.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 40 -->
+    <a href="m3_s40_visitor_management.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 40</div>
+        <div class="title">Visitor Management</div>
+        <div class="desc">ID OCR scanner workflows, face webcam capture, QR badge printing, and checkout logs.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 41 -->
+    <a href="m3_s41_hotel_lock_systems.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 41</div>
+        <div class="title">Hotel Lock Systems</div>
+        <div class="desc">Mifare card encrypted sectors, offline battery locks with internal RTC, and energy saver switches.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 42 -->
+    <a href="m3_s42_parking_management.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 42</div>
+        <div class="title">Parking Management</div>
+        <div class="desc">Ticket lane dispensers, ground loop triggers, card swallow collectors, and anti-passback.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 43 -->
+    <a href="m3_s43_basic_bms.html" class="card" tabindex="0" style="--accent-color: #8b5cf6; --accent-glow: rgba(139, 92, 246, 0.3);">
+      <div>
+        <div class="day-tag">Session 43</div>
+        <div class="title">Basic BMS</div>
+        <div class="desc">DDC board input/output blocks, Modbus RTU serial RS485 loop, and register table polling.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+  </div>
+</div>
+
+<!-- MODULE 4 TAB -->
+<div id="m4" class="tab-content">
+  <div class="grid">
+    <!-- Session 44 -->
+    <a href="m4_s44_knx_fundamentals.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 44</div>
+        <div class="title">KNX Fundamentals</div>
+        <div class="desc">KNX TP1 green bus line, decentralized node addressing, and ETS software group mapping.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 45 -->
+    <a href="m4_s45_wifi_smart_home.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 45</div>
+        <div class="title">Wi-Fi Smart Home</div>
+        <div class="desc">Neutral vs No-Neutral capacitor bypass, Zigbee hubs, and Tuya cloud OAuth linking.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 46 -->
+    <a href="m4_s46_zigbee_zwave.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 46</div>
+        <div class="title">Zigbee & Z-Wave</div>
+        <div class="desc">Mesh coordinator/router/end roles, frequency spacing, and self-healing pathways tests.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 47 -->
+    <a href="m4_s47_matter_thread.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 47</div>
+        <div class="title">Matter & Thread</div>
+        <div class="desc">Unified local IP protocols, Thread Border Routers, and Multi-Admin local pairings.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 48 -->
+    <a href="m4_s48_alexa_google_home.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 48</div>
+        <div class="title">Alexa & Google Home</div>
+        <div class="desc">Cloud-to-Cloud API tokens, OAuth skill authorizations, and multi-device routines.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 49 -->
+    <a href="m4_s49_home_assistant.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 49</div>
+        <div class="title">Home Assistant</div>
+        <div class="desc">Local HAOS hub settings, HACS integrations, and structured YAML automation scripting.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 50 -->
+    <a href="m4_s50_smart_lighting_curtain.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 50</div>
+        <div class="title">Smart Lighting & Curtain</div>
+        <div class="desc">Leading vs trailing phase dimmers, curtain track torque calibrating, and relay setups.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 51 -->
+    <a href="m4_s51_smart_irrigation_energy_monitoring.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 51</div>
+        <div class="title">Smart Irrigation & Energy</div>
+        <div class="desc">24VAC solenoid valves, CT sensor current clamps calibration, and HA power dashboards.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 52 -->
+    <a href="m4_s52_solar_cctv_iot_fundamentals.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 52</div>
+        <div class="title">Solar CCTV & IoT</div>
+        <div class="desc">MPPT charger setups, LiFePO4 DOD limits, and industrial 4G SIM APN cell routing.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 53 -->
+    <a href="m4_s53_site_survey_boq_quotation.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 53</div>
+        <div class="title">Site Survey & BOQ</div>
+        <div class="desc">Blueprints mapping, laser dimensions checks, wholesale cost margins, and quote matrices.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 54 -->
+    <a href="m4_s54_project_planning_installation_standards.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 54</div>
+        <div class="title">Project Cabling Standards</div>
+        <div class="desc">NEC 40% conduit fill area, switch heights, drip loops, and structured labeling tag codes.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 55 -->
+    <a href="m4_s55_testing_commissioning_amc.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 55</div>
+        <div class="title">Testing, Commissioning & AMC</div>
+        <div class="desc">Continuity insulation megger test logs, client handover checklist, and AMC agreements.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 56 -->
+    <a href="m4_s56_customer_support_sales_negotiation.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 56</div>
+        <div class="title">Customer Support & Sales</div>
+        <div class="desc">SLA response matrices (P1 to P3), value-based pitching, and project scope creep controls.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 57 -->
+    <a href="m4_s57_digital_marketing_business_automation.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 57</div>
+        <div class="title">Marketing & Automation</div>
+        <div class="desc">Google Map business profiles localized keywords, WhatsApp quick replies, and chatbot funnels.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 58 -->
+    <a href="m4_s58_business_setup_entrepreneurship.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 58</div>
+        <div class="title">Business Setup & Startup</div>
+        <div class="desc">Sole proprietorship vs LLC, tax compliance, wholesale distributor tiers, and milestone billing.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+
+    <!-- Session 59 -->
+    <a href="m4_s59_placement_training_career_prep.html" class="card" tabindex="0" style="--accent-color: #f97316; --accent-glow: rgba(249, 115, 22, 0.3);">
+      <div>
+        <div class="day-tag">Session 59</div>
+        <div class="title">Career Prep & Placements</div>
+        <div class="desc">Low-voltage project resume designs, LinkedIn headline SEO, and mock technical interviews.</div>
+      </div>
+      <div class="btn">Open Presentation</div>
+    </a>
+  </div>
+</div>
+
+<script>
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  // Handle Tab switching
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      switchTab(btn.getAttribute('data-tab'));
+    });
+  });
+
+  function switchTab(tabId) {
+    tabBtns.forEach(b => {
+      if (b.getAttribute('data-tab') === tabId) {
+        b.classList.add('active');
+      } else {
+        b.classList.remove('active');
+      }
+    });
+    tabContents.forEach(c => {
+      if (c.id === tabId) {
+        c.classList.add('active');
+      } else {
+        c.classList.remove('active');
+      }
+    });
+    // Remove focused class from all cards when switching tabs
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('focused'));
+    // Focus first card in new active tab
+    focusCard(0);
+  }
+
+  let focusedIndex = 0;
+
+  function focusCard(index) {
+    const visibleCards = Array.from(document.querySelectorAll('.tab-content.active .card'));
+    if (visibleCards.length === 0) return;
+
+    // Clamp index boundaries
+    focusedIndex = Math.max(0, Math.min(index, visibleCards.length - 1));
+
+    // Remove focus class from all cards
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('focused'));
+
+    const targetCard = visibleCards[focusedIndex];
+    targetCard.classList.add('focused');
+    targetCard.focus(); // Set browser active focus
+
+    // Scroll centered dynamically
+    targetCard.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  // Handle Keyboard Grid Arrow navigation
+  window.addEventListener('keydown', (e) => {
+    const visibleCards = Array.from(document.querySelectorAll('.tab-content.active .card'));
+    if (visibleCards.length === 0) return;
+
+    // Focus recovery: If key event occurs but no card is actively focused, force focus card 0
+    const activeElement = document.activeElement;
+    const isCardFocused = activeElement && activeElement.classList.contains('card');
+    
+    if (!isCardFocused && ['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(e.key)) {
+      e.preventDefault();
+      focusCard(focusedIndex);
+      return;
+    }
+
+    // Calculate grid columns dynamically using element layout geometries
+    let columns = visibleCards.length;
+    if (visibleCards.length > 1) {
+      const firstCardTop = visibleCards[0].offsetTop;
+      for (let i = 1; i < visibleCards.length; i++) {
+        if (visibleCards[i].offsetTop > firstCardTop) {
+          columns = i;
+          break;
+        }
+      }
+    }
+
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      focusCard(focusedIndex + 1);
+    } else if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      focusCard(focusedIndex - 1);
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      focusCard(focusedIndex + columns);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      focusCard(focusedIndex - columns);
+    } else if (e.key === 'Enter') {
+      const activeCard = visibleCards[focusedIndex];
+      if (activeCard) {
+        e.preventDefault();
+        window.location.href = activeCard.getAttribute('href');
+      }
+    }
+  });
+
+  // Sync focusedIndex when a card receives focus naturally (click or tab)
+  document.querySelectorAll('.card').forEach(card => {
+    card.addEventListener('focus', () => {
+      const visibleCards = Array.from(document.querySelectorAll('.tab-content.active .card'));
+      const cardIndex = visibleCards.indexOf(card);
+      if (cardIndex !== -1) {
+        focusedIndex = cardIndex;
+        // Ensure focused class is applied
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('focused'));
+        card.classList.add('focused');
+      }
+    });
+  });
+
+  // Restore session tracker on load
+  window.addEventListener('DOMContentLoaded', () => {
+    const lastModule = localStorage.getItem('lastViewedModule');
+    const lastSession = localStorage.getItem('lastViewedSession');
+
+    if (lastModule) {
+      switchTab(lastModule);
+    } else {
+      switchTab('m1');
+    }
+
+    if (lastSession) {
+      const visibleCards = Array.from(document.querySelectorAll('.tab-content.active .card'));
+      const targetIndex = visibleCards.findIndex(card => card.getAttribute('href') === lastSession);
+      if (targetIndex !== -1) {
+        focusCard(targetIndex);
+        
+        // Add transient return highlighting
+        const cardEl = visibleCards[targetIndex];
+        cardEl.style.outline = '4px solid var(--accent-color)';
+        cardEl.style.boxShadow = '0 0 30px var(--accent-glow)';
+        setTimeout(() => {
+          cardEl.style.outline = '';
+          cardEl.style.boxShadow = '';
+        }, 1500);
+      } else {
+        focusCard(0);
+      }
+    } else {
+      focusCard(0);
+    }
+  });
+</script>
+</body>
+</html>

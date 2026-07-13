@@ -1,0 +1,575 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 14: Analog IP CCTV</title>
+<style>
+  :root {
+    --bg-color: #080c14;
+    --card-bg: rgba(15, 25, 45, 0.6);
+    --accent-color: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.4);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .deck {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 30px;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    max-height: 700px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.4s ease;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+  }
+
+  .slide-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--accent-color);
+  }
+
+  .slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-main);
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .text-content {
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .visual-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-content svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  li strong {
+    color: var(--accent-color);
+  }
+
+  .highlight-block {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 4px solid var(--accent-color);
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  .lab-block {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-left: 4px solid #10b981;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+
+  .lab-block h3 {
+    color: #10b981;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 13px;
+  }
+
+  th {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--accent-color);
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    text-align: left;
+  }
+
+  td {
+    border: 1px solid var(--border-color);
+    padding: 6px;
+  }
+
+  .controls-bar {
+    height: 60px;
+    background: rgba(15, 22, 40, 0.8);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: transparent;
+  }
+
+  .slide-counter {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .progress-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .title-slide h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .title-slide h2 {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 30px;
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <!-- Slide 1 -->
+  <div class="slide active title-slide">
+    <div class="slide-tag">Module 2 - Session 14</div>
+    <h1>Analog & IP CCTV Systems</h1>
+    <h2>Analog IP CCTV</h2>
+    <div class="instructor-tag">Low-Voltage Systems & Automation Training Series</div>
+  </div>  <!-- Slide 2 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 14 - Slide 2</div>
+      <div class="slide-counter">Slide 2 of 10</div>
+    </div>
+    <h2 class="slide-title">Analog CCTV Basics</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Signal Type:</strong> Transmits raw analog electrical waveforms over physical copper cable lines.</li><li><strong>Coaxial Cables:</strong> Relies on RG59 or RG6 cables shielded to prevent high-frequency noise insertion.</li><li><strong>BNC Connectors:</strong> Utilizes twist-lock bayonet connections standard on analog DVR units.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <!-- Outer sheath -->
+  <rect x="15" y="45" width="170" height="40" fill="#4b5563" rx="4"/>
+  <!-- Copper shield -->
+  <rect x="55" y="50" width="115" height="30" fill="#f59e0b"/>
+  <!-- Dielectric insulator -->
+  <rect x="95" y="55" width="60" height="20" fill="#f3f4f6"/>
+  <!-- Center Core -->
+  <rect x="135" y="62" width="50" height="6" fill="#f97316"/>
+  <text x="100" y="125" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">RG59 Coaxial Core Layers</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 3 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 14 - Slide 3</div>
+      <div class="slide-counter">Slide 3 of 10</div>
+    </div>
+    <h2 class="slide-title">IP CCTV Basics</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Digital Data:</strong> Video is compressed into standard network packets at the camera level.</li><li><strong>Cat6 Cabling:</strong> Employs ethernet lines to carry both digital data and PoE operating voltages.</li><li><strong>Decentralization:</strong> Each IP camera operates as a standalone network client with its own IP card.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <circle cx="100" cy="70" r="45" fill="none" stroke="#4b5563" stroke-width="2"/>
+  <!-- Spline center divider -->
+  <line x1="100" y1="25" x2="100" y2="115" stroke="#9ca3af" stroke-width="2"/>
+  <line x1="55" y1="70" x2="145" y2="70" stroke="#9ca3af" stroke-width="2"/>
+  <!-- Twisted pairs circles -->
+  <circle cx="75" cy="45" r="8" fill="#f97316"/>
+  <circle cx="125" cy="45" r="8" fill="#22c55e"/>
+  <circle cx="75" cy="95" r="8" fill="#3b82f6"/>
+  <circle cx="125" cy="95" r="8" fill="#854d0e"/>
+  <text x="100" y="138" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Cat6 Twisted Pair Architecture</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 4 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 14 - Slide 4</div>
+      <div class="slide-counter">Slide 4 of 10</div>
+    </div>
+    <h2 class="slide-title">Signal Latency Comparison</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Analog Realtime:</strong> Zero processing delays. Video travels at electrical speed straight to screen.</li><li><strong>IP Delay:</strong> Compression, network routing, and NVR buffering introduce mild latency (typically 100-300ms).</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <line x1="30" y1="15" x2="30" y2="120" stroke="#4b5563" stroke-width="1.5"/>
+  <line x1="30" y1="120" x2="190" y2="120" stroke="#4b5563" stroke-width="1.5"/>
+  <rect x="45" y="40" width="40" height="80" fill="#10b981"/>
+  <text x="65" y="32" fill="#10b981" font-family="sans-serif" font-size="8" text-anchor="middle">Analog (0ms)</text>
+  <rect x="115" y="90" width="40" height="30" fill="#ef4444"/>
+  <text x="135" y="82" fill="#ef4444" font-family="sans-serif" font-size="8" text-anchor="middle">IP (150ms)</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="10" text-anchor="middle">Direct vs Encoded Network Lag</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 5 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 14 - Slide 5</div>
+      <div class="slide-counter">Slide 5 of 10</div>
+    </div>
+    <h2 class="slide-title">HD-TVI Protocols</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>HD-TVI:</strong> High Definition Transport Video Interface standard.</li><li><strong>Analog Megapixel:</strong> Permits sending full HD 1080p and 4K resolutions over existing standard analog coax routes.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <line x1="15" y1="75" x2="185" y2="75" stroke="#4b5563" stroke-width="1.5"/>
+  <!-- High frequency carrier sine wave with small steps -->
+  <path d="M 15 75 Q 35 30 55 75 T 95 75 T 135 75 T 175 75" fill="none" stroke="#f59e0b" stroke-width="2"/>
+  <rect x="75" y="65" width="20" height="20" fill="#ef4444" opacity="0.8"/>
+  <text x="85" y="60" fill="#ef4444" font-family="sans-serif" font-size="8" text-anchor="middle">Data</text>
+  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">HD-TVI High-Freq Carrier</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 6 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 14 - Slide 6</div>
+      <div class="slide-counter">Slide 6 of 10</div>
+    </div>
+    <h2 class="slide-title">Video Baluns</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Purpose:</strong> Impedance-matching transformers that allow coaxial BNC signals to travel over UTP (Cat6) twisted pair lines.</li><li><strong>Impedance Match:</strong> Adapts 75-ohm unbalanced coax impedance to 100-ohm balanced twisted-pair lines.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="75" y="45" width="50" height="50" rx="3" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <path d="M 85 55 C 95 55, 95 65, 85 65 C 95 65, 95 75, 85 75 C 95 75, 95 85, 85 85" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="25" y1="70" x2="75" y2="70" stroke="#f59e0b" stroke-width="2"/>
+  <line x1="125" y1="60" x2="175" y2="60" stroke="#10b981" stroke-width="2"/>
+  <line x1="125" y1="80" x2="175" y2="80" stroke="#10b981" stroke-width="2"/>
+  <text x="50" y="60" fill="#f59e0b" font-family="sans-serif" font-size="8" text-anchor="middle">75Î©</text>
+  <text x="150" y="50" fill="#10b981" font-family="sans-serif" font-size="8" text-anchor="middle">100Î©</text>
+  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Balun Matching Transformer</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 7 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 14 - Slide 7</div>
+      <div class="slide-counter">Slide 7 of 10</div>
+    </div>
+    <h2 class="slide-title">Coaxial Distance Sizing Limits</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Distance Sizing:</strong> Standard RG59 cables support video runs up to 300m.</li><li><strong>Signal loss:</strong> Long coax runs attenuate high-frequency video signals, resulting in grainy images.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <line x1="30" y1="20" x2="30" y2="120" stroke="#4b5563" stroke-width="1.5"/>
+  <line x1="30" y1="120" x2="190" y2="120" stroke="#4b5563" stroke-width="1.5"/>
+  <path d="M 30 30 Q 90 40 180 110" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+  <text x="110" y="55" fill="#ef4444" font-family="sans-serif" font-size="9">Coax Attenuation</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Signal Loss vs Run Length</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 8 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 14 - Slide 8</div>
+      <div class="slide-counter">Slide 8 of 10</div>
+    </div>
+    <h2 class="slide-title">Ethernet Sizing Limits</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>IP Limit:</strong> Standard Cat6 cable links are strictly limited to 100m.</li><li><strong>PoE voltage drop:</strong> Sizing requires inline extenders or switches for runs extending past the 100m threshold.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="15" y="45" width="40" height="40" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <text x="35" y="68" fill="#3b82f6" font-family="sans-serif" font-size="8" text-anchor="middle">Switch</text>
+  <rect x="80" y="45" width="40" height="40" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <text x="100" y="68" fill="#ef4444" font-family="sans-serif" font-size="8" text-anchor="middle">PoE Inj</text>
+  <rect x="145" y="45" width="40" height="40" fill="none" stroke="#10b981" stroke-width="2"/>
+  <text x="165" y="68" fill="#10b981" font-family="sans-serif" font-size="8" text-anchor="middle">Camera</text>
+  <line x1="55" y1="65" x2="80" y2="65" stroke="#9ca3af" stroke-width="1.5"/>
+  <line x1="120" y1="65" x2="145" y2="65" stroke="#10b981" stroke-width="2"/>
+  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">100m Active Link Topology</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 9 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 14 - Slide 9</div>
+      <div class="slide-counter">Slide 9 of 10</div>
+    </div>
+    <h2 class="slide-title">DVR, NVR & Hybrid Recorders</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>DVR (Digital Video Recorder):</strong> Encodes and compresses incoming raw analog camera feeds.</li><li><strong>NVR (Network Video Recorder):</strong> Simply records incoming pre-compressed network streams from IP cameras.</li><li><strong>XVR Hybrid:</strong> Accepts both analog BNC and IP camera inputs on the same chassis.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="20" y="35" width="160" height="80" fill="none" stroke="#4b5563" stroke-width="2"/>
+  <!-- Analog inputs -->
+  <circle cx="45" cy="60" r="6" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <circle cx="75" cy="60" r="6" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <!-- IP ports -->
+  <rect x="120" y="50" width="16" height="16" fill="none" stroke="#10b981" stroke-width="2"/>
+  <rect x="145" y="50" width="16" height="16" fill="none" stroke="#10b981" stroke-width="2"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">XVR Rear Port Layout</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 10 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 14 - Slide 10</div>
+      <div class="slide-counter">Slide 10 of 10</div>
+    </div>
+    <h2 class="slide-title">Practical Lab Guide</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <div class='lab-block'><h3>Lab Work: Analog vs IP Setup</h3><ol><li>Crimp BNC terminal onto RG59 coax, wire analog camera to DVR.</li><li>Install video baluns to run analog signal over a Cat6 twisted pair.</li><li>Configure IP Dome on network switch, compare latency feeds on NVR screen.</li></ol></div>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="30" y="25" width="140" height="95" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <line x1="30" y1="72" x2="170" y2="72" stroke="#ef4444" stroke-width="2"/>
+  <text x="100" y="65" fill="#ef4444" font-family="sans-serif" font-size="9" text-anchor="middle">Cable Run</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Bench Test Layout</text>
+</svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="nav-buttons">
+    <a class="btn" href="slides_index.html" style="text-decoration:none;">Back to Hub</a>
+    <button class="btn" id="prevBtn" disabled>Previous</button>
+    <button class="btn" id="nextBtn">Next</button>
+  </div>
+  <button class="btn" id="fullscreenBtn">Fullscreen</button>
+</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === slides.length - 1;
+
+    const progress = (currentSlide / (slides.length - 1)) * 100;
+    progressBar.style.width = progress + "%";
+  }
+
+  prevBtn.addEventListener('click', () => {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      }
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      }
+    }
+  });
+
+  fullscreenBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        alert("Error enabling fullscreen: " + err.message);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  // Track session and module in localStorage for index back navigation
+  const pageName = window.location.pathname.split('/').pop();
+  localStorage.setItem('lastViewedSession', pageName);
+  localStorage.setItem('lastViewedModule', 'm2');
+</script>
+</body>
+</html>

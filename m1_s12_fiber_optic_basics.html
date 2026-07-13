@@ -1,0 +1,554 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 12: Fiber Optic Basics</title>
+<style>
+  :root {
+    --bg-color: #0b0f19;
+    --card-bg: rgba(20, 30, 55, 0.6);
+    --accent-color: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.4);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .deck {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 30px;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    max-height: 700px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.4s ease;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+  }
+
+  .slide-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--accent-color);
+  }
+
+  .slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-main);
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .text-content {
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .visual-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-content svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  li strong {
+    color: var(--accent-color);
+  }
+
+  .highlight-block {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 4px solid var(--accent-color);
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  .lab-block {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-left: 4px solid #10b981;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+
+  .lab-block h3 {
+    color: #10b981;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 13px;
+  }
+
+  th {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--accent-color);
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    text-align: left;
+  }
+
+  td {
+    border: 1px solid var(--border-color);
+    padding: 6px;
+  }
+
+  .controls-bar {
+    height: 60px;
+    background: rgba(15, 22, 40, 0.8);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: transparent;
+  }
+
+  .slide-counter {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .progress-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .title-slide h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .title-slide h2 {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 30px;
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <!-- Slide 1 -->
+  <div class="slide active title-slide">
+    <div class="slide-tag">Module 1 - Session 12</div>
+    <h1>Fiber Optic Basics</h1>
+    <h2>Fiber Optic Basics</h2>
+    <div class="instructor-tag">Low-Voltage Systems & Automation Training Series</div>
+  </div>  <!-- Slide 2 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 2</div>
+      <div class="slide-counter">Slide 2 of 10</div>
+    </div>
+    <h2 class="slide-title">Copper vs. Fiber Optic</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Range comparison:</strong> Cat6 copper limit is 100m; fiber runs extend past 10km.</li><li><strong>Noise Immunity:</strong> Fiber uses light pulse signals, immune to high-voltage EMI interference.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <line x1="30" y1="20" x2="30" y2="120" stroke="#4b5563" stroke-width="1.5"/>
+  <line x1="30" y1="120" x2="190" y2="120" stroke="#4b5563" stroke-width="1.5"/>
+  <path d="M 30 40 Q 90 90 180 110" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <text x="135" y="60" fill="#ef4444" font-family="sans-serif" font-size="8">Voltage Drop</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Voltage Drop vs Cable Distance</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 3 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 3</div>
+      <div class="slide-counter">Slide 3 of 10</div>
+    </div>
+    <h2 class="slide-title">Single-Mode vs. Multi-Mode</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Single-Mode (SM):</strong> Narrow core (9 microns), laser source. Long distances (up to 40km).</li><li><strong>Multi-Mode (MM):</strong> Wider core (50 microns), LED source. Short runs (up to 550m).</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="20" y="55" width="160" height="35" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <!-- Light bouncing -->
+  <path d="M 20 72 L 50 60 L 80 85 L 110 60 L 140 85 L 170 60" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <text x="100" y="125" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Internal Total Reflection</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 4 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 4</div>
+      <div class="slide-counter">Slide 4 of 10</div>
+    </div>
+    <h2 class="slide-title">SFP Transceiver Modules</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>SFP:</strong> Small Form-factor Pluggable modular transceiver slots on switches.</li><li><strong>Media Speeds:</strong> Configure Gigabit SFP or 10G SFP+ to handle backhaul fiber lines.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="55" y="45" width="90" height="40" rx="2" fill="none" stroke="#4b5563" stroke-width="2"/>
+  <rect x="60" y="50" width="20" height="30" fill="#3b82f6"/>
+  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Optical SFP Transceiver</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 5 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 5</div>
+      <div class="slide-counter">Slide 5 of 10</div>
+    </div>
+    <h2 class="slide-title">Fiber Connector Types</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>LC Connector:</strong> Snap-in clip connector. Standard on SFP transceiver inserts.</li><li><strong>SC Connector:</strong> Square push-pull socket standard on media converters.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="55" y="45" width="90" height="40" rx="2" fill="none" stroke="#4b5563" stroke-width="2"/>
+  <rect x="60" y="50" width="20" height="30" fill="#3b82f6"/>
+  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Optical SFP Transceiver</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 6 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 6</div>
+      <div class="slide-counter">Slide 6 of 10</div>
+    </div>
+    <h2 class="slide-title">Fiber Media Converters</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Purpose:</strong> Convert copper RJ45 electrical signals to fiber light signals.</li><li><strong>Application:</strong> Extends network reach for outlying security poles beyond 100m.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="45" width="150" height="50" rx="3" fill="none" stroke="#4b5563" stroke-width="2"/>
+  <!-- WAN port -->
+  <rect x="35" y="55" width="20" height="20" fill="#3b82f6" rx="1"/>
+  <text x="45" y="88" fill="#3b82f6" font-family="sans-serif" font-size="7" text-anchor="middle">WAN</text>
+  <!-- LAN ports -->
+  <rect x="75" y="55" width="20" height="20" fill="#10b981" rx="1"/>
+  <rect x="105" y="55" width="20" height="20" fill="#10b981" rx="1"/>
+  <rect x="135" y="55" width="20" height="20" fill="#10b981" rx="1"/>
+  <text x="115" y="88" fill="#10b981" font-family="sans-serif" font-size="7" text-anchor="middle">LAN Ports</text>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Standard Router Back Panel</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 7 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 7</div>
+      <div class="slide-counter">Slide 7 of 10</div>
+    </div>
+    <h2 class="slide-title">Optical Insertion Loss & Audits</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Loss Attenuation:</strong> Signal strength drop caused by joints, dust, and bends.</li><li><strong>Contamination:</strong> Dust particles on connector faces block laser light transmission. Clean with optical fluid.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="20" y="55" width="160" height="35" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <!-- Light bouncing -->
+  <path d="M 20 72 L 50 60 L 80 85 L 110 60 L 140 85 L 170 60" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <text x="100" y="125" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Internal Total Reflection</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 8 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 8</div>
+      <div class="slide-counter">Slide 8 of 10</div>
+    </div>
+    <h2 class="slide-title">Enclosures & Splicing (LIU)</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>LIU Panel:</strong> Light Interface Unit. Protects optical splicing trays and splits.</li><li><strong>Fusion Splicing:</strong> Welding glass cores together using high-voltage arcs.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="30" y="30" width="140" height="85" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <rect x="45" y="45" width="8" height="20" fill="#ef4444"/>
+  <rect x="75" y="45" width="8" height="20" fill="#ef4444"/>
+  <rect x="105" y="45" width="8" height="20" fill="#ef4444"/>
+  <rect x="135" y="45" width="8" height="20" fill="#ef4444"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Individual Port Fuses</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 9 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 9</div>
+      <div class="slide-counter">Slide 9 of 10</div>
+    </div>
+    <h2 class="slide-title">Laser Safety & Handling Rules</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Eye Danger:</strong> Never look directly into optical ports or active fiber tips. Laser light is invisible IR and burns retinas instantly.</li><li><strong>Handling:</strong> Properly dispose of glass fiber shards after stripping.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="35" y="65" width="40" height="40" rx="4" fill="none" stroke="#ef4444" stroke-width="3"/>
+  <path d="M 45 65 L 45 45 A 10 10 0 0 1 65 45 L 65 65" fill="none" stroke="#ef4444" stroke-width="3"/>
+  <polygon points="120,40 160,40 165,45 165,110 120,110" fill="none" stroke="#f59e0b" stroke-width="2"/>
+  <circle cx="130" cy="50" r="3" fill="#f59e0b"/>
+  <text x="142" y="75" fill="#ef4444" font-family="sans-serif" font-weight="bold" font-size="8" text-anchor="middle">DANGER</text>
+  <text x="142" y="90" fill="#f3f4f6" font-family="sans-serif" font-size="7" text-anchor="middle">LOCKED OUT</text>
+  <text x="100" y="138" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">LOTO Device Isolation</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 10 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 10</div>
+      <div class="slide-counter">Slide 10 of 10</div>
+    </div>
+    <h2 class="slide-title">Lab Session Work</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <div class='lab-block'><h3>Lab Work: Fiber Uplink Setup</h3><ol><li>Install SFP transceivers into gigabit managed switches.</li><li>Connect switches using LC duplex optical patch cords.</li><li>Verify status LEDs on fiber media converter units.</li></ol></div>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="55" y="45" width="90" height="40" rx="2" fill="none" stroke="#4b5563" stroke-width="2"/>
+  <rect x="60" y="50" width="20" height="30" fill="#3b82f6"/>
+  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Optical SFP Transceiver</text>
+</svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="nav-buttons">
+    <a class="btn" href="slides_index.html" style="text-decoration:none;">Back to Hub</a>
+    <button class="btn" id="prevBtn" disabled>Previous</button>
+    <button class="btn" id="nextBtn">Next</button>
+  </div>
+  <button class="btn" id="fullscreenBtn">Fullscreen</button>
+</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === slides.length - 1;
+
+    const progress = (currentSlide / (slides.length - 1)) * 100;
+    progressBar.style.width = progress + "%";
+  }
+
+  prevBtn.addEventListener('click', () => {
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    }
+  });
+
+  nextBtn.addEventListener('click', () => {
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      }
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      }
+    }
+  });
+
+  fullscreenBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(err => {
+        alert("Error enabling fullscreen: " + err.message);
+      });
+    } else {
+      document.exitFullscreen();
+    }
+  });
+
+  // Track session and module in localStorage for index back navigation
+  const pageName = window.location.pathname.split('/').pop();
+  localStorage.setItem('lastViewedSession', pageName);
+  localStorage.setItem('lastViewedModule', 'm1');
+</script>
+</body>
+</html>
