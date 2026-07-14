@@ -31,6 +31,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    touch-action: pan-y;
   }
 
   .deck {
@@ -40,6 +41,7 @@
     justify-content: center;
     position: relative;
     padding: 30px;
+    touch-action: pan-y;
   }
 
   .slide {
@@ -58,6 +60,7 @@
     position: relative;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
     animation: fadeIn 0.4s ease;
+    touch-action: pan-y;
   }
 
   .slide.active {
@@ -540,7 +543,15 @@
     });
 
     prevBtn.disabled = currentSlide === 0;
-    nextBtn.disabled = currentSlide === slides.length - 1;
+    
+    // Changing Next button to "Finish" label when on the last slide can be nice, but keeping functionality:
+    // If on last slide, nextBtn can remain active to trigger the exit
+    nextBtn.disabled = false; 
+    if (currentSlide === slides.length - 1) {
+      nextBtn.textContent = "Finish";
+    } else {
+      nextBtn.textContent = "Next";
+    }
 
     const progress = (currentSlide / (slides.length - 1)) * 100;
     progressBar.style.width = progress + "%";
@@ -557,6 +568,8 @@
     if (currentSlide < slides.length - 1) {
       currentSlide++;
       updateSlides();
+    } else {
+      window.location.href = 'slides_index.html';
     }
   });
 
@@ -565,6 +578,8 @@
       if (currentSlide < slides.length - 1) {
         currentSlide++;
         updateSlides();
+      } else {
+        window.location.href = 'slides_index.html';
       }
     } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
       if (currentSlide > 0) {
@@ -574,31 +589,44 @@
     }
   });
 
-  // Touch Swipe Support
+  // Global Document-level Touch Swipe Support
   let touchStartX = 0;
+  let touchStartY = 0;
   let touchEndX = 0;
-  const slideDeck = document.querySelector('.deck');
+  let touchEndY = 0;
   
-  slideDeck.addEventListener('touchstart', e => {
+  document.addEventListener('touchstart', e => {
     touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
   }, {passive: true});
 
-  slideDeck.addEventListener('touchend', e => {
+  document.addEventListener('touchend', e => {
     touchEndX = e.changedTouches[0].screenX;
+    touchEndY = e.changedTouches[0].screenY;
     handleSwipeGesture();
   }, {passive: true});
 
   function handleSwipeGesture() {
     const swipeThreshold = 50;
-    if (touchStartX - touchEndX > swipeThreshold) {
-      if (currentSlide < slides.length - 1) {
-        currentSlide++;
-        updateSlides();
-      }
-    } else if (touchEndX - touchStartX > swipeThreshold) {
-      if (currentSlide > 0) {
-        currentSlide--;
-        updateSlides();
+    const diffX = touchStartX - touchEndX;
+    const diffY = touchStartY - touchEndY;
+    
+    // Verify swipe is horizontal and meets threshold
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > swipeThreshold) {
+      if (diffX > 0) {
+        // Swipe Left -> Next
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          window.location.href = 'slides_index.html';
+        }
+      } else {
+        // Swipe Right -> Prev
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        }
       }
     }
   }
