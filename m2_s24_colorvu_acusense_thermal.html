@@ -270,6 +270,20 @@
     font-weight: 500;
     margin-bottom: 30px;
   }
+
+  /* Force landscape rotation on mobile portrait screen sizes only (excluding tablets/fold displays) */
+  @media (orientation: portrait) and (max-width: 500px) {
+    body {
+      transform: rotate(90deg);
+      transform-origin: top left;
+      width: 100vh !important;
+      height: 100vw !important;
+      position: absolute;
+      top: 0;
+      left: 100%;
+      overflow: hidden;
+    }
+  }
 </style>
 </head>
 <body>
@@ -566,23 +580,49 @@
     const diffX = touchStartX - touchEndX;
     const diffY = touchStartY - touchEndY;
     
-    // Verify swipe is horizontal and meets threshold
-    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > swipeThreshold) {
-      if (diffX > 0) {
-        // Swipe Left -> Next
-        if (currentSlide < slides.length - 1) {
-          currentSlide++;
-          updateSlides();
+    // Check if the screen is physically vertical (portrait) but rotated to landscape layout
+    const isRotated = (window.innerHeight > window.innerWidth) && (window.innerWidth <= 500);
+    
+    if (isRotated) {
+      // In rotated mode, vertical gestures (up/down) correspond to slide progression (left/right)
+      if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > swipeThreshold) {
+        if (diffY > 0) {
+          // Swipe Up -> Next
+          if (currentSlide < slides.length - 1) {
+            currentSlide++;
+            updateSlides();
+          } else {
+            window.location.href = 'slides_index.html';
+          }
         } else {
-          window.location.href = 'slides_index.html';
+          // Swipe Down -> Prev
+          if (currentSlide > 0) {
+            currentSlide--;
+            updateSlides();
+          } else {
+            window.location.href = 'slides_index.html';
+          }
         }
-      } else {
-        // Swipe Right -> Prev
-        if (currentSlide > 0) {
-          currentSlide--;
-          updateSlides();
+      }
+    } else {
+      // Normal horizontal swiping on tablets, folds, or landscape devices
+      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > swipeThreshold) {
+        if (diffX > 0) {
+          // Swipe Left -> Next
+          if (currentSlide < slides.length - 1) {
+            currentSlide++;
+            updateSlides();
+          } else {
+            window.location.href = 'slides_index.html';
+          }
         } else {
-          window.location.href = 'slides_index.html';
+          // Swipe Right -> Prev
+          if (currentSlide > 0) {
+            currentSlide--;
+            updateSlides();
+          } else {
+            window.location.href = 'slides_index.html';
+          }
         }
       }
     }
