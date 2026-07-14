@@ -542,11 +542,15 @@
       }
     });
 
-    prevBtn.disabled = currentSlide === 0;
-    
-    // Changing Next button to "Finish" label when on the last slide can be nice, but keeping functionality:
-    // If on last slide, nextBtn can remain active to trigger the exit
+    prevBtn.disabled = false;
     nextBtn.disabled = false; 
+    
+    if (currentSlide === 0) {
+      prevBtn.textContent = "Exit";
+    } else {
+      prevBtn.textContent = "Previous";
+    }
+    
     if (currentSlide === slides.length - 1) {
       nextBtn.textContent = "Finish";
     } else {
@@ -561,6 +565,8 @@
     if (currentSlide > 0) {
       currentSlide--;
       updateSlides();
+    } else {
+      window.location.href = 'slides_index.html';
     }
   });
 
@@ -585,6 +591,8 @@
       if (currentSlide > 0) {
         currentSlide--;
         updateSlides();
+      } else {
+        window.location.href = 'slides_index.html';
       }
     }
   });

@@ -493,10 +493,15 @@
       }
     });
 
-    prevBtn.disabled = currentSlide === 0;
+    prevBtn.disabled = false;
+    nextBtn.disabled = false; 
     
-    // Set Next button label to Finish on the last slide
-    nextBtn.disabled = false;
+    if (currentSlide === 0) {
+      prevBtn.textContent = "Exit";
+    } else {
+      prevBtn.textContent = "Previous";
+    }
+    
     if (currentSlide === slides.length - 1) {
       nextBtn.textContent = "Finish";
     } else {
@@ -511,6 +516,8 @@
     if (currentSlide > 0) {
       currentSlide--;
       updateSlides();
+    } else {
+      window.location.href = 'slides_index.html';
     }
   });
 
@@ -535,6 +542,8 @@
       if (currentSlide > 0) {
         currentSlide--;
         updateSlides();
+      } else {
+        window.location.href = 'slides_index.html';
       }
     }
   });
