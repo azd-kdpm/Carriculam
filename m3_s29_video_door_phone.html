@@ -585,18 +585,8 @@
   const progressBar = document.getElementById('progressBar');
   const fullscreenBtn = document.getElementById('fullscreenBtn');
   
-  const pagePath = window.location.pathname;
-  const storageKey = 'slide_pos_' + (pagePath.split('/').pop() || 'current');
-  
-  // Restore saved slide position (PERSISTS ACROSS VISITS & EXITS!)
+  // ALWAYS start from Slide 0 (Slide 1)
   let currentSlide = 0;
-  const savedPos = localStorage.getItem(storageKey);
-  if (savedPos !== null) {
-    const parsed = parseInt(savedPos, 10);
-    if (!isNaN(parsed) && parsed >= 0 && parsed < slides.length) {
-      currentSlide = parsed;
-    }
-  }
 
   function updateSlides() {
     slides.forEach((slide, index) => {
@@ -606,9 +596,6 @@
         slide.classList.remove('active');
       }
     });
-
-    // Save selection position to localStorage (Never deleted!)
-    localStorage.setItem(storageKey, currentSlide);
 
     prevBtn.disabled = false;
     nextBtn.disabled = false;
@@ -630,7 +617,6 @@
   }
 
   function goToIndex() {
-    // Keep progress saved in localStorage!
     window.location.href = 'slides_index.html';
   }
 
@@ -654,7 +640,7 @@
     }
   });
 
-  // Laptop Keyboard Navigation
+  // Laptop Keyboard Navigation inside slide deck
   document.addEventListener('keydown', (e) => {
     if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
       e.preventDefault();
@@ -677,7 +663,7 @@
     }
   });
 
-  // Android Touch & Swipe Handler
+  // Touch & Swipe Handler
   let touchStartX = 0;
   let touchStartY = 0;
 
