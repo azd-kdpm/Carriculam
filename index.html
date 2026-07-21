@@ -1,30 +1,430 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="refresh" content="0; url=slides_index.html" />
-  <title>Redirecting to Slides Hub...</title>
-  <style>
-    body {
-      background-color: #0b0f19;
-      color: #f3f4f6;
-      font-family: 'Segoe UI', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-    }
-    a {
-      color: #3b82f6;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ELV & Automation Course Presentations Hub</title>
+<style>
+  :root {
+    --bg-color: #0b0f19;
+    --card-bg: rgba(20, 30, 55, 0.6);
+    --accent: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.4);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    padding: 40px 20px;
+    max-width: 1300px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--text-muted);
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  .stage-header {
+    margin-top: 40px;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .stage-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #3b82f6;
+    letter-spacing: -0.3px;
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(12px);
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 12px 30px -10px var(--accent-glow);
+  }
+
+  .card-badge {
+    font-size: 12px;
+    font-weight: 600;
+    color: #10b981;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+
+  .card-module {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .card-footer {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+</style>
 </head>
 <body>
-  <p>Redirecting to <a href="slides_index.html">Slides Hub</a>...</p>
+  <header>
+    <h1>ELV & Automation Master Presentations Hub</h1>
+    <p class="subtitle">Complete 59-Session Interactive Training Series â€¢ Organized into 12 Industrial Learning Stages</p>
+  </header>
+
+  <div class='stage-header'><h2>Stage 1: Electrical Fundamentals & Wiring</h2></div><div class='grid-container'>    <a href="m1_s01_electrical_fundamentals_ac_dc.html" class="card">
+      <div class="card-badge">Session 1 â€¢ 2 Hrs</div>
+      <div class="card-title">Electrical Fundamentals (AC/DC)</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m1_s02_earthing_surge_protection.html" class="card">
+      <div class="card-badge">Session 2 â€¢ 2 Hrs</div>
+      <div class="card-title">Earthing & Lightning Protection</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m1_s03_multimeter_diagnostics.html" class="card">
+      <div class="card-badge">Session 3 â€¢ 3 Hrs</div>
+      <div class="card-title">Multimeter Practical</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m1_s04_electrical_safety_breakers.html" class="card">
+      <div class="card-badge">Session 4 â€¢ 1 Hr</div>
+      <div class="card-title">Electrical Safety & PPE</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m1_s05_power_supply_smps.html" class="card">
+      <div class="card-badge">Session 5 â€¢ 2 Hrs</div>
+      <div class="card-title">Power Supply & SMPS</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m1_s06_reading_drawings.html" class="card">
+      <div class="card-badge">Session 6 â€¢ 2 Hrs</div>
+      <div class="card-title">Reading Electrical Drawings</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m1_s07_cable_selection_conduits.html" class="card">
+      <div class="card-badge">Session 7 â€¢ 2 Hrs</div>
+      <div class="card-title">Cable Selection & Management</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a></div><div class='stage-header'><h2>Stage 2: Analog CCTV Systems</h2></div><div class='grid-container'>    <a href="m1_s08_ip_addressing_subnetting.html" class="card">
+      <div class="card-badge">Session 8 â€¢ 2 Hrs</div>
+      <div class="card-title">Analog & IP CCTV</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m1_s09_router_switch_configuration.html" class="card">
+      <div class="card-badge">Session 9 â€¢ 3 Hrs</div>
+      <div class="card-title">Camera Selection & Design</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m1_s10_vlan_basics.html" class="card">
+      <div class="card-badge">Session 10 â€¢ 2 Hrs</div>
+      <div class="card-title">Lens & Field of View</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a></div><div class='stage-header'><h2>Stage 3: Networking Fundamentals & Infrastructure</h2></div><div class='grid-container'>    <a href="m1_s11_poe_poe_switches.html" class="card">
+      <div class="card-badge">Session 11 â€¢ 4 Hrs</div>
+      <div class="card-title">IP Addressing & Subnetting</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m1_s12_fiber_optic_basics.html" class="card">
+      <div class="card-badge">Session 12 â€¢ 4 Hrs</div>
+      <div class="card-title">Router & Switch Configuration</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m1_s13_network_troubleshooting.html" class="card">
+      <div class="card-badge">Session 13 â€¢ 2 Hrs</div>
+      <div class="card-title">VLAN Basics</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m2_s14_analog_ip_cctv.html" class="card">
+      <div class="card-badge">Session 14 â€¢ 2 Hrs</div>
+      <div class="card-title">PoE & PoE Switches</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m2_s15_camera_selection_design.html" class="card">
+      <div class="card-badge">Session 15 â€¢ 2 Hrs</div>
+      <div class="card-title">Fiber Optic Basics</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m2_s16_lens_field_of_view.html" class="card">
+      <div class="card-badge">Session 16 â€¢ 2 Hrs</div>
+      <div class="card-title">Network Troubleshooting</div>
+      <div class="card-module">Module 1: Electrical & Networking</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a></div><div class='stage-header'><h2>Stage 4: IP Camera Systems & VMS</h2></div><div class='grid-container'>    <a href="m2_s17_dvr_nvr_hybrid_systems.html" class="card">
+      <div class="card-badge">Session 17 â€¢ 3 Hrs</div>
+      <div class="card-title">DVR, NVR & Hybrid Systems</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m2_s18_raid_storage_design.html" class="card">
+      <div class="card-badge">Session 18 â€¢ 2 Hrs</div>
+      <div class="card-title">RAID & Storage Design</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m2_s19_onvif_standards.html" class="card">
+      <div class="card-badge">Session 19 â€¢ 1 Hr</div>
+      <div class="card-title">ONVIF Standards</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m2_s20_video_compression.html" class="card">
+      <div class="card-badge">Session 20 â€¢ 2 Hrs</div>
+      <div class="card-title">Video Compression (H.264/H.265/H.265+)</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m2_s21_ai_analytics.html" class="card">
+      <div class="card-badge">Session 21 â€¢ 2 Hrs</div>
+      <div class="card-title">AI Analytics</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m2_s22_anpr.html" class="card">
+      <div class="card-badge">Session 22 â€¢ 2 Hrs</div>
+      <div class="card-title">ANPR (Automatic Number Plate Recognition)</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m2_s23_facial_recognition.html" class="card">
+      <div class="card-badge">Session 23 â€¢ 2 Hrs</div>
+      <div class="card-title">Facial Recognition</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a></div><div class='stage-header'><h2>Stage 5: Network & Camera Troubleshooting</h2></div><div class='grid-container'>    <a href="m2_s24_colorvu_acusense_thermal.html" class="card">
+      <div class="card-badge">Session 24 â€¢ 3 Hrs</div>
+      <div class="card-title">ColorVu, AcuSense & Thermal Cameras</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a></div><div class='stage-header'><h2>Stage 6: Building Communication Systems (VDP, Intercom, PA)</h2></div><div class='grid-container'>    <a href="m2_s25_ptz_cameras.html" class="card">
+      <div class="card-badge">Session 25 â€¢ 2 Hrs</div>
+      <div class="card-title">PTZ Cameras</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m2_s26_remote_viewing_cloud.html" class="card">
+      <div class="card-badge">Session 26 â€¢ 3 Hrs</div>
+      <div class="card-title">Remote Viewing & Cloud</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m2_s27_cybersecurity.html" class="card">
+      <div class="card-badge">Session 27 â€¢ 2 Hrs</div>
+      <div class="card-title">Cybersecurity</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m2_s28_troubleshooting_maintenance.html" class="card">
+      <div class="card-badge">Session 28 â€¢ 4 Hrs</div>
+      <div class="card-title">Troubleshooting & Maintenance</div>
+      <div class="card-module">Module 2: Professional CCTV Systems</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a></div><div class='stage-header'><h2>Stage 7: Hotel Locks & Smart Locks</h2></div><div class='grid-container'>    <a href="m3_s29_video_door_phone.html" class="card">
+      <div class="card-badge">Session 29 â€¢ 2 Hrs</div>
+      <div class="card-title">Video Door Phone</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m3_s30_access_control.html" class="card">
+      <div class="card-badge">Session 30 â€¢ 3 Hrs</div>
+      <div class="card-title">Access Control</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a></div><div class='stage-header'><h2>Stage 8: Access Control, Biometrics & Attendance</h2></div><div class='grid-container'>    <a href="m3_s31_biometric_systems.html" class="card">
+      <div class="card-badge">Session 31 â€¢ 2 Hrs</div>
+      <div class="card-title">Biometric Systems</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m3_s32_smart_locks.html" class="card">
+      <div class="card-badge">Session 32 â€¢ 2 Hrs</div>
+      <div class="card-title">Smart Locks</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m3_s33_boom_barrier.html" class="card">
+      <div class="card-badge">Session 33 â€¢ 2 Hrs</div>
+      <div class="card-title">Boom Barrier</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m3_s34_gate_automation.html" class="card">
+      <div class="card-badge">Session 34 â€¢ 2 Hrs</div>
+      <div class="card-title">Gate Automation</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a></div><div class='stage-header'><h2>Stage 9: Boom Barriers & Vehicle Gate Systems</h2></div><div class='grid-container'>    <a href="m3_s35_intruder_alarm_systems.html" class="card">
+      <div class="card-badge">Session 35 â€¢ 3 Hrs</div>
+      <div class="card-title">Intruder Alarm Systems</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m3_s36_fire_alarm_systems.html" class="card">
+      <div class="card-badge">Session 36 â€¢ 4 Hrs</div>
+      <div class="card-title">Fire Alarm Systems</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a></div><div class='stage-header'><h2>Stage 10: Building Management Systems (BMS)</h2></div><div class='grid-container'>    <a href="m3_s37_pa_bgm_systems.html" class="card">
+      <div class="card-badge">Session 37 â€¢ 2 Hrs</div>
+      <div class="card-title">PA/BGM Systems</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m3_s38_intercom_systems.html" class="card">
+      <div class="card-badge">Session 38 â€¢ 2 Hrs</div>
+      <div class="card-title">Intercom Systems</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m3_s39_elevator_access_control.html" class="card">
+      <div class="card-badge">Session 39 â€¢ 2 Hrs</div>
+      <div class="card-title">Elevator Access Control</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m3_s40_visitor_management.html" class="card">
+      <div class="card-badge">Session 40 â€¢ 2 Hrs</div>
+      <div class="card-title">Visitor Management</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a></div><div class='stage-header'><h2>Stage 11: Smart Home Automation, IoT & KNX</h2></div><div class='grid-container'>    <a href="m3_s41_hotel_lock_systems.html" class="card">
+      <div class="card-badge">Session 41 â€¢ 2 Hrs</div>
+      <div class="card-title">Hotel Lock Systems</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m3_s42_parking_management.html" class="card">
+      <div class="card-badge">Session 42 â€¢ 2 Hrs</div>
+      <div class="card-title">Parking Management</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m3_s43_basic_bms.html" class="card">
+      <div class="card-badge">Session 43 â€¢ 3 Hrs</div>
+      <div class="card-title">Basic Building Management Systems (BMS)</div>
+      <div class="card-module">Module 3: Security & Building Automation</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s44_knx_fundamentals.html" class="card">
+      <div class="card-badge">Session 44 â€¢ 4 Hrs</div>
+      <div class="card-title">KNX Fundamentals</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s45_wifi_smart_home.html" class="card">
+      <div class="card-badge">Session 45 â€¢ 2 Hrs</div>
+      <div class="card-title">Wi-Fi Smart Home</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s46_zigbee_zwave.html" class="card">
+      <div class="card-badge">Session 46 â€¢ 3 Hrs</div>
+      <div class="card-title">Zigbee & Z-Wave</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s47_matter_thread.html" class="card">
+      <div class="card-badge">Session 47 â€¢ 2 Hrs</div>
+      <div class="card-title">Matter & Thread</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a></div><div class='stage-header'><h2>Stage 12: Business, Project Engineering & Career</h2></div><div class='grid-container'>    <a href="m4_s48_alexa_google_home.html" class="card">
+      <div class="card-badge">Session 48 â€¢ 2 Hrs</div>
+      <div class="card-title">Alexa & Google Home Integration</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s49_home_assistant.html" class="card">
+      <div class="card-badge">Session 49 â€¢ 3 Hrs</div>
+      <div class="card-title">Home Assistant</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s50_smart_lighting_curtain.html" class="card">
+      <div class="card-badge">Session 50 â€¢ 2 Hrs</div>
+      <div class="card-title">Smart Lighting & Curtain</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s51_smart_irrigation_energy_monitoring.html" class="card">
+      <div class="card-badge">Session 51 â€¢ 2 Hrs</div>
+      <div class="card-title">Smart Irrigation & Energy Monitoring</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s52_solar_cctv_iot_fundamentals.html" class="card">
+      <div class="card-badge">Session 52 â€¢ 2 Hrs</div>
+      <div class="card-title">Solar CCTV & IoT Fundamentals</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s53_site_survey_boq_quotation.html" class="card">
+      <div class="card-badge">Session 53 â€¢ 3 Hrs</div>
+      <div class="card-title">Site Survey & BOQ/Quotation</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s54_project_planning_installation_standards.html" class="card">
+      <div class="card-badge">Session 54 â€¢ 3 Hrs</div>
+      <div class="card-title">Project Planning & Installation Standards</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s55_testing_commissioning_amc.html" class="card">
+      <div class="card-badge">Session 55 â€¢ 2 Hrs</div>
+      <div class="card-title">Testing, Commissioning & AMC</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s56_customer_support_sales_negotiation.html" class="card">
+      <div class="card-badge">Session 56 â€¢ 2 Hrs</div>
+      <div class="card-title">Customer Support & Sales/Negotiation</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s57_digital_marketing_business_automation.html" class="card">
+      <div class="card-badge">Session 57 â€¢ 2 Hrs</div>
+      <div class="card-title">Digital Marketing & Business Automation</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s58_business_setup_entrepreneurship.html" class="card">
+      <div class="card-badge">Session 58 â€¢ 1 Hr</div>
+      <div class="card-title">Business Setup & Entrepreneurship</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a>    <a href="m4_s59_placement_training_career_prep.html" class="card">
+      <div class="card-badge">Session 59 â€¢ 4 Hrs</div>
+      <div class="card-title">Placement Training & Career Prep</div>
+      <div class="card-module">Module 4: Smart Home, IoT & Business</div>
+      <div class="card-footer">View Interactive Slide Deck â†’</div>
+    </a></div>
 </body>
 </html>
