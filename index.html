@@ -126,23 +126,6 @@
     align-items: center;
     gap: 5px;
   }
-  /* GPU Acceleration & Android Performance Optimizations */
-  .card {
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    will-change: transform;
-    contain: content;
-  }
-
-  /* Disable heavy real-time backdrop blurs on Android/Mobile GPUs for 60 FPS smoothness */
-  @media (max-width: 768px), (pointer: coarse) {
-    .card {
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      background: rgba(18, 26, 45, 0.98) !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
-    }
-  }
 </style>
 </head>
 <body>
@@ -186,47 +169,47 @@
       <div class="card-title">Cable Selection & Management</div>
       <div class="card-module">Module 1: Electrical & Networking</div>
       <div class="card-footer">View Interactive Slide Deck â†’</div>
-    </a></div><div class='stage-header'><h2>Stage 2: Analog CCTV Systems</h2></div><div class='grid-container'>    <a href="m1_s08_ip_addressing_subnetting.html" class="card" data-session="8" tabindex="0">
+    </a></div><div class='stage-header'><h2>Stage 2: Analog CCTV Systems</h2></div><div class='grid-container'>    <a href="m2_s08_analog_ip_cctv.html" class="card" data-session="8" tabindex="0">
       <div class="card-badge">Session 8 â€¢ 2 Hrs</div>
       <div class="card-title">Analog & IP CCTV</div>
       <div class="card-module">Module 2: Professional CCTV Systems</div>
       <div class="card-footer">View Interactive Slide Deck â†’</div>
-    </a>    <a href="m1_s09_router_switch_configuration.html" class="card" data-session="9" tabindex="0">
+    </a>    <a href="m2_s09_camera_selection_design.html" class="card" data-session="9" tabindex="0">
       <div class="card-badge">Session 9 â€¢ 3 Hrs</div>
       <div class="card-title">Camera Selection & Design</div>
       <div class="card-module">Module 2: Professional CCTV Systems</div>
       <div class="card-footer">View Interactive Slide Deck â†’</div>
-    </a>    <a href="m1_s10_vlan_basics.html" class="card" data-session="10" tabindex="0">
+    </a>    <a href="m2_s10_lens_field_of_view.html" class="card" data-session="10" tabindex="0">
       <div class="card-badge">Session 10 â€¢ 2 Hrs</div>
       <div class="card-title">Lens & Field of View</div>
       <div class="card-module">Module 2: Professional CCTV Systems</div>
       <div class="card-footer">View Interactive Slide Deck â†’</div>
-    </a></div><div class='stage-header'><h2>Stage 3: Networking Fundamentals & Infrastructure</h2></div><div class='grid-container'>    <a href="m1_s11_poe_poe_switches.html" class="card" data-session="11" tabindex="0">
+    </a></div><div class='stage-header'><h2>Stage 3: Networking Fundamentals & Infrastructure</h2></div><div class='grid-container'>    <a href="m1_s11_ip_addressing_subnetting.html" class="card" data-session="11" tabindex="0">
       <div class="card-badge">Session 11 â€¢ 4 Hrs</div>
       <div class="card-title">IP Addressing & Subnetting</div>
       <div class="card-module">Module 1: Electrical & Networking</div>
       <div class="card-footer">View Interactive Slide Deck â†’</div>
-    </a>    <a href="m1_s12_fiber_optic_basics.html" class="card" data-session="12" tabindex="0">
+    </a>    <a href="#" class="card" data-session="12" tabindex="0">
       <div class="card-badge">Session 12 â€¢ 4 Hrs</div>
       <div class="card-title">Router & Switch Configuration</div>
       <div class="card-module">Module 1: Electrical & Networking</div>
       <div class="card-footer">View Interactive Slide Deck â†’</div>
-    </a>    <a href="m1_s13_network_troubleshooting.html" class="card" data-session="13" tabindex="0">
+    </a>    <a href="m1_s13_router_switch_configuration.html" class="card" data-session="13" tabindex="0">
       <div class="card-badge">Session 13 â€¢ 2 Hrs</div>
       <div class="card-title">VLAN Basics</div>
       <div class="card-module">Module 1: Electrical & Networking</div>
       <div class="card-footer">View Interactive Slide Deck â†’</div>
-    </a>    <a href="m2_s14_analog_ip_cctv.html" class="card" data-session="14" tabindex="0">
+    </a>    <a href="m1_s14_vlan_basics.html" class="card" data-session="14" tabindex="0">
       <div class="card-badge">Session 14 â€¢ 2 Hrs</div>
       <div class="card-title">PoE & PoE Switches</div>
       <div class="card-module">Module 1: Electrical & Networking</div>
       <div class="card-footer">View Interactive Slide Deck â†’</div>
-    </a>    <a href="m2_s15_camera_selection_design.html" class="card" data-session="15" tabindex="0">
+    </a>    <a href="m1_s15_poe_poe_switches.html" class="card" data-session="15" tabindex="0">
       <div class="card-badge">Session 15 â€¢ 2 Hrs</div>
       <div class="card-title">Fiber Optic Basics</div>
       <div class="card-module">Module 1: Electrical & Networking</div>
       <div class="card-footer">View Interactive Slide Deck â†’</div>
-    </a>    <a href="m2_s16_lens_field_of_view.html" class="card" data-session="16" tabindex="0">
+    </a>    <a href="m1_s16_fiber_optic_basics.html" class="card" data-session="16" tabindex="0">
       <div class="card-badge">Session 16 â€¢ 2 Hrs</div>
       <div class="card-title">Network Troubleshooting</div>
       <div class="card-module">Module 1: Electrical & Networking</div>
@@ -266,7 +249,7 @@
       <div class="card-title">Facial Recognition</div>
       <div class="card-module">Module 2: Professional CCTV Systems</div>
       <div class="card-footer">View Interactive Slide Deck â†’</div>
-    </a></div><div class='stage-header'><h2>Stage 5: Network & Camera Troubleshooting</h2></div><div class='grid-container'>    <a href="m2_s24_colorvu_acusense_thermal.html" class="card" data-session="24" tabindex="0">
+    </a></div><div class='stage-header'><h2>Stage 5: Network & Camera Troubleshooting</h2></div><div class='grid-container'>    <a href="m1_s24_network_troubleshooting.html" class="card" data-session="24" tabindex="0">
       <div class="card-badge">Session 24 â€¢ 3 Hrs</div>
       <div class="card-title">ColorVu, AcuSense & Thermal Cameras</div>
       <div class="card-module">Module 2: Professional CCTV Systems</div>

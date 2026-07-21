@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Session 8: IP Addressing Subnetting</title>
+<title>Session 9: Camera Selection Design</title>
 <style>
   :root {
-    --bg-color: #0b0f19;
-    --card-bg: rgba(20, 30, 55, 0.6);
-    --accent-color: #3b82f6;
-    --accent-glow: rgba(59, 130, 246, 0.4);
+    --bg-color: #080c14;
+    --card-bg: rgba(15, 25, 45, 0.6);
+    --accent-color: #10b981;
+    --accent-glow: rgba(16, 185, 129, 0.4);
     --text-main: #f3f4f6;
     --text-muted: #9ca3af;
     --border-color: rgba(255, 255, 255, 0.08);
@@ -306,232 +306,205 @@
 <div class="deck">
   <!-- Slide 1 -->
   <div class="slide active title-slide">
-    <div class="slide-tag">Module 1 - Session 8</div>
-    <h1>IP Addressing & Subnetting</h1>
-    <h2>IP Addressing Subnetting</h2>
+    <div class="slide-tag">Module 2 - Session 9</div>
+    <h1>Camera Selection & Design</h1>
+    <h2>Camera Selection Design</h2>
     <div class="instructor-tag">Low-Voltage Systems & Automation Training Series</div>
   </div>  <!-- Slide 2 -->
   <div class="slide">
     <div class="slide-header">
-      <div class="slide-tag">Session 8 - Slide 2</div>
+      <div class="slide-tag">Session 9 - Slide 2</div>
       <div class="slide-counter">Slide 2 of 10</div>
     </div>
-    <h2 class="slide-title">What is an IP Address?</h2>
+    <h2 class="slide-title">Dome Camera Enclosures</h2>
     <div class="slide-body">
       <div class="text-content">
-        <ul><li><strong>IPv4 Structure:</strong> A 32-bit address split into 4 octets (numbers 0-255).</li><li><strong>Network vs Host:</strong> The Network ID locates the subnet, while the Host ID identifies the individual device (camera, NVR).</li></ul>
+        <ul><li><strong>Aesthetics:</strong> Low-profile design. Fits discreetly in indoor offices and retail settings.</li><li><strong>Vandal Resistance:</strong> IK10-rated polycarbonate glass dome shells protect lenses from physical attacks.</li></ul>
       </div>
       <div class="visual-content">
         <svg viewBox="0 0 200 150" width="100%">
-  <rect x="10" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
-  <rect x="55" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
-  <rect x="100" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
-  <rect x="145" y="45" width="45" height="25" fill="none" stroke="#10b981" stroke-width="1.5"/>
-  <text x="27" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">192</text>
-  <text x="72" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">168</text>
-  <text x="117" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">1</text>
-  <text x="167" y="60" fill="#10b981" font-family="monospace" font-size="8" text-anchor="middle">100</text>
-  <text x="65" y="90" fill="#3b82f6" font-family="sans-serif" font-size="9" text-anchor="middle">Network ID</text>
-  <text x="155" y="90" fill="#10b981" font-family="sans-serif" font-size="9" text-anchor="middle">Host ID</text>
-  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">IPv4 Address Architecture</text>
+  <path d="M 40 85 A 60 60 0 0 1 160 85 Z" fill="none" stroke="#3b82f6" stroke-width="3"/>
+  <rect x="35" y="85" width="130" height="10" fill="#3b82f6" rx="2"/>
+  <circle cx="100" cy="55" r="15" fill="#9ca3af" opacity="0.6"/>
+  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Vandal-Proof IK10 Housing</text>
 </svg>
       </div>
     </div>
   </div>  <!-- Slide 3 -->
   <div class="slide">
     <div class="slide-header">
-      <div class="slide-tag">Session 8 - Slide 3</div>
+      <div class="slide-tag">Session 9 - Slide 3</div>
       <div class="slide-counter">Slide 3 of 10</div>
     </div>
-    <h2 class="slide-title">The Subnet Mask</h2>
+    <h2 class="slide-title">Bullet Camera Enclosures</h2>
     <div class="slide-body">
       <div class="text-content">
-        <ul><li><strong>Subnet Mask:</strong> A filter that tells the operating system where the network section ends and host section begins.</li><li><strong>Standard Mask:</strong> Class C standard (255.255.255.0) limits local hosts to 254 devices.</li></ul>
+        <ul><li><strong>Deterrence:</strong> High-visibility housing. Discourages trespassers in outdoor areas.</li><li><strong>IP Ratings:</strong> IP66/IP67 weatherproofing standard with adjustable hoods to protect lenses from rain glare.</li></ul>
       </div>
       <div class="visual-content">
         <svg viewBox="0 0 200 150" width="100%">
-  <rect x="20" y="30" width="70" height="40" fill="none" stroke="#3b82f6" stroke-width="2"/>
-  <text x="55" y="55" fill="#3b82f6" font-family="monospace" font-size="9" text-anchor="middle">255.255.255.0</text>
-  <rect x="110" y="30" width="70" height="40" fill="none" stroke="#ef4444" stroke-width="2"/>
-  <text x="145" y="55" fill="#ef4444" font-family="monospace" font-size="9" text-anchor="middle">255.255.255.240</text>
-  <text x="55" y="95" fill="#9ca3af" font-family="sans-serif" font-size="8" text-anchor="middle">/24 (256 hosts)</text>
-  <text x="145" y="95" fill="#9ca3af" font-family="sans-serif" font-size="8" text-anchor="middle">/28 (16 hosts)</text>
-  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Subnet Mask Partitioning</text>
+  <rect x="45" y="45" width="90" height="40" rx="3" fill="none" stroke="#10b981" stroke-width="3"/>
+  <!-- Bracket pivot -->
+  <line x1="70" y1="85" x2="70" y2="120" stroke="#10b981" stroke-width="3"/>
+  <!-- Sun visor cover -->
+  <path d="M 40 40 L 140 40 L 125 45 L 45 45 Z" fill="#9ca3af"/>
+  <text x="100" y="140" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">IP67 Waterproof Bullet</text>
 </svg>
       </div>
     </div>
   </div>  <!-- Slide 4 -->
   <div class="slide">
     <div class="slide-header">
-      <div class="slide-tag">Session 8 - Slide 4</div>
+      <div class="slide-tag">Session 9 - Slide 4</div>
       <div class="slide-counter">Slide 4 of 10</div>
     </div>
-    <h2 class="slide-title">CIDR Classless Notation</h2>
+    <h2 class="slide-title">Turret / Eyeball Cameras</h2>
     <div class="slide-body">
       <div class="text-content">
-        <ul><li><strong>Slash Notation:</strong> Combines IP address and mask bits (e.g. 192.168.1.0/24).</li><li><strong>Subnet Slicing:</strong> Slicing larger IP ranges into smaller blocks (e.g. /28 offers 16 IPs, /29 offers 8 IPs).</li></ul>
+        <ul><li><strong>Flexible Direction:</strong> Ball-and-socket design allows multi-axis adjustment without taking off dome covers.</li><li><strong>No IR Reflection:</strong> Separate glass panes for lens and IR emitters prevent night halo glare.</li></ul>
       </div>
       <div class="visual-content">
         <svg viewBox="0 0 200 150" width="100%">
-  <!-- Pie chart slices representation -->
-  <circle cx="100" cy="70" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/>
-  <line x1="100" y1="25" x2="100" y2="115" stroke="#3b82f6" stroke-width="2"/>
-  <line x1="55" y1="70" x2="145" y2="70" stroke="#3b82f6" stroke-width="2"/>
-  <text x="70" y="55" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 10</text>
-  <text x="130" y="55" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 20</text>
-  <text x="70" y="95" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 30</text>
-  <text x="130" y="95" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 40</text>
-  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Subnet Slicing</text>
+  <circle cx="100" cy="70" r="40" fill="none" stroke="#f59e0b" stroke-width="3"/>
+  <!-- Ring separating IR and Lens -->
+  <circle cx="100" cy="70" r="18" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <circle cx="100" cy="70" r="5" fill="#ef4444"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Dual-Pane Turret Eyeball</text>
 </svg>
       </div>
     </div>
   </div>  <!-- Slide 5 -->
   <div class="slide">
     <div class="slide-header">
-      <div class="slide-tag">Session 8 - Slide 5</div>
+      <div class="slide-tag">Session 9 - Slide 5</div>
       <div class="slide-counter">Slide 5 of 10</div>
     </div>
-    <h2 class="slide-title">Private vs. Public IP Ranges</h2>
+    <h2 class="slide-title">Low-Light Sensors & Lux Ratings</h2>
     <div class="slide-body">
       <div class="text-content">
-        <ul><li><strong>Private IP (RFC 1918):</strong> Intended for local LAN use (e.g. 192.168.x.x, 10.x.x.x). Cannot route on the internet.</li><li><strong>Public IP:</strong> Unique global address assigned by ISPs, allowing servers to trace internet route directions.</li></ul>
+        <ul><li><strong>Lux Scale:</strong> Standard of sensitivity (0 Lux = absolute dark).</li><li><strong>Sensors:</strong> Large aperture CMOS chips gather faint ambient light to output clear night frames.</li></ul>
       </div>
       <div class="visual-content">
         <svg viewBox="0 0 200 150" width="100%">
-  <rect x="25" y="45" width="150" height="50" rx="3" fill="none" stroke="#4b5563" stroke-width="2"/>
-  <!-- WAN port -->
-  <rect x="35" y="55" width="20" height="20" fill="#3b82f6" rx="1"/>
-  <text x="45" y="88" fill="#3b82f6" font-family="sans-serif" font-size="7" text-anchor="middle">WAN</text>
-  <!-- LAN ports -->
-  <rect x="75" y="55" width="20" height="20" fill="#10b981" rx="1"/>
-  <rect x="105" y="55" width="20" height="20" fill="#10b981" rx="1"/>
-  <rect x="135" y="55" width="20" height="20" fill="#10b981" rx="1"/>
-  <text x="115" y="88" fill="#10b981" font-family="sans-serif" font-size="7" text-anchor="middle">LAN Ports</text>
-  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Standard Router Back Panel</text>
+  <line x1="30" y1="75" x2="170" y2="75" stroke="#9ca3af" stroke-width="2"/>
+  <circle cx="40" cy="75" r="5" fill="#ef4444"/>
+  <circle cx="100" cy="75" r="5" fill="#3b82f6"/>
+  <circle cx="160" cy="75" r="5" fill="#10b981"/>
+  <text x="40" y="60" fill="#ef4444" font-family="sans-serif" font-size="8" text-anchor="middle">0.01 Lux</text>
+  <text x="100" y="60" fill="#3b82f6" font-family="sans-serif" font-size="8" text-anchor="middle">10 Lux</text>
+  <text x="160" y="60" fill="#10b981" font-family="sans-serif" font-size="8" text-anchor="middle">10k Lux</text>
+  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Sensor Lux Sensitivity Scale</text>
 </svg>
       </div>
     </div>
   </div>  <!-- Slide 6 -->
   <div class="slide">
     <div class="slide-header">
-      <div class="slide-tag">Session 8 - Slide 6</div>
+      <div class="slide-tag">Session 9 - Slide 6</div>
       <div class="slide-counter">Slide 6 of 10</div>
     </div>
-    <h2 class="slide-title">Gateway & DNS Basics</h2>
+    <h2 class="slide-title">WDR (Wide Dynamic Range)</h2>
     <div class="slide-body">
       <div class="text-content">
-        <ul><li><strong>Default Gateway:</strong> The local exit interface router port IP (usually 192.168.1.1). Routes out-of-subnet packets.</li><li><strong>DNS Server:</strong> Domain Name System converts URL text into web IPs (Google DNS standard: 8.8.8.8).</li></ul>
+        <ul><li><strong>Contrast:</strong> Combines multiple fast exposures to clear up dark shadow regions and bright window backlights.</li><li><strong>Sizing:</strong> Standard WDR is rated in Decibels (120dB standard for retail entrance glass doors).</li></ul>
       </div>
       <div class="visual-content">
         <svg viewBox="0 0 200 150" width="100%">
-  <rect x="80" y="45" width="40" height="40" fill="none" stroke="#3b82f6" stroke-width="2"/>
-  <line x1="20" y1="65" x2="80" y2="65" stroke="#ef4444" stroke-width="2"/>
-  <line x1="120" y1="65" x2="180" y2="65" stroke="#10b981" stroke-width="2"/>
-  <text x="50" y="55" fill="#ef4444" font-family="monospace" font-size="7" text-anchor="middle">192.168.1.10</text>
-  <text x="150" y="55" fill="#10b981" font-family="monospace" font-size="7" text-anchor="middle">122.15.6.8</text>
-  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Network Address Translation</text>
+  <!-- Off WDR -->
+  <rect x="20" y="35" width="70" height="70" fill="#1f2937" stroke="#ef4444" stroke-width="2"/>
+  <rect x="55" y="45" width="20" height="50" fill="#ffffff" opacity="0.9"/>
+  <rect x="25" y="45" width="20" height="50" fill="#000000"/>
+  <text x="55" y="120" fill="#ef4444" font-family="sans-serif" font-size="8" text-anchor="middle">WDR OFF</text>
+  <!-- On WDR -->
+  <rect x="110" y="35" width="70" height="70" fill="#6b7280" stroke="#10b981" stroke-width="2"/>
+  <rect x="115" y="45" width="60" height="50" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="145" y="120" fill="#10b981" font-family="sans-serif" font-size="8" text-anchor="middle">True WDR ON</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">High Contrast Calibration</text>
 </svg>
       </div>
     </div>
   </div>  <!-- Slide 7 -->
   <div class="slide">
     <div class="slide-header">
-      <div class="slide-tag">Session 8 - Slide 7</div>
+      <div class="slide-tag">Session 9 - Slide 7</div>
       <div class="slide-counter">Slide 7 of 10</div>
     </div>
-    <h2 class="slide-title">Static IP vs. DHCP Dynamic</h2>
+    <h2 class="slide-title">Infrared Night Illumination</h2>
     <div class="slide-body">
       <div class="text-content">
-        <ul><li><strong>DHCP Server:</strong> Automatically leases temporary IP addresses to user laptops and phones.</li><li><strong>Static IP Standard:</strong> Critical security devices (NVR, cameras, servers) must have permanent static IPs.</li></ul>
+        <ul><li><strong>IR LEDs:</strong> Emitters output invisible 850nm light to illuminate dark outdoor areas.</li><li><strong>Smart IR:</strong> Adjusts IR intensity automatically as targets approach, preventing face overexposure.</li></ul>
       </div>
       <div class="visual-content">
         <svg viewBox="0 0 200 150" width="100%">
-  <rect x="10" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
-  <rect x="55" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
-  <rect x="100" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
-  <rect x="145" y="45" width="45" height="25" fill="none" stroke="#10b981" stroke-width="1.5"/>
-  <text x="27" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">192</text>
-  <text x="72" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">168</text>
-  <text x="117" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">1</text>
-  <text x="167" y="60" fill="#10b981" font-family="monospace" font-size="8" text-anchor="middle">100</text>
-  <text x="65" y="90" fill="#3b82f6" font-family="sans-serif" font-size="9" text-anchor="middle">Network ID</text>
-  <text x="155" y="90" fill="#10b981" font-family="sans-serif" font-size="9" text-anchor="middle">Host ID</text>
-  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">IPv4 Address Architecture</text>
+  <circle cx="60" cy="70" r="25" fill="#f59e0b" opacity="0.9"/>
+  <text x="60" y="115" fill="#ef4444" font-family="sans-serif" font-size="8" text-anchor="middle">Standard IR Washout</text>
+  <circle cx="140" cy="70" r="25" fill="#3b82f6" opacity="0.3"/>
+  <text x="140" y="115" fill="#10b981" font-family="sans-serif" font-size="8" text-anchor="middle">Smart IR Dimming</text>
+  <text x="100" y="138" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Smart IR Face Overexposure Fix</text>
 </svg>
       </div>
     </div>
   </div>  <!-- Slide 8 -->
   <div class="slide">
     <div class="slide-header">
-      <div class="slide-tag">Session 8 - Slide 8</div>
+      <div class="slide-tag">Session 9 - Slide 8</div>
       <div class="slide-counter">Slide 8 of 10</div>
     </div>
-    <h2 class="slide-title">Sizing a CCTV Subnet</h2>
+    <h2 class="slide-title">DORI Design Standards</h2>
     <div class="slide-body">
       <div class="text-content">
-        <ul><li><strong>Subnet Calculation:</strong> Ensure CIDR blocks offer enough host spaces for all cameras and workstations.</li><li><strong>IP Conservation:</strong> Prevents network conflicts and IP address exhaustion on large multi-camera systems.</li></ul>
+        <ul><li><strong>DORI Specs:</strong> Enforces pixel densities on target fields:<ul><li><strong>Detect (25 px/m):</strong> Is there a person?</li><li><strong>Observe (63 px/m):</strong> What are they doing?</li><li><strong>Recognize (125 px/m):</strong> Can we recognize their face?</li><li><strong>Identify (250 px/m):</strong> Legal identification criteria.</li></ul></li></ul>
       </div>
       <div class="visual-content">
         <svg viewBox="0 0 200 150" width="100%">
-  <!-- Pie chart slices representation -->
-  <circle cx="100" cy="70" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/>
-  <line x1="100" y1="25" x2="100" y2="115" stroke="#3b82f6" stroke-width="2"/>
-  <line x1="55" y1="70" x2="145" y2="70" stroke="#3b82f6" stroke-width="2"/>
-  <text x="70" y="55" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 10</text>
-  <text x="130" y="55" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 20</text>
-  <text x="70" y="95" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 30</text>
-  <text x="130" y="95" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 40</text>
-  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Subnet Slicing</text>
+  <line x1="20" y1="75" x2="180" y2="75" stroke="#9ca3af" stroke-width="3"/>
+  <rect x="30" y="65" width="30" height="20" fill="#ef4444"/>
+  <text x="45" y="55" fill="#ef4444" font-family="sans-serif" font-size="8" text-anchor="middle">Identify</text>
+  <rect x="80" y="65" width="40" height="20" fill="#f59e0b"/>
+  <text x="100" y="55" fill="#f59e0b" font-family="sans-serif" font-size="8" text-anchor="middle">Recognize</text>
+  <rect x="140" y="65" width="30" height="20" fill="#10b981"/>
+  <text x="155" y="55" fill="#10b981" font-family="sans-serif" font-size="8" text-anchor="middle">Detect</text>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">DORI Target Zone Limits</text>
 </svg>
       </div>
     </div>
   </div>  <!-- Slide 9 -->
   <div class="slide">
     <div class="slide-header">
-      <div class="slide-tag">Session 8 - Slide 9</div>
+      <div class="slide-tag">Session 9 - Slide 9</div>
       <div class="slide-counter">Slide 9 of 10</div>
     </div>
-    <h2 class="slide-title">Common Configuration Errors</h2>
+    <h2 class="slide-title">Mounts & Brackets Sizing</h2>
     <div class="slide-body">
       <div class="text-content">
-        <ul><li><strong>Invalid IP:</strong> Setting an IP address that lies outside the defined subnet gateway block range.</li><li><strong>Mismatched Masks:</strong> Restricts target devices from listening to NVR requests.</li></ul>
+        <ul><li><strong>Brackets:</strong> Junction mount boxes, wall goosenecks, pole clamps, and corner brackets.</li><li><strong>Waterproofing:</strong> Enforce rubber gaskets and drip loops to prevent water from entering cable cavities.</li></ul>
       </div>
       <div class="visual-content">
         <svg viewBox="0 0 200 150" width="100%">
-  <rect x="20" y="30" width="70" height="40" fill="none" stroke="#3b82f6" stroke-width="2"/>
-  <text x="55" y="55" fill="#3b82f6" font-family="monospace" font-size="9" text-anchor="middle">255.255.255.0</text>
-  <rect x="110" y="30" width="70" height="40" fill="none" stroke="#ef4444" stroke-width="2"/>
-  <text x="145" y="55" fill="#ef4444" font-family="monospace" font-size="9" text-anchor="middle">255.255.255.240</text>
-  <text x="55" y="95" fill="#9ca3af" font-family="sans-serif" font-size="8" text-anchor="middle">/24 (256 hosts)</text>
-  <text x="145" y="95" fill="#9ca3af" font-family="sans-serif" font-size="8" text-anchor="middle">/28 (16 hosts)</text>
-  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Subnet Mask Partitioning</text>
+  <line x1="30" y1="20" x2="30" y2="130" stroke="#4b5563" stroke-width="4"/>
+  <rect x="30" y="45" width="35" height="20" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <text x="80" y="58" fill="#3b82f6" font-family="sans-serif" font-size="8">Wall Arm</text>
+  <circle cx="30" cy="100" r="10" fill="none" stroke="#10b981" stroke-width="2"/>
+  <text x="80" y="104" fill="#10b981" font-family="sans-serif" font-size="8">Pole Clamp</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Structural Adapter Hardware</text>
 </svg>
       </div>
     </div>
   </div>  <!-- Slide 10 -->
   <div class="slide">
     <div class="slide-header">
-      <div class="slide-tag">Session 8 - Slide 10</div>
+      <div class="slide-tag">Session 9 - Slide 10</div>
       <div class="slide-counter">Slide 10 of 10</div>
     </div>
-    <h2 class="slide-title">Lab Session Work</h2>
+    <h2 class="slide-title">Practical Lab Guide</h2>
     <div class="slide-body">
       <div class="text-content">
-        <div class='lab-block'><h3>Lab Work: Setup Local Subnet</h3><ol><li>Connect two workstations via switch, manually configure static IPs inside /24 subnet.</li><li>Execute ping command tests to confirm link setup.</li><li>Alter subnet mask on one host, observe and resolve failure.</li></ol></div>
+        <div class='lab-block'><h3>Lab Work: Mount & WDR Setup</h3><ol><li>Secure bullet camera box bracket onto mock masonry block.</li><li>Aim camera at bright window backlight, enable True WDR, verify shadow detail.</li><li>Measure target face pixel density to audit DORI recognition limits.</li></ol></div>
       </div>
       <div class="visual-content">
         <svg viewBox="0 0 200 150" width="100%">
-  <rect x="10" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
-  <rect x="55" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
-  <rect x="100" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
-  <rect x="145" y="45" width="45" height="25" fill="none" stroke="#10b981" stroke-width="1.5"/>
-  <text x="27" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">192</text>
-  <text x="72" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">168</text>
-  <text x="117" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">1</text>
-  <text x="167" y="60" fill="#10b981" font-family="monospace" font-size="8" text-anchor="middle">100</text>
-  <text x="65" y="90" fill="#3b82f6" font-family="sans-serif" font-size="9" text-anchor="middle">Network ID</text>
-  <text x="155" y="90" fill="#10b981" font-family="sans-serif" font-size="9" text-anchor="middle">Host ID</text>
-  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">IPv4 Address Architecture</text>
+  <rect x="25" y="25" width="150" height="95" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Completed Mount Design</text>
 </svg>
       </div>
     </div>
