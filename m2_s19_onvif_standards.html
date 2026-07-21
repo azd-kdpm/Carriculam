@@ -490,7 +490,20 @@
   const nextBtn = document.getElementById('nextBtn');
   const progressBar = document.getElementById('progressBar');
   const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  // Extract Session ID for localStorage key
+  const pagePath = window.location.pathname;
+  const storageKey = 'slide_pos_' + (pagePath.split('/').pop() || 'current');
+  
+  // Restore saved slide position or start at 0
   let currentSlide = 0;
+  const savedPos = localStorage.getItem(storageKey);
+  if (savedPos !== null) {
+    const parsed = parseInt(savedPos, 10);
+    if (!isNaN(parsed) && parsed >= 0 && parsed < slides.length) {
+      currentSlide = parsed;
+    }
+  }
 
   function updateSlides() {
     slides.forEach((slide, index) => {
@@ -501,18 +514,23 @@
       }
     });
 
-    prevBtn.disabled = false;
-    nextBtn.disabled = false;
-    
+    // Save selection position to localStorage
+    localStorage.setItem(storageKey, currentSlide);
+
+    // Update buttons & boundary states (Stay on current session!)
     if (currentSlide === 0) {
-      prevBtn.textContent = "Exit";
+      prevBtn.disabled = true;
+      prevBtn.textContent = "Previous";
     } else {
+      prevBtn.disabled = false;
       prevBtn.textContent = "Previous";
     }
-    
+
     if (currentSlide === slides.length - 1) {
-      nextBtn.textContent = "Finish";
+      nextBtn.disabled = true;
+      nextBtn.textContent = "Session Complete";
     } else {
+      nextBtn.disabled = false;
       nextBtn.textContent = "Next";
     }
 
@@ -524,8 +542,6 @@
     if (currentSlide > 0) {
       currentSlide--;
       updateSlides();
-    } else {
-      window.location.href = 'slides_index.html';
     }
   });
 
@@ -533,113 +549,63 @@
     if (currentSlide < slides.length - 1) {
       currentSlide++;
       updateSlides();
-    } else {
-      window.location.href = 'slides_index.html';
     }
   });
 
+  // Laptop Keyboard Navigation Listener (Supports Arrow Keys, Space, PageUp/Down)
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
       if (currentSlide < slides.length - 1) {
         currentSlide++;
         updateSlides();
-      } else {
-        window.location.href = 'slides_index.html';
       }
-    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
       if (currentSlide > 0) {
         currentSlide--;
         updateSlides();
-      } else {
-        window.location.href = 'slides_index.html';
       }
     }
   });
 
-  // Global Document-level Touch Swipe Support
+  // Touch Swipe Support for Android Tablets & Touch Laptops
   let touchStartX = 0;
-  let touchStartY = 0;
   let touchEndX = 0;
-  let touchEndY = 0;
-  
-  document.addEventListener('touchstart', e => {
+
+  document.addEventListener('touchstart', (e) => {
     touchStartX = e.changedTouches[0].screenX;
-    touchStartY = e.changedTouches[0].screenY;
-  }, {passive: true});
+  }, false);
 
-  document.addEventListener('touchend', e => {
+  document.addEventListener('touchend', (e) => {
     touchEndX = e.changedTouches[0].screenX;
-    touchEndY = e.changedTouches[0].screenY;
-    handleSwipeGesture();
-  }, {passive: true});
+    handleSwipe();
+  }, false);
 
-  function handleSwipeGesture() {
-    const swipeThreshold = 50;
-    const diffX = touchStartX - touchEndX;
-    const diffY = touchStartY - touchEndY;
-    
-    // Check if the screen is physically vertical (portrait) but rotated to landscape layout
-    const isRotated = (window.innerHeight > window.innerWidth) && (window.innerWidth <= 500);
-    
-    if (isRotated) {
-      // In rotated mode, vertical gestures (up/down) correspond to slide progression (left/right)
-      if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > swipeThreshold) {
-        if (diffY > 0) {
-          // Swipe Up -> Next
-          if (currentSlide < slides.length - 1) {
-            currentSlide++;
-            updateSlides();
-          } else {
-            window.location.href = 'slides_index.html';
-          }
-        } else {
-          // Swipe Down -> Prev
-          if (currentSlide > 0) {
-            currentSlide--;
-            updateSlides();
-          } else {
-            window.location.href = 'slides_index.html';
-          }
-        }
-      }
-    } else {
-      // Normal horizontal swiping on tablets, folds, or landscape devices
-      if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > swipeThreshold) {
-        if (diffX > 0) {
-          // Swipe Left -> Next
-          if (currentSlide < slides.length - 1) {
-            currentSlide++;
-            updateSlides();
-          } else {
-            window.location.href = 'slides_index.html';
-          }
-        } else {
-          // Swipe Right -> Prev
-          if (currentSlide > 0) {
-            currentSlide--;
-            updateSlides();
-          } else {
-            window.location.href = 'slides_index.html';
-          }
-        }
-      }
+  function handleSwipe() {
+    const diff = touchEndX - touchStartX;
+    if (diff < -50 && currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    } else if (diff > 50 && currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
     }
   }
 
-  fullscreenBtn.addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch(err => {
-        alert("Error enabling fullscreen: " + err.message);
-      });
-    } else {
-      document.exitFullscreen();
-    }
-  });
+  // Fullscreen Handler
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen().catch(err => {});
+      }
+    });
+  }
 
-  // Track session and module in localStorage for index back navigation
-  const pageName = window.location.pathname.split('/').pop();
-  localStorage.setItem('lastViewedSession', pageName);
-  localStorage.setItem('lastViewedModule', 'm2');
+  // Initialize slides state
+  updateSlides();
 </script>
 </body>
 </html>
