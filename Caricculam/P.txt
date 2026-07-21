@@ -1,0 +1,65 @@
+4*20 (4*5) * 2hrs = 160 hrs
+
+
+
+
+Month 1 – Electrical & Networking Basics
+
+* DC & AC Fundamentals
+* Voltage, Current, Power
+* Multimeter Usage
+* Adapter, Battery, SMPS
+* Cable Types (Cat6, Coaxial)
+* IP Address Basics
+* Router & Switch Configuration
+* Network Troubleshooting
+
+Month 2 – CCTV Systems
+
+* Analog CCTV
+* IP CCTV
+* DVR & NVR
+* Camera Types
+* Storage Calculation
+* Remote Viewing Setup
+* Hikvision & Dahua Configuration
+* CCTV Installation Practical
+* Fault Finding & Maintenance
+
+Month 3 – Security Automation
+
+* Video Door Phone
+* Access Control
+* Biometric Attendance
+* Boom Barrier
+* Gate Automation
+* Smart Locks
+* Alarm Systems
+* Intercom Systems
+* Basic Home Automation
+
+Month 4 – Smart Home & Business
+
+* Smart Switches
+* WiFi Automation
+* Solar CCTV Systems
+* IoT Basics
+* Customer Handling
+* Site Survey
+* Quotation Preparation
+* Installation Project
+* Maintenance Contract (AMC)
+* Business & Marketing Basics
+
+Final Project
+
+* Complete CCTV Installation
+* Access Control Setup
+* Smart Home Demo
+* Customer Presentation
+
+
+
+
+Fiber optics,
+pa systems

@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+<meta charset="utf-8">
+<title>BotGi Tech School - Event Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@300;400;700;900&family=Outfit:wght@200;300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-color: #0c0717; /* Deep luxury obsidian violet */
+    --card-bg: #160e28; /* Luxurious deep violet-black */
+    --text-color: #f1e6ff; /* Soft lavender white */
+    --text-gray: #a39bb4; /* Muted lavender gray */
+    --gold: #d4af37; /* Luxury burnished gold */
+    --gold-light: #f3df95; /* Light champagne gold */
+    --purple-glow: rgba(191, 128, 255, 0.15);
+    --border-color: rgba(191, 128, 255, 0.2);
+    --font-malayalam: 'Noto Sans Malayalam', sans-serif;
+    --font-english: 'Outfit', sans-serif;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: var(--font-malayalam);
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    background-image: radial-gradient(circle at 80% 20%, rgba(191, 128, 255, 0.08) 0%, rgba(12, 7, 23, 0) 65%);
+    overflow-x: hidden;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Presentation Structure */
+  .slide {
+    width: 297mm;
+    height: 210mm;
+    page-break-after: always;
+    background-color: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 35px 55px;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  /* Slide Footer */
+  .slide-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    font-family: var(--font-english);
+    font-size: 8.5pt;
+    color: var(--text-gray);
+    z-index: 10;
+  }
+
+  .brand-logo {
+    height: 70px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 4px rgba(191,128,255,0.2));
+  }
+
+  .slide-footer .page-number {
+    font-weight: 300;
+    letter-spacing: 1px;
+  }
+
+  /* Slide Header */
+  .slide-header {
+    margin-bottom: 20px;
+    z-index: 10;
+  }
+
+  .slide-header h2 {
+    font-size: 20pt;
+    font-weight: 900;
+    color: var(--gold-light);
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+  }
+
+  .slide-header p {
+    font-size: 10pt;
+    color: var(--text-gray);
+    margin-top: 4px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  /* Content Containers */
+  .slide-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 10;
+    height: 135mm;
+  }
+
+  /* Image Slots */
+  .img-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 6px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 15px var(--purple-glow);
+    border: 1px solid var(--border-color);
+  }
+
+  .img-slot {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Slide 1: Welcome */
+  .landing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    height: 100%;
+    align-items: center;
+  }
+
+  .landing-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .landing-logo {
+    height: 160px;
+    width: auto;
+    object-fit: contain;
+    align-self: flex-start;
+    margin-bottom: 25px;
+    filter: drop-shadow(0 0 8px rgba(191,128,255,0.3));
+  }
+
+  .landing-left h1 {
+    font-size: 26pt;
+    font-weight: 900;
+    line-height: 1.3;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .landing-left p {
+    font-size: 10.5pt;
+    color: var(--text-gray);
+    font-family: var(--font-english);
+    font-weight: 300;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-left: 2px solid var(--gold);
+    padding-left: 15px;
+  }
+
+  .landing-right {
+    height: 80%;
+  }
+
+  /* Slide 2: Reality */
+  .reality-layout {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 40px;
+    height: 100%;
+    align-items: center;
+  }
+
+  .reality-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .reality-card {
+    background-color: var(--card-bg);
+    border-left: 3px solid var(--border-color);
+    border-radius: 4px;
+    padding: 14px 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .reality-card.active {
+    border-left-color: var(--gold);
+  }
+
+  .reality-card h3 {
+    font-size: 12.5pt;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 3px;
+  }
+
+  .reality-card p {
+    font-size: 9.5pt;
+    color: var(--text-gray);
+    line-height: 1.5;
+  }
+
+  .reality-banner {
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    color: var(--gold-light);
+    padding: 10px 15px;
+    font-size: 10pt;
+    font-weight: 700;
+    border-radius: 4px;
+    text-align: center;
+    margin-top: 8px;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+  }
+
+  /* Slide 3: Fields */
+  .security-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .sec-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  .sec-icon {
+    font-size: 15pt;
+    width: 38px;
+    height: 38px;
+    background: rgba(191, 128, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .sec-text h4 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  /* Slide 4: Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .stats-left {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .stat-large-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 24px 15px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  }
+
+  .stat-large-card .number {
+    font-family: var(--font-english);
+    font-size: 24pt;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .stat-large-card .label {
+    font-size: 11.5pt;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 4px;
+  }
+
+  .stat-large-card .desc {
+    font-size: 9pt;
+    color: var(--text-gray);
+    line-height: 1.4;
+  }
+
+  .stats-right {
+    border-left: 2px solid var(--gold);
+    padding-left: 25px;
+  }
+
+  .stats-right p {
+    font-size: 12pt;
+    line-height: 1.7;
+    color: var(--text-color);
+    font-weight: 300;
+  }
+
+  /* Slide 5: Kerala */
+  .kerala-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    height: 100%;
+    align-items: center;
+  }
+
+  .kerala-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .kerala-column {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  .kerala-column h3 {
+    font-size: 12pt;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 5px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 3px;
+  }
+
+  .kerala-column p {
+    font-size: 9.5pt;
+    color: var(--text-gray);
+    line-height: 1.5;
+  }
+
+  /* Slide 6: What is BotGi */
+  .botgi-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+
+  .botgi-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 18px 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .botgi-card .step {
+    font-family: var(--font-english);
+    font-size: 8pt;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .botgi-card h3 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+    font-family: var(--font-english);
+    min-height: 32px;
+  }
+
+  .botgi-card p {
+    font-size: 9pt;
+    color: var(--text-gray);
+    line-height: 1.5;
+  }
+
+  /* Slide 7: Mission */
+  .mv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .mv-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 24px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  }
+
+  .mv-card h3 {
+    font-size: 14pt;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .mv-card p {
+    font-size: 10pt;
+    color: var(--text-gray);
+    line-height: 1.7;
+  }
+
+  /* Service Detail Layouts (Used for slides 8-16) */
+  .service-layout {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 45px;
+    height: 100%;
+    align-items: center;
+  }
+
+  .service-details h3 {
+    font-size: 16pt;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 15px;
+    border-left: 3px solid var(--gold);
+    padding-left: 15px;
+  }
+
+  .service-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .service-list li {
+    font-size: 11pt;
+    line-height: 1.6;
+    color: var(--text-color);
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .service-list li::before {
+    content: "•";
+    color: var(--gold);
+    font-weight: bold;
+    font-size: 14pt;
+    position: absolute;
+    left: 0;
+    top: -2px;
+  }
+
+  /* Slide 17: Outro */
+  .outro-layout {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 50px;
+    height: 100%;
+    align-items: center;
+  }
+
+  .outro-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .outro-box h2 {
+    font-size: 18pt;
+    font-weight: 900;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    color: #ffffff;
+  }
+
+  .outro-box p {
+    font-size: 10.5pt;
+    color: var(--gold);
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+    font-size: 10pt;
+    font-family: var(--font-english);
+    color: var(--text-gray);
+  }
+
+  .contact-info span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Navigation UI for Browser Mode */
+  .nav-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+  }
+
+  .nav-btn {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: var(--font-english);
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+  }
+
+  .nav-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Web View Centering & Responsiveness */
+  @media screen {
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      background-color: #07040e; /* Sleek darker theater viewport background */
+    }
+    .slide {
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      border-radius: 8px;
+    }
+    
+    /* Responsive breakpoints for smaller viewports */
+    @media (max-width: 1024px) {
+      body {
+        justify-content: flex-start;
+        padding: 10px;
+      }
+      .slide {
+        width: 100%;
+        max-width: 100vw;
+        height: auto;
+        min-height: 90vh;
+        padding: 30px;
+      }
+      .slide-content {
+        height: auto;
+        min-height: 250px;
+      }
+      .landing-grid, .reality-layout, .stats-grid, .kerala-grid, .mv-grid, .service-layout, .outro-layout {
+        grid-template-columns: 1fr !important;
+        gap: 30px !important;
+      }
+      .landing-right, .kerala-grid .img-container, .service-layout .img-container, .outro-layout .img-container {
+        height: 280px !important;
+      }
+      .botgi-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 15px !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .slide {
+        padding: 20px;
+      }
+      .slide-header h2 {
+        font-size: 16pt !important;
+      }
+      .landing-left h1 {
+        font-size: 20pt !important;
+      }
+      .botgi-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      .landing-right, .kerala-grid .img-container, .service-layout .img-container, .outro-layout .img-container {
+        height: 200px !important;
+      }
+      .security-grid {
+        grid-template-columns: 1fr 1fr !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .botgi-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .security-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .stats-left {
+        grid-template-columns: 1fr !important;
+      }
+      .landing-right, .kerala-grid .img-container, .service-layout .img-container, .outro-layout .img-container {
+        height: 160px !important;
+      }
+    }
+  }
+
+  @media print {
+    body {
+      background-color: var(--bg-color);
+    }
+    .nav-controls {
+      display: none;
+    }
+    .slide {
+      display: flex !important;
+      width: 297mm !important;
+      height: 210mm !important;
+      page-break-after: always !important;
+      padding: 35px 55px !important;
+    }
+    .landing-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 50px !important;
+    }
+    .reality-layout {
+      grid-template-columns: 0.95fr 1.05fr !important;
+      gap: 40px !important;
+    }
+    .stats-grid {
+      grid-template-columns: 1.15fr 0.85fr !important;
+      gap: 40px !important;
+    }
+    .kerala-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 40px !important;
+    }
+    .botgi-grid {
+      grid-template-columns: repeat(5, 1fr) !important;
+      gap: 12px !important;
+    }
+    .mv-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 40px !important;
+    }
+    .service-layout {
+      grid-template-columns: 1.05fr 0.95fr !important;
+      gap: 45px !important;
+    }
+    .outro-layout {
+      grid-template-columns: 1.05fr 0.95fr !important;
+      gap: 50px !important;
+    }
+    .slide-content {
+      height: 135mm !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Slide 1 -->
+  <div class="slide" id="slide-1">
+    <div class="slide-content">
+      <div class="landing-grid">
+        <div class="landing-left">
+          <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="landing-logo">
+          <h1>ആധുനിക ടെക്നോളജി പരിശീലനം</h1>
+          <p>Low-Voltage Systems & Security Automation</p>
+        </div>
+        <div class="landing-right">
+          <div class="img-container">
+            <img src="../assets/slide1.jpg" alt="Smart Home Setup" class="img-slot">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">01 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide" id="slide-2">
+    <div class="slide-header">
+      <h2>ഇന്നത്തെ വിദ്യാഭ്യാസ സംവിധാനത്തിന്റെ യാഥാർത്ഥ്യം</h2>
+      <p>മാറുന്ന തൊഴിൽ വിപണിയിൽ പ്രായോഗിക പരിശീലനത്തിന്റെ ആവശ്യകത</p>
+    </div>
+    <div class="slide-content">
+      <div class="reality-layout">
+        <div class="img-container">
+          <img src="../assets/slide2.jpg" alt="Student & Workplace" class="img-slot">
+        </div>
+        <div class="reality-grid">
+          <div class="reality-card active">
+            <h3>ഡിഗ്രി മാത്രം പോരാ</h3>
+            <p>വെറുമൊരു ബിരുദം കൊണ്ട് മാത്രം ഇന്ന് കരിയറിൽ വിജയം കണ്ടെത്താൻ സാധിക്കില്ല. തൊഴിൽ മേഖലകൾ അതിവേഗം മാറിമറിഞ്ഞിരിക്കുന്നു.</p>
+          </div>
+          <div class="reality-card">
+            <h3>പ്രായോഗിക സ്കിൽ</h3>
+            <p>പല മുൻനിര കമ്പനികളും ഇന്ന് സർട്ടിഫിക്കറ്റുകളെക്കാൾ കൂടുതൽ ഉദ്യോഗാർത്ഥിയുടെ പ്രായോഗികമായ അറിവിനും കഴിവിനുമാണ് പ്രാധാന്യം നൽകുന്നത്.</p>
+          </div>
+          <div class="reality-card">
+            <h3>വിടവ്</h3>
+            <p>കോളേജുകളിൽ നിന്ന് പഠിക്കുന്ന തിയറികളും വ്യവസായ മേഖലയ്ക്ക് യഥാർത്ഥത്തിൽ ആവശ്യമുള്ള കഴിവും തമ്മിൽ വലിയൊരു വിടവുണ്ട്.</p>
+          </div>
+          <div class="reality-banner">
+            അതുകൊണ്ട് പഠനത്തോടൊപ്പം Industry Skills നേടുന്നത് അനിവാര്യമാണ്!
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">02 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide" id="slide-3">
+    <div class="slide-header">
+      <h2>എന്തുകൊണ്ട് Security & Automation?</h2>
+      <p>അതിവേഗം വളരുന്ന ഒരു ആധുനിക സാങ്കേതികവിദ്യ മേഖല</p>
+    </div>
+    <div class="slide-content">
+      <p style="font-size: 10pt; margin-bottom: 20px; color: var(--text-gray); font-weight: 300;">ഓരോ പുതിയ വീടും, ഓഫീസും, ഹോസ്പിറ്റലും, സ്കൂളും കൂടുതൽ സ്മാർട്ടാകുകയാണ്. ഈ മേഖലകൾ വേഗത്തിൽ വളരുന്നു.</p>
+      <div class="security-grid">
+        <div class="sec-item">
+          <div class="sec-icon">🏠</div>
+          <div class="sec-text">
+            <h4>Smart Home & Office</h4>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">📹</div>
+          <div class="sec-text">
+            <h4>CCTV & AI Surveillance</h4>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🚪</div>
+          <div class="sec-text">
+            <h4>Access Control</h4>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🚧</div>
+          <div class="sec-text">
+            <h4>Gate Automation</h4>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🏢</div>
+          <div class="sec-text">
+            <h4>KNX Building Automation</h4>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🔗</div>
+          <div class="sec-text">
+            <h4>IoT & Energy Management</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">03 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 4 -->
+  <div class="slide" id="slide-4">
+    <div class="slide-header">
+      <h2>ഇന്ത്യ 2030</h2>
+      <p>സുരക്ഷാ ഓട്ടോമേഷൻ മേഖലയിലെ ഭീമമായ വിപണി സാധ്യതകൾ</p>
+    </div>
+    <div class="slide-content">
+      <div class="stats-grid">
+        <div class="stats-left">
+          <div class="stat-large-card">
+            <div class="number">₹40-45K Cr</div>
+            <div class="label">നിലവിലെ വിപണി</div>
+            <div class="desc">ഇന്ന് ഇന്ത്യയിലെ Smart Home & Automation മേഖലയിലെ ഏകദേശ വിപണി മൂല്യം</div>
+          </div>
+          <div class="stat-large-card">
+            <div class="number">₹5L Cr+</div>
+            <div class="label">2030 പ്രവചനം</div>
+            <div class="desc">ഭാവിയിൽ ഈ മേഖല കൈവരിക്കാൻ പോകുന്ന വൻ വിപണി കുതിപ്പ്</div>
+          </div>
+        </div>
+        <div class="stats-right">
+          <p>ഈ സമാനതകളില്ലാത്ത വളർച്ചയോടൊപ്പം Security & Automation മേഖലയിൽ മികച്ച രീതിയിൽ പരിശീലനം നേടിയ ആളുകളുടെ ആവശ്യകതയും പലമടങ്ങ് വർദ്ധിക്കും.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">04 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 5 -->
+  <div class="slide" id="slide-5">
+    <div class="slide-header">
+      <h2>കേരളം 2030</h2>
+      <p>നമ്മുടെ നാട്ടിലെ വളർന്നുവരുന്ന പുതിയ തൊഴിൽ വിപ്ലവം</p>
+    </div>
+    <div class="slide-content">
+      <div class="kerala-grid">
+        <div class="img-container">
+          <img src="../assets/slide5.jpg" alt="Kerala Smart Villa" class="img-slot">
+        </div>
+        <div class="kerala-content">
+          <div class="kerala-column">
+            <h3>വളരുന്ന മേഖലകൾ</h3>
+            <p>കേരളത്തിലുടനീളം Smart Homes, Villas, Apartments, Hospitals, Schools, Hotels, Commercial Buildings എന്നിവയിലെല്ലാം തന്നെ ഓട്ടോമേഷൻ സംവിധാനങ്ങളുടെ ഉപയോഗം അതിവേഗം വർദ്ധിച്ചുകൊണ്ടിരിക്കുകയാണ്.</p>
+          </div>
+          <div class="kerala-column">
+            <h3>പുതിയ അവസരങ്ങൾ</h3>
+            <p>Smart City പദ്ധതികൾ, AI, IoT, Solar, EV Charging എന്നിവയുടെ വികാസം പുതിയ തൊഴിലവസരങ്ങൾ സൃഷ്ടിക്കും. പ്രായോഗിക സ്കിൽ ഉള്ളവർക്ക് ജോലി, Freelancing, സ്വന്തം Business എന്നിവയ്ക്ക് മികച്ച സാധ്യതകളുണ്ടാകും.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">05 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 6 -->
+  <div class="slide" id="slide-6">
+    <div class="slide-header">
+      <h2>What is BotGi Tech School?</h2>
+      <p>ഞങ്ങൾ വെറുമൊരു കോഴ്സ് മാത്രമല്ല നൽകുന്നത്, നിങ്ങളെ ഒരു പ്രൊഫഷണലാക്കി മാറ്റുന്നു</p>
+    </div>
+    <div class="slide-content">
+      <div class="botgi-grid">
+        <div class="botgi-card">
+          <div class="step">STAGE 01</div>
+          <h3>Skilled Technician</h3>
+          <p>ഒരു മികച്ച Skilled Technician ആക്കി മാറ്റുന്നു.</p>
+        </div>
+        <div class="botgi-card">
+          <div class="step">STAGE 02</div>
+          <h3>Professional System Integrator</h3>
+          <p>പ്രൊഫഷണൽ രീതിയിലുള്ള സിസ്റ്റം ഇന്റഗ്രേഷൻ പഠിപ്പിക്കുന്നു.</p>
+        </div>
+        <div class="botgi-card">
+          <div class="step">STAGE 03</div>
+          <h3>Freelancer</h3>
+          <p>ഫ്രീലാൻസിങ് ചെയ്യാൻ നിങ്ങളെ പ്രാപ്തരാക്കുന്നു.</p>
+        </div>
+        <div class="botgi-card">
+          <div class="step">STAGE 04</div>
+          <h3>Entrepreneur</h3>
+          <p>സ്വന്തമായി ബിസിനസ്സ് തുടങ്ങാൻ ആവശ്യമായ മാർഗ്ഗനിർദ്ദേശങ്ങൾ നൽകുന്നു.</p>
+        </div>
+        <div class="botgi-card">
+          <div class="step">STAGE 05</div>
+          <h3>2030-Ready</h3>
+          <p>ഭാവിയിലെ പുതിയ സാങ്കേതികവിദ്യകളെ നേരിടാൻ സജ്ജമാക്കുന്നു.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">06 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 7 -->
+  <div class="slide" id="slide-7">
+    <div class="slide-header">
+      <h2>OUR MISSION AND VISION</h2>
+      <p>ഞങ്ങളുടെ ലക്ഷ്യവും ദൗത്യവും</p>
+    </div>
+    <div class="slide-content">
+      <div class="mv-grid">
+        <div class="mv-card">
+          <h3>ഞങ്ങളുടെ ദൗത്യം (Mission)</h3>
+          <p>ഭാവിക്ക് അനുയോജ്യമായ സാങ്കേതികവിദ്യകളിൽ അടുത്ത തലമുറയെ ശാക്തീകരിക്കുക, അതുവഴി വിജയകരമായ തൊഴിൽ, അഭിവൃദ്ധി പ്രാപിക്കുന്ന ബിസിനസ്സുകൾ, സ്മാർട്ടായ ഒരു സമൂഹം എന്നിവ കെട്ടിപ്പടുക്കുക.</p>
+        </div>
+        <div class="mv-card">
+          <h3>ഞങ്ങളുടെ കാഴ്ചപ്പാട് (Vision)</h3>
+          <p>സെക്യൂരിറ്റി സിസ്റ്റങ്ങൾ, സ്മാർട്ട് ഹോം ഓട്ടോമേഷൻ, IoT, AI, നെറ്റ്വർക്കിംഗ് എന്നിവയിൽ പ്രായോഗികവും വ്യവസായോന്മുഖവുമായ മികച്ച പരിശീലനം നൽകി തൊഴിൽ നേടാനും ബിസിനസ്സ് തുടങ്ങാനും ആവശ്യമായ ആത്മവിശ്വാസവും ധാർമ്മിക മൂല്യങ്ങളും വളർത്തുക.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">07 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 8: Networking & Structured Cabling (New) -->
+  <div class="slide" id="slide-8">
+    <div class="slide-header">
+      <h2>Networking & Structured Cabling</h2>
+      <p>ഐപി നെറ്റ്‌വർക്കുകളും ഫൈബർ ഒപ്റ്റിക്സ് ഇൻസ്റ്റാളേഷനും</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_networking.jpg" alt="Networking Lab" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>പ്രധാന കോഴ്സ് ഉള്ളടക്കം:</h3>
+          <ul class="service-list">
+            <li>IPv4 സബ്‌നെറ്റിംഗ്, സ്റ്റാറ്റിക് ഐപി കോൺഫിഗറേഷൻ & ഡിഫോൾട്ട് ഗേറ്റ്‌വേ ക്രമീകരണങ്ങൾ.</li>
+            <li>റൂട്ടറുകൾ & നിയന്ത്രിത സ്വിച്ചുകൾ (Managed Switches) അടിസ്ഥാന കോൺഫിഗറേഷൻ.</li>
+            <li>VLAN ബ്രോഡ്കാസ്റ്റ് സെഗ്‌മെന്റേഷൻ & PoE സ്വിച്ച് പവർ ബഡ്ജറ്റ് കണക്കുകൂട്ടലുകൾ.</li>
+            <li>ഫൈബർ ഒപ്റ്റിക് കേബിളിംഗ് അടിസ്ഥാനങ്ങൾ, SFP ട്രാൻസീവറുകൾ & ലാൻ ട്രബിൾഷൂട്ടിംഗ്.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">08 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 9: CCTV AI Programs -->
+  <div class="slide" id="slide-9">
+    <div class="slide-header">
+      <h2>CCTV & AI Security Programs</h2>
+      <p>ആധുനിക സർവൈലൻസ് ക്യാമറകളും നിർമ്മിത ബുദ്ധി സിസ്റ്റങ്ങളും</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_cctv_ai.jpg" alt="AI CCTV Camera" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>പ്രധാന കോഴ്സ് ഉള്ളടക്കം:</h3>
+          <ul class="service-list">
+            <li>ഫേഷ്യൽ റെക്കഗ്നിഷൻ (Facial Recognition) കോൺഫിഗറേഷൻ & ഡാറ്റാബേസ് മാനേജ്മെന്റ്.</li>
+            <li>ഓട്ടോമാറ്റിക് നമ്പർ പ്ലേറ്റ് റെക്കഗ്നിഷൻ (ANPR) ഗേറ്റ് ഇന്റഗ്രേഷനുകൾ.</li>
+            <li>ബിഹേവിയർ അനലിറ്റിക്സ്, ലൈൻ ക്രോസിംഗ് & ഇൻട്രൂഷൻ ഡിറ്റക്ഷൻ അലേർട്ടുകൾ.</li>
+            <li>സിസ്റ്റം ഇൻസ്റ്റാളേഷൻ, ക്യാമറ സെലക്ഷൻ, ഐപി അഡ്രസ്സിങ് & സൈബർ സെക്യൂരിറ്റി ഹാർഡനിങ്.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">09 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 10: Gate Automation -->
+  <div class="slide" id="slide-10">
+    <div class="slide-header">
+      <h2>Gate Automation</h2>
+      <p>ഓട്ടോമേറ്റഡ് ഗേറ്റ് സിസ്റ്റങ്ങളുടെ പ്രായോഗിക പരിശീലനം</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_gate_automation.jpg" alt="Gate Automation" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>പ്രധാന കോഴ്സ് ഉള്ളടക്കം:</h3>
+          <ul class="service-list">
+            <li>സ്ലൈഡിങ് & സ്വിങ് ഗേറ്റ് മോട്ടോറുകൾ ഇൻസ്റ്റാളേഷൻ & വയറിങ് രീതികൾ.</li>
+            <li>ലൂപ്പ് ഡിറ്റക്ടർ (Loop Detector) കോയിൽ ഫ്ലോർ സെറ്റപ്പുകൾ & സേഫ്റ്റി ഫോട്ടോ-ബീമുകൾ.</li>
+            <li>ഗിയർ റാക്ക് അലൈൻമെന്റ് & മോട്ടോർ പ്രോഗ്രാമിങ് ടെക്നിക്കുകൾ.</li>
+            <li>RF റിമോട്ട് കൺട്രോൾ പെയറിങ് & മൊബൈൽ ആപ്പ് ഇന്റഗ്രേഷൻ.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">10 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 11: VDP, Access Control & Attendance -->
+  <div class="slide" id="slide-11">
+    <div class="slide-header">
+      <h2>VDP, Access Control & Attendance Systems</h2>
+      <p>വീഡിയോ ഡോർ ഫോൺ, ബയോമെട്രിക് ആക്സസ്സ് & അറ്റൻഡൻസ് സിസ്റ്റങ്ങൾ</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_biometrics_vdp.jpg" alt="VDP, Biometrics, and Attendance" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>പ്രധാന കോഴ്സ് ഉള്ളടക്കം:</h3>
+          <ul class="service-list">
+            <li>2-വയർ / IP വീഡിയോ ഡോർ ഫോൺ കണക്ഷനുകളും ഡിജിറ്റൽ ലോക്ക് റിലേ വയറിംഗും.</li>
+            <li>ഫിംഗർപ്രിന്റ്, ഫേഷ്യൽ സ്കാനർ ടൈം-അറ്റൻഡൻസ് ലോഗ് റീഡിങ് & മാനേജ്‌മെന്റ് സോഫ്റ്റ്‌വെയർ.</li>
+            <li>RFID കാർഡ് ആക്സസ് കൺട്രോൾ ഇൻസ്റ്റാളേഷൻ & Wiegand റീഡറുകൾ ക്രമീകരിക്കൽ.</li>
+            <li>ബൂം ബാരിയറുകൾ, എലിവേറ്റർ ആക്സസ് & വിസിറ്റർ മാനേജ്മെന്റ് സിസ്റ്റങ്ങൾ.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">11 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 12: Home Automation -->
+  <div class="slide" id="slide-12">
+    <div class="slide-header">
+      <h2>Home Automation</h2>
+      <p>സ്മാർട്ട് ഹോം & ബിൽഡിംഗ് മാനേജ്മെന്റ് സിസ്റ്റങ്ങൾ</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_home_automation.jpg" alt="Smart Home Panel" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>പ്രധാന കോഴ്സ് ഉള്ളടക്കം:</h3>
+          <ul class="service-list">
+            <li>KNX ബസ് പ്രോട്ടോക്കോൾ വയറിങ് & ETS പ്രോഗ്രാമിങ് സോഫ്റ്റ്‌വെയർ അടിസ്ഥാനങ്ങൾ.</li>
+            <li>Zigbee, Z-Wave സ്മാര്ട്ട് സ്വിച്ചുകൾ & മെഷ് നെറ്റ്‌വർക്ക് ഡിസൈൻ.</li>
+            <li>യൂണിഫൈഡ് Matter & Thread പ്രോട്ടോക്കോളുകൾ വഴിയുള്ള ഡിവൈസ് ലിങ്കിങ്.</li>
+            <li>Home Assistant ലോക്കൽ ഹബ്ബ് കോൺഫിഗറേഷൻ & ഗൂഗിൾ അസിസ്റ്റന്റ് വോയ്സ് കൺട്രോൾ.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">12 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 13: Solar & IoT Power (Introduction) -->
+  <div class="slide" id="slide-13">
+    <div class="slide-header">
+      <h2>Solar & IoT Power (Introduction)</h2>
+      <p>സോളാർ പവർ സിസ്റ്റം അടിസ്ഥാന വിവരങ്ങൾ (പരിമിതമായ പരിചയപ്പെടുത്തൽ മാത്രം)</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_solar.jpg" alt="Solar Panels & CCTV" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>പരിചയപ്പെടുത്തുന്ന വിഷയങ്ങൾ:</h3>
+          <ul class="service-list">
+            <li>സോളാർ പാനലുകൾ & ഓഫ്-ഗ്രിഡ് സിസ്റ്റം ലേഔട്ട് പ്രവർത്തന രീതി പരിചയപ്പെടൽ.</li>
+            <li>MPPT ചാർജ്ജ് കൺട്രോളറുകളെക്കുറിച്ചുള്ള ലളിതമായ വിവരണം.</li>
+            <li>ബാറ്ററി ബാക്കപ്പ് കണക്കുകൂട്ടലുകളുടെ പ്രാഥമിക തത്വങ്ങൾ.</li>
+            <li>പ്രായോഗിക സോളാർ CCTV ക്യാമറ & 4G റൂട്ടർ വയർലെസ്സ് സെറ്റപ്പുകൾ കാണിച്ചുതരൽ.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">13 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 14: PA System -->
+  <div class="slide" id="slide-14">
+    <div class="slide-header">
+      <h2>Public Address & BGM Systems</h2>
+      <p>ഓഡിയോ സിസ്റ്റംസും ബാക്ക്ഗ്രൗണ്ട് മ്യൂസിക് ഡിസൈനും</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_pa_system.jpg" alt="PA Microphone & Speaker" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>പ്രധാന കോഴ്സ് ഉള്ളടക്കം:</h3>
+          <ul class="service-list">
+            <li>100V ലൈൻ ഹൈ-വോൾട്ടേജ് ഓഡിയോ ആംപ്ലിഫയർ വിതരണ നെറ്റ്‌വർക്ക്.</li>
+            <li>സീലിംഗ്, കോളം & വാൾ സ്പീക്കർ വാട്ടേജ് ലൈൻ ടാപ്പുകൾ ക്രമീകരിക്കൽ.</li>
+            <li>ഇംപെഡൻസ് മാച്ചിങ് രീതികൾ & മൈക്രോഫോൺ വോയ്സ് പ്രയോറിറ്റി സർക്യൂട്ട്.</li>
+            <li>മൾട്ടി-സോൺ ഓഡിയോ റൂട്ടിങ് & PABX ടെലിഫോൺ പേജിങ് ലൂപ്പുകൾ.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">14 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 15: Intruder Alarm Systems -->
+  <div class="slide" id="slide-15">
+    <div class="slide-header">
+      <h2>Intruder Alarm Systems</h2>
+      <p>സുരക്ഷാ അലാറം & കവർച്ച പ്രതിരോധ സംവിധാനങ്ങൾ</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_alarm_system.jpg" alt="Alarm Panel" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>പ്രധാന കോഴ്സ് ഉള്ളടക്കം:</h3>
+          <ul class="service-list">
+            <li>EOL (End of Line) റെസിസ്റ്റർ ലൂപ്പ് ഡിസൈനുകൾ & വയേർഡ് സെൻസർ വയറിങ്.</li>
+            <li>PIR മോഷൻ ഡിറ്റക്ടറുകൾ, വൈബ്രേഷൻ സെൻസറുകൾ & മാഗ്നറ്റിക് കോൺടാക്റ്റുകൾ.</li>
+            <li>അലാറം കൺട്രോൾ പാനൽ പ്രോഗ്രാമിങ് & ഹൂട്ടർ/സൈറൺ വയറിങ്.</li>
+            <li>GSM ഡയലർ ലിങ്കിങ് & അടിയന്തിര മൊബൈൽ നോട്ടിഫിക്കേഷനുകൾ.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">15 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 16: Fire Alarm Systems -->
+  <div class="slide" id="slide-16">
+    <div class="slide-header">
+      <h2>Fire Alarm Systems</h2>
+      <p>ഫയർ ഡിറ്റക്ഷൻ & എമർജൻസി സിസ്റ്റംസ് ഇൻസ്റ്റാളേഷൻ</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_fire_alarm.jpg" alt="Fire Alarm System" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>പ്രധാന കോഴ്സ് ഉള്ളടക്കം:</h3>
+          <ul class="service-list">
+            <li>കൺവെൻഷണൽ & അഡ്രസ്സബിൾ ഫയർ അലാറം പാനലുകൾ തമ്മിലുള്ള വ്യത്യാസം.</li>
+            <li>സ്മോക്ക് ഡിറ്റക്ടറുകൾ & ഹീറ്റ് ഡിറ്റക്ടറുകൾ ലൂപ്പ് കൺക്ഷനുകൾ.</li>
+            <li>മാനുവൽ കോൾ പോയിന്റുകൾ (MCP) & ഫയർ ഹൂട്ടർ ലൈനുകൾ ക്രമീകരിക്കൽ.</li>
+            <li>എമർജൻസി ലിഫ്റ്റ് ട്രിപ്പ് & വെന്റിലേഷൻ ഷട്ട്ഡൗൺ റിലേ ഇന്റഗ്രേഷൻ.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">16 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 17 -->
+  <div class="slide" id="slide-17">
+    <div class="slide-content">
+      <div class="outro-layout">
+        <div class="img-container">
+          <img src="../assets/slide8.jpg" alt="Systems Integrator Professional" class="img-slot">
+        </div>
+        <div class="outro-box">
+          <h2>നിങ്ങൾക്കല്ല നിങ്ങളുടെ ഫ്യൂച്ചറിനാണ് ഞങ്ങൾ ഉറപ്പ് നൽകുന്നത്</h2>
+          <p>BotGi Tech School - Low-Voltage & Smart Automation Certification</p>
+          <div class="contact-info">
+            <span>🌐 &nbsp;www.botgi.com</span>
+            <span>📧 &nbsp;admissions@botgi.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">17 / 17</span>
+    </div>
+  </div>
+
+  <!-- Navigation Controls for Browser View -->
+  <div class="nav-controls">
+    <button class="nav-btn" onclick="prevSlide()">Previous</button>
+    <button class="nav-btn" onclick="nextSlide()">Next</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 17;
+
+    function showSlide(index) {
+      if (index < 1 || index > totalSlides) return;
+      document.getElementById(`slide-${currentSlide}`).style.display = 'none';
+      document.getElementById(`slide-${index}`).style.display = 'flex';
+      currentSlide = index;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    // Initialize presentation mode
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!window.matchMedia('print').matches) {
+        for (let i = 2; i <= totalSlides; i++) {
+          document.getElementById(`slide-${i}`).style.display = 'none';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

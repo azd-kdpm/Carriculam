@@ -1,0 +1,174 @@
+$srcDir = "c:\Users\asadu\Downloads\Quick Share\BotGI"
+$destDir = "$srcDir\event_preparations"
+
+# 1. Create clean destination folders
+if (Test-Path $destDir) {
+    Remove-Item -Path $destDir -Recurse -Force
+}
+New-Item -ItemType Directory -Path "$destDir\event" -Force
+New-Item -ItemType Directory -Path "$destDir\assets" -Force
+
+# 2. Copy presentation slides
+Copy-Item -Path "$srcDir\event\event_presentation.html" -Destination "$destDir\event\" -Force
+Copy-Item -Path "$srcDir\event\event_presentation_en.html" -Destination "$destDir\event\" -Force
+
+# 3. Copy only necessary assets
+$assets = @(
+    "slide1.jpg",
+    "slide2.jpg",
+    "slide5.jpg",
+    "slide8.jpg",
+    "offer_networking.jpg",
+    "offer_cctv_ai.jpg",
+    "offer_gate_automation.jpg",
+    "offer_biometrics_vdp.jpg",
+    "offer_home_automation.jpg",
+    "offer_solar.jpg",
+    "offer_pa_system.jpg",
+    "offer_alarm_system.jpg",
+    "offer_fire_alarm.jpg",
+    "BotGI_logo_with_white_background-removebg-preview.png"
+)
+
+foreach ($asset in $assets) {
+    Copy-Item -Path "$srcDir\assets\$asset" -Destination "$destDir\assets\" -Force
+}
+
+# 4. Create the root index.html index page inside event_preparations (no registration link)
+$portalHtml = @"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BotGi Tech School - Presentation Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-color: #0c0717; /* Deep luxury obsidian violet */
+    --card-bg: #160e28;
+    --text-color: #f1e6ff;
+    --text-gray: #a39bb4;
+    --gold: #d4af37;
+    --gold-light: #f3df95;
+    --border-color: rgba(191, 128, 255, 0.2);
+    --input-focus: #bf80ff;
+  }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    background-image: radial-gradient(circle at 50% 30%, rgba(191, 128, 255, 0.12) 0%, rgba(12, 7, 23, 0) 70%);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .portal-container {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 40px;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(191, 128, 255, 0.05);
+    box-sizing: border-box;
+    text-align: center;
+  }
+
+  .logo {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 0 8px rgba(191,128,255,0.25));
+  }
+
+  h1 {
+    font-size: 16pt;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  p {
+    font-size: 9.5pt;
+    color: var(--text-gray);
+    margin-top: 0;
+    margin-bottom: 30px;
+  }
+
+  .nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .portal-link {
+    display: block;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 11pt;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .portal-link:hover {
+    background-color: rgba(191, 128, 255, 0.08);
+    border-color: var(--input-focus);
+    box-shadow: 0 0 10px rgba(191, 128, 255, 0.15);
+  }
+
+  .portal-link.highlight {
+    background-color: var(--gold);
+    color: #0c0717;
+    border-color: var(--gold);
+    font-weight: 800;
+  }
+
+  .portal-link.highlight:hover {
+    background-color: var(--gold-light);
+    border-color: var(--gold-light);
+    box-shadow: 0 0 15px rgba(243, 223, 149, 0.3);
+  }
+
+  .footer {
+    margin-top: 30px;
+    font-size: 8pt;
+    color: var(--text-gray);
+  }
+</style>
+</head>
+<body>
+
+  <div class="portal-container">
+    <img src="assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="logo">
+    <h1>Seminar Presentation Portal</h1>
+    <p>Select your presentation version below</p>
+
+    <div class="nav-menu">
+      <a href="event/event_presentation_en.html" class="portal-link highlight">English Presentation</a>
+      <a href="event/event_presentation.html" class="portal-link">Malayalam Presentation</a>
+    </div>
+
+    <div class="footer">
+      BotGi Tech School © 2026
+    </div>
+  </div>
+
+</body>
+</html>
+"@
+
+$portalHtml | Out-File -FilePath "$destDir\index.html" -Encoding utf8
+
+Write-Host "Clean upload package 'event_preparations' created successfully!"

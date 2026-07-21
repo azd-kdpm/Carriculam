@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BotGi Tech School - Seminar Plan v2 (English)</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-color: #0c0717;
+    --card-bg: #160e28;
+    --text-color: #f1e6ff;
+    --text-gray: #a39bb4;
+    --gold: #d4af37;
+    --gold-light: #f3df95;
+    --border-color: rgba(191, 128, 255, 0.2);
+    --purple-glow: rgba(191, 128, 255, 0.15);
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 15mm;
+  }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    background-image: radial-gradient(circle at 50% 0%, rgba(191, 128, 255, 0.1) 0%, rgba(12, 7, 23, 0) 70%);
+    margin: 0;
+    padding: 30px;
+    line-height: 1.6;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+  }
+
+  .logo {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+    margin-bottom: 15px;
+    filter: drop-shadow(0 0 8px rgba(191,128,255,0.25));
+  }
+
+  h1 {
+    font-size: 22pt;
+    color: var(--gold-light);
+    margin: 0 0 5px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .subtitle {
+    font-size: 11pt;
+    color: var(--text-gray);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  h2 {
+    font-size: 15pt;
+    color: var(--gold);
+    border-left: 3px solid var(--gold);
+    padding-left: 12px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  th {
+    background-color: rgba(191, 128, 255, 0.08);
+    color: var(--gold-light);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 9.5pt;
+    letter-spacing: 0.5px;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  td strong {
+    color: #ffffff;
+  }
+
+  ul {
+    padding-left: 20px;
+    margin: 10px 0;
+  }
+
+  li {
+    margin-bottom: 8px;
+  }
+
+  .highlight-box {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  }
+
+  .highlight-box h3 {
+    margin-top: 0;
+    color: #ffffff;
+    font-size: 12pt;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  @media print {
+    body {
+      background-image: none;
+      padding: 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="logo">
+      <h1>Seminar Execution Plan v2</h1>
+      <p class="subtitle">Careers of 2030 in Smart Automation & Security</p>
+    </div>
+
+    <h2>1. Overview & Setup</h2>
+    <p>This plan is tailored for a 2-hour promotional seminar starting at <strong>10:30 AM</strong>. The technical display is designed around a specific, high-impact set of local hardware tools to demonstrate system integration capability.</p>
+
+    <div class="highlight-box">
+      <h3>On-Site Hardware Inventory</h3>
+      <ul>
+        <li><strong>Android Smart Board Panel:</strong> Central stage hub displaying presentations, NVR video stream, and home automation dashboard.</li>
+        <li><strong>NVR & IP Security Cameras:</strong> Live camera feeds with virtual tripwire zone alarms.</li>
+        <li><strong>Home Automation Switch:</strong> Linked to a light bulb, fan, and motorized curtain.</li>
+        <li><strong>Google Assistant Speaker:</strong> Local voice control interface.</li>
+        <li><strong>Biometric Attendance Device:</strong> Used at entry for check-in demo.</li>
+        <li><strong>Doorbell:</strong> Entrance visitor announcement demo.</li>
+        <li><strong>Tools & Wires:</strong> Cat6 RJ45 punch-down tools, wire strippers, and network patch cables.</li>
+      </ul>
+    </div>
+
+    <h2>2. Seminar Program Agenda</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>Duration</th>
+          <th>Segment</th>
+          <th>Action Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>10:30 AM - 11:00 AM</strong></td>
+          <td>30 mins</td>
+          <td><strong>Welcome Tea, Weather Settle & Registration</strong></td>
+          <td>Serve hot tea/coffee to let attendees dry off from rain and travel. Guests register using the tablet <a href="registration_form.html">Registration App</a> and check in their fingerprint on the biometric attendance device.</td>
+        </tr>
+        <tr>
+          <td><strong>11:00 AM - 11:15 AM</strong></td>
+          <td>15 mins</td>
+          <td><strong>Welcome & Introductions</strong></td>
+          <td>Introduction of BotGi Tech School. Brief background of the lead tutor followed by a quick introduction of each student.</td>
+        </tr>
+        <tr>
+          <td><strong>11:15 AM - 11:40 AM</strong></td>
+          <td>25 mins</td>
+          <td><strong>Session 1: Industry Scope</strong></td>
+          <td>Display slides 1 to 7 on the Android Smart Board. Discuss automation market trends in India and Kerala towards 2030.</td>
+        </tr>
+        <tr>
+          <td><strong>11:40 AM - 12:15 PM</strong></td>
+          <td>35 mins</td>
+          <td><strong>Session 2: Live Tech Demo Class</strong></td>
+          <td>Present slides 8 to 16. Trigger voice automation (Google Assistant fan/curtain), Smart Board dashboard switching, NVR tripwire alerts, and cabling tool demos.</td>
+        </tr>
+        <tr>
+          <td><strong>12:15 PM - 12:30 PM</strong></td>
+          <td>15 mins</td>
+          <td><strong>Q&A, Special Offer & Spot Admissions</strong></td>
+          <td>Open discussion with parents regarding jobs, lab hours, and certification. Announce limited-seat spot discounts (Slide 17).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>3. Stage Demo Guidelines</h2>
+    <ul>
+      <li><strong>Step A (Smart Board):</strong> Touch the dashboard to toggle the lights and fan. Slide the curtain.</li>
+      <li><strong>Step B (Voice):</strong> Command Google Assistant: <em>"Hey Google, open the curtain"</em> or <em>"Hey Google, turn on the fan"</em>.</li>
+      <li><strong>Step C (CCTV Security):</strong> Show the NVR feed. Walk in front of the camera to trigger the tripwire warning live.</li>
+      <li><strong>Step D (Cabling):</strong> Hand out patch cables and show the punch-down tools to emphasize practical lab classes.</li>
+    </ul>
+  </div>
+
+</body>
+</html>

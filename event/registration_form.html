@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BotGi Tech School - Seminar Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-color: #0c0717; /* Deep luxury obsidian violet */
+    --card-bg: #160e28;
+    --text-color: #f1e6ff;
+    --text-gray: #a39bb4;
+    --gold: #d4af37;
+    --gold-light: #f3df95;
+    --border-color: rgba(191, 128, 255, 0.2);
+    --input-focus: #bf80ff;
+  }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    background-image: radial-gradient(circle at 50% 0%, rgba(191, 128, 255, 0.1) 0%, rgba(12, 7, 23, 0) 70%);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .form-container {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 40px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(191, 128, 255, 0.05);
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .header h1 {
+    font-size: 22pt;
+    font-weight: 800;
+    color: var(--gold-light);
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+  }
+
+  .header p {
+    font-size: 10pt;
+    color: var(--text-gray);
+    margin-top: 0;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    font-size: 9.5pt;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .form-control {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 11pt;
+    color: #ffffff;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: all 0.3s;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: var(--input-focus);
+    background-color: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 8px rgba(191, 128, 255, 0.2);
+  }
+
+  select.form-control option {
+    background-color: var(--card-bg);
+    color: #ffffff;
+  }
+
+  .checkbox-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 9.5pt;
+    color: var(--text-gray);
+  }
+
+  .checkbox-item input {
+    accent-color: var(--input-focus);
+    width: 15px;
+    height: 15px;
+  }
+
+  .btn {
+    width: 100%;
+    background-color: var(--gold);
+    color: #0c0717;
+    border: none;
+    border-radius: 6px;
+    padding: 14px;
+    font-size: 11pt;
+    font-weight: 800;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+    margin-top: 15px;
+  }
+
+  .btn:hover {
+    background-color: var(--gold-light);
+    box-shadow: 0 0 15px rgba(243, 223, 149, 0.3);
+  }
+
+  .success-overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--card-bg);
+    border-radius: 12px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 30px;
+    box-sizing: border-box;
+    z-index: 10;
+  }
+
+  .success-icon {
+    font-size: 40pt;
+    color: var(--gold-light);
+    margin-bottom: 15px;
+  }
+
+  .success-overlay h2 {
+    font-size: 18pt;
+    color: #ffffff;
+    margin-bottom: 10px;
+  }
+
+  .success-overlay p {
+    font-size: 10pt;
+    color: var(--text-gray);
+  }
+
+  /* Admin corner button */
+  .admin-trigger {
+    position: fixed;
+    bottom: 15px;
+    left: 15px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    font-size: 8pt;
+  }
+  .admin-trigger:hover {
+    color: var(--text-gray);
+  }
+</style>
+</head>
+<body>
+
+  <div class="form-container">
+    <div class="header">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" style="height: 150px; width: auto; object-fit: contain; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(191,128,255,0.3));">
+      <p>Seminar Registration & Future Enrollment</p>
+    </div>
+
+    <form id="regForm" onsubmit="saveRegistration(event)">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" class="form-control" placeholder="Enter your full name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" class="form-control" placeholder="Enter phone number" required pattern="[0-9]{10}">
+      </div>
+
+      <div class="form-group">
+        <label for="education">Current Education / Profession</label>
+        <input type="text" id="education" class="form-control" placeholder="e.g. ITI, Diploma, BTech, Student" required>
+      </div>
+
+      <div class="form-group">
+        <label for="referral">How did you hear about us?</label>
+        <select id="referral" class="form-control" required>
+          <option value="" disabled selected>Select an option</option>
+          <option value="Social Media">Social Media (Facebook/Instagram/WhatsApp)</option>
+          <option value="College Flyer">College Poster / Pamphlet</option>
+          <option value="Friends/Family">Friends / Family / Word of Mouth</option>
+          <option value="Other">Other Sourcing</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Primary Areas of Interest</label>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" name="interest" value="CCTV & AI"> CCTV & AI</label>
+          <label class="checkbox-item"><input type="checkbox" name="interest" value="Home Automation"> Smart Home</label>
+          <label class="checkbox-item"><input type="checkbox" name="interest" value="Networking"> IP Networking</label>
+          <label class="checkbox-item"><input type="checkbox" name="interest" value="Intruder Alarms"> Alarm Systems</label>
+          <label class="checkbox-item"><input type="checkbox" name="interest" value="Fire Alarms"> Fire Systems</label>
+          <label class="checkbox-item"><input type="checkbox" name="interest" value="Gate Automation"> Gate Auto</label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn">Confirm Registration</button>
+    </form>
+
+    <div class="success-overlay" id="successView">
+      <div class="success-icon">✓</div>
+      <h2>Registration Confirmed!</h2>
+      <p>Thank you for registering. Please proceed to the refreshments area for some warm tea.</p>
+    </div>
+  </div>
+
+  <button class="admin-trigger" onclick="exportData()">Export Database</button>
+
+  <script>
+    function saveRegistration(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('fullName').value;
+      const phone = document.getElementById('phone').value;
+      const education = document.getElementById('education').value;
+      const referral = document.getElementById('referral').value;
+      
+      const checkboxes = document.querySelectorAll('input[name="interest"]:checked');
+      let interests = [];
+      checkboxes.forEach(cb => interests.push(cb.value));
+
+      const newRegistration = {
+        timestamp: new Date().toLocaleString(),
+        name,
+        phone,
+        education,
+        referral,
+        interests: interests.join(', ')
+      };
+
+      // Retrieve existing list or init new list
+      let database = JSON.parse(localStorage.getItem('botgi_registrations') || '[]');
+      database.push(newRegistration);
+      localStorage.setItem('botgi_registrations', JSON.stringify(database));
+
+      // Show success screen
+      document.getElementById('successView').style.display = 'flex';
+
+      // Reset form and return to form after 4 seconds
+      setTimeout(() => {
+        document.getElementById('regForm').reset();
+        document.getElementById('successView').style.display = 'none';
+      }, 4000);
+    }
+
+    function exportData() {
+      const database = JSON.parse(localStorage.getItem('botgi_registrations') || '[]');
+      if (database.length === 0) {
+        alert("No registration records found yet.");
+        return;
+      }
+
+      // Generate CSV
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Timestamp,Name,Phone,Education/Profession,Referral,Interests\n";
+      
+      database.forEach(row => {
+        const line = `"${row.timestamp}","${row.name}","${row.phone}","${row.education}","${row.referral}","${row.interests}"`;
+        csvContent += line + "\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `botgi_seminar_registrations_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>

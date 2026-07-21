@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BotGi Tech School - English Event Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-color: #0c0717; /* Deep luxury obsidian violet */
+    --card-bg: #160e28; /* Luxurious deep violet-black */
+    --text-color: #f1e6ff; /* Soft lavender white */
+    --text-gray: #a39bb4; /* Muted lavender gray */
+    --gold: #d4af37; /* Luxury burnished gold */
+    --gold-light: #f3df95; /* Light champagne gold */
+    --purple-glow: rgba(191, 128, 255, 0.15);
+    --border-color: rgba(191, 128, 255, 0.2);
+    --font-english: 'Outfit', sans-serif;
+  }
+
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: var(--font-english);
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    background-image: radial-gradient(circle at 80% 20%, rgba(191, 128, 255, 0.08) 0%, rgba(12, 7, 23, 0) 65%);
+    overflow-x: hidden;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Presentation Structure */
+  .slide {
+    width: 297mm;
+    height: 210mm;
+    page-break-after: always;
+    background-color: var(--bg-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 35px 55px;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  /* Slide Footer */
+  .slide-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border-color);
+    padding-top: 12px;
+    font-size: 8.5pt;
+    color: var(--text-gray);
+    z-index: 10;
+  }
+
+  .brand-logo {
+    height: 70px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 4px rgba(191,128,255,0.2));
+  }
+
+  .slide-footer .page-number {
+    font-weight: 300;
+    letter-spacing: 1px;
+  }
+
+  /* Slide Header */
+  .slide-header {
+    margin-bottom: 20px;
+    z-index: 10;
+  }
+
+  .slide-header h2 {
+    font-size: 22pt;
+    font-weight: 900;
+    color: var(--gold-light);
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    text-transform: uppercase;
+  }
+
+  .slide-header p {
+    font-size: 10.5pt;
+    color: var(--text-gray);
+    margin-top: 4px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  /* Content Containers */
+  .slide-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 10;
+    height: 135mm;
+  }
+
+  /* Image Slots */
+  .img-container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 6px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 15px var(--purple-glow);
+    border: 1px solid var(--border-color);
+  }
+
+  .img-slot {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Slide 1: Welcome */
+  .landing-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+    height: 100%;
+    align-items: center;
+  }
+
+  .landing-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .landing-logo {
+    height: 160px;
+    width: auto;
+    object-fit: contain;
+    align-self: flex-start;
+    margin-bottom: 25px;
+    filter: drop-shadow(0 0 8px rgba(191,128,255,0.3));
+  }
+
+  .landing-left h1 {
+    font-size: 32pt;
+    font-weight: 900;
+    line-height: 1.3;
+    color: #ffffff;
+    margin-bottom: 15px;
+    letter-spacing: -1px;
+  }
+
+  .landing-left p {
+    font-size: 11pt;
+    color: var(--text-gray);
+    font-weight: 300;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-left: 2px solid var(--gold);
+    padding-left: 15px;
+  }
+
+  .landing-right {
+    height: 80%;
+  }
+
+  /* Slide 2: Reality */
+  .reality-layout {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 40px;
+    height: 100%;
+    align-items: center;
+  }
+
+  .reality-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .reality-card {
+    background-color: var(--card-bg);
+    border-left: 3px solid var(--border-color);
+    border-radius: 4px;
+    padding: 14px 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  .reality-card.active {
+    border-left-color: var(--gold);
+  }
+
+  .reality-card h3 {
+    font-size: 12.5pt;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 3px;
+  }
+
+  .reality-card p {
+    font-size: 9.5pt;
+    color: var(--text-gray);
+    line-height: 1.5;
+  }
+
+  .reality-banner {
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.25);
+    color: var(--gold-light);
+    padding: 10px 15px;
+    font-size: 10pt;
+    font-weight: 700;
+    border-radius: 4px;
+    text-align: center;
+    margin-top: 8px;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+  }
+
+  /* Slide 3: Fields */
+  .security-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .sec-item {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  .sec-icon {
+    font-size: 15pt;
+    width: 38px;
+    height: 38px;
+    background: rgba(191, 128, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .sec-text h4 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  /* Slide 4: Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 40px;
+    align-items: center;
+  }
+
+  .stats-left {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .stat-large-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 24px 15px;
+    text-align: center;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  }
+
+  .stat-large-card .number {
+    font-size: 26pt;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .stat-large-card .label {
+    font-size: 11.5pt;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 4px;
+  }
+
+  .stat-large-card .desc {
+    font-size: 9pt;
+    color: var(--text-gray);
+    line-height: 1.4;
+  }
+
+  .stats-right {
+    border-left: 2px solid var(--gold);
+    padding-left: 25px;
+  }
+
+  .stats-right p {
+    font-size: 12.5pt;
+    line-height: 1.7;
+    color: var(--text-color);
+    font-weight: 300;
+  }
+
+  /* Slide 5: Kerala */
+  .kerala-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    height: 100%;
+    align-items: center;
+  }
+
+  .kerala-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .kerala-column {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 16px 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+
+  .kerala-column h3 {
+    font-size: 12pt;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 5px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 3px;
+  }
+
+  .kerala-column p {
+    font-size: 9.5pt;
+    color: var(--text-gray);
+    line-height: 1.5;
+  }
+
+  /* Slide 6: What is BotGi */
+  .botgi-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+  }
+
+  .botgi-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 18px 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .botgi-card .step {
+    font-size: 8pt;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .botgi-card h3 {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+    min-height: 32px;
+  }
+
+  .botgi-card p {
+    font-size: 9pt;
+    color: var(--text-gray);
+    line-height: 1.5;
+  }
+
+  /* Slide 7: Mission */
+  .mv-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+
+  .mv-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 24px;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  }
+
+  .mv-card h3 {
+    font-size: 14pt;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .mv-card p {
+    font-size: 10pt;
+    color: var(--text-gray);
+    line-height: 1.7;
+  }
+
+  /* Service Detail Layouts (Used for slides 8-16) */
+  .service-layout {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 45px;
+    height: 100%;
+    align-items: center;
+  }
+
+  .service-details h3 {
+    font-size: 16pt;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 15px;
+    border-left: 3px solid var(--gold);
+    padding-left: 15px;
+  }
+
+  .service-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .service-list li {
+    font-size: 11pt;
+    line-height: 1.6;
+    color: var(--text-color);
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .service-list li::before {
+    content: "•";
+    color: var(--gold);
+    font-weight: bold;
+    font-size: 14pt;
+    position: absolute;
+    left: 0;
+    top: -2px;
+  }
+
+  /* Slide 17: Outro */
+  .outro-layout {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 50px;
+    height: 100%;
+    align-items: center;
+  }
+
+  .outro-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .outro-box h2 {
+    font-size: 18pt;
+    font-weight: 900;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    color: #ffffff;
+  }
+
+  .outro-box p {
+    font-size: 10.5pt;
+    color: var(--gold);
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+    font-size: 10pt;
+    color: var(--text-gray);
+  }
+
+  .contact-info span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Navigation UI for Browser Mode */
+  .nav-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+  }
+
+  .nav-btn {
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+  }
+
+  .nav-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Web View Centering & Responsiveness */
+  @media screen {
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      background-color: #07040e; /* Sleek darker theater viewport background */
+    }
+    .slide {
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      border-radius: 8px;
+    }
+    
+    /* Responsive breakpoints for smaller viewports */
+    @media (max-width: 1024px) {
+      body {
+        justify-content: flex-start;
+        padding: 10px;
+      }
+      .slide {
+        width: 100%;
+        max-width: 100vw;
+        height: auto;
+        min-height: 90vh;
+        padding: 30px;
+      }
+      .slide-content {
+        height: auto;
+        min-height: 250px;
+      }
+      .landing-grid, .reality-layout, .stats-grid, .kerala-grid, .mv-grid, .service-layout, .outro-layout {
+        grid-template-columns: 1fr !important;
+        gap: 30px !important;
+      }
+      .landing-right, .kerala-grid .img-container, .service-layout .img-container, .outro-layout .img-container {
+        height: 280px !important;
+      }
+      .botgi-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 15px !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .slide {
+        padding: 20px;
+      }
+      .slide-header h2 {
+        font-size: 16pt !important;
+      }
+      .landing-left h1 {
+        font-size: 20pt !important;
+      }
+      .botgi-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      .landing-right, .kerala-grid .img-container, .service-layout .img-container, .outro-layout .img-container {
+        height: 200px !important;
+      }
+      .security-grid {
+        grid-template-columns: 1fr 1fr !important;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .botgi-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .security-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .stats-left {
+        grid-template-columns: 1fr !important;
+      }
+      .landing-right, .kerala-grid .img-container, .service-layout .img-container, .outro-layout .img-container {
+        height: 160px !important;
+      }
+    }
+  }
+
+  @media print {
+    body {
+      background-color: var(--bg-color);
+    }
+    .nav-controls {
+      display: none;
+    }
+    .slide {
+      display: flex !important;
+      width: 297mm !important;
+      height: 210mm !important;
+      page-break-after: always !important;
+      padding: 35px 55px !important;
+    }
+    .landing-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 50px !important;
+    }
+    .reality-layout {
+      grid-template-columns: 0.95fr 1.05fr !important;
+      gap: 40px !important;
+    }
+    .stats-grid {
+      grid-template-columns: 1.15fr 0.85fr !important;
+      gap: 40px !important;
+    }
+    .kerala-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 40px !important;
+    }
+    .botgi-grid {
+      grid-template-columns: repeat(5, 1fr) !important;
+      gap: 12px !important;
+    }
+    .mv-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 40px !important;
+    }
+    .service-layout {
+      grid-template-columns: 1.05fr 0.95fr !important;
+      gap: 45px !important;
+    }
+    .outro-layout {
+      grid-template-columns: 1.05fr 0.95fr !important;
+      gap: 50px !important;
+    }
+    .slide-content {
+      height: 135mm !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Slide 1 -->
+  <div class="slide" id="slide-1">
+    <div class="slide-content">
+      <div class="landing-grid">
+        <div class="landing-left">
+          <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="landing-logo">
+          <h1>Advanced Technology Training</h1>
+          <p>Low-Voltage Systems & Security Automation</p>
+        </div>
+        <div class="landing-right">
+          <div class="img-container">
+            <img src="../assets/slide1.jpg" alt="Smart Home Setup" class="img-slot">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">01 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 2 -->
+  <div class="slide" id="slide-2">
+    <div class="slide-header">
+      <h2>The Reality of Modern Education</h2>
+      <p>The Crucial Need for Practical Skills in a Shifting Job Market</p>
+    </div>
+    <div class="slide-content">
+      <div class="reality-layout">
+        <div class="img-container">
+          <img src="../assets/slide2.jpg" alt="Student & Workplace" class="img-slot">
+        </div>
+        <div class="reality-grid">
+          <div class="reality-card active">
+            <h3>Degree Alone is Not Enough</h3>
+            <p>A college degree is no longer a guaranteed ticket to a successful career. Industries have rapidly evolved.</p>
+          </div>
+          <div class="reality-card">
+            <h3>Practical Skills First</h3>
+            <p>Leading companies prioritize actual hands-on technical competence over certificates.</p>
+          </div>
+          <div class="reality-card">
+            <h3>The Curriculum Gap</h3>
+            <p>There is a massive divide between university theories and real-world system integration demands.</p>
+          </div>
+          <div class="reality-banner">
+            Therefore, acquiring Industry Skills alongside your studies is essential!
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">02 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="slide" id="slide-3">
+    <div class="slide-header">
+      <h2>Why Security & Automation?</h2>
+      <p>A Rapidly Growing High-Tech Sector</p>
+    </div>
+    <div class="slide-content">
+      <p style="font-size: 10pt; margin-bottom: 20px; color: var(--text-gray); font-weight: 300;">Every new home, office, hospital, and school is transforming into a smart facility. This sector is expanding rapidly.</p>
+      <div class="security-grid">
+        <div class="sec-item">
+          <div class="sec-icon">🏠</div>
+          <div class="sec-text">
+            <h4>Smart Home & Office</h4>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">📹</div>
+          <div class="sec-text">
+            <h4>CCTV & AI Surveillance</h4>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🚪</div>
+          <div class="sec-text">
+            <h4>Access Control</h4>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🚧</div>
+          <div class="sec-text">
+            <h4>Gate Automation</h4>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🏢</div>
+          <div class="sec-text">
+            <h4>KNX Building Automation</h4>
+          </div>
+        </div>
+        <div class="sec-item">
+          <div class="sec-icon">🔗</div>
+          <div class="sec-text">
+            <h4>IoT & Energy Management</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">03 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 4 -->
+  <div class="slide" id="slide-4">
+    <div class="slide-header">
+      <h2>India 2030</h2>
+      <p>Trillion-Rupee Opportunities in Security & Automation</p>
+    </div>
+    <div class="slide-content">
+      <div class="stats-grid">
+        <div class="stats-left">
+          <div class="stat-large-card">
+            <div class="number">₹40-45K Cr</div>
+            <div class="label">Current Market</div>
+            <div class="desc">Current size of the Smart Home & Security Automation market in India.</div>
+          </div>
+          <div class="stat-large-card">
+            <div class="number">₹5L Cr+</div>
+            <div class="label">2030 Forecast</div>
+            <div class="desc">Projected market value representing a monumental boom in the sector.</div>
+          </div>
+        </div>
+        <div class="stats-right">
+          <p>Along with this unprecedented growth, the demand for highly trained security and automation integrators will multiply.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">04 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 5 -->
+  <div class="slide" id="slide-5">
+    <div class="slide-header">
+      <h2>Kerala 2030</h2>
+      <p>The Rising Smart Infrastructure Revolution</p>
+    </div>
+    <div class="slide-content">
+      <div class="kerala-grid">
+        <div class="img-container">
+          <img src="../assets/slide5.jpg" alt="Kerala Smart Villa" class="img-slot">
+        </div>
+        <div class="kerala-content">
+          <div class="kerala-column">
+            <h3>Growing Sectors</h3>
+            <p>Across Kerala, the integration of automation is skyrocketing in luxury homes, apartments, villas, hospitals, hotels, and commercial buildings.</p>
+          </div>
+          <div class="kerala-column">
+            <h3>New Frontiers</h3>
+            <p>The expansion of Smart Cities, AI, IoT, Solar energy, and EV charging points creates massive career opportunities. Certified technicians can choose between high-paying jobs, freelancing, or starting their own integration firm.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">05 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 6 -->
+  <div class="slide" id="slide-6">
+    <div class="slide-header">
+      <h2>What is BotGi Tech School?</h2>
+      <p>We don't just teach courses; we build industry professionals.</p>
+    </div>
+    <div class="slide-content">
+      <div class="botgi-grid">
+        <div class="botgi-card">
+          <div class="step">STAGE 01</div>
+          <h3>Skilled Technician</h3>
+          <p>Equipping you with foundational electrical & troubleshooting skills.</p>
+        </div>
+        <div class="botgi-card">
+          <div class="step">STAGE 02</div>
+          <h3>Professional System Integrator</h3>
+          <p>Training you to design and commission complex automated ecosystems.</p>
+        </div>
+        <div class="botgi-card">
+          <div class="step">STAGE 03</div>
+          <h3>Freelancer</h3>
+          <p>Empowering you to source and deliver independent integration projects.</p>
+        </div>
+        <div class="botgi-card">
+          <div class="step">STAGE 04</div>
+          <h3>Entrepreneur</h3>
+          <p>Providing mentoring to launch your own local automation business.</p>
+        </div>
+        <div class="botgi-card">
+          <div class="step">STAGE 05</div>
+          <h3>2030-Ready</h3>
+          <p>Preparing you to lead with next-generation smart technologies.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">06 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 7 -->
+  <div class="slide" id="slide-7">
+    <div class="slide-header">
+      <h2>OUR MISSION AND VISION</h2>
+      <p>Our core goals and pathway</p>
+    </div>
+    <div class="slide-content">
+      <div class="mv-grid">
+        <div class="mv-card">
+          <h3>Our Mission</h3>
+          <p>To empower the next generation with future-ready low-voltage engineering skills, creating successful careers, thriving businesses, and smart communities.</p>
+        </div>
+        <div class="mv-card">
+          <h3>Our Vision</h3>
+          <p>To deliver industry-aligned practical training in security, networking, and home automation, instilling the confidence, ethics, and expertise required to lead the automation market.</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">07 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 8: Networking & Structured Cabling (New) -->
+  <div class="slide" id="slide-8">
+    <div class="slide-header">
+      <h2>Networking & Structured Cabling</h2>
+      <p>IP Networks, Subnetting, and Fiber Optic Deployments</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_networking.jpg" alt="Networking Lab" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>Core Syllabus Focus:</h3>
+          <ul class="service-list">
+            <li>IPv4 addressing, subnetting grids, static IPs, and default gateway configurations.</li>
+            <li>Installing and configuring WAN/LAN interfaces on routers and managed switches.</li>
+            <li>Implementing VLAN network segmentation and PoE power budget designs.</li>
+            <li>Splicing and testing single-mode/multi-mode fiber cables and SFP modules.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">08 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 9: CCTV AI Programs -->
+  <div class="slide" id="slide-9">
+    <div class="slide-header">
+      <h2>CCTV & AI Security Programs</h2>
+      <p>Next-Generation Intelligent Surveillance Systems</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_cctv_ai.jpg" alt="AI CCTV Camera" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>Core Syllabus Focus:</h3>
+          <ul class="service-list">
+            <li>Configuring facial recognition models and enrollment databases.</li>
+            <li>Designing Automated Number Plate Recognition (ANPR) systems.</li>
+            <li>Implementing AI line-crossing alerts and smart intrusion zones.</li>
+            <li>Conducting site surveys, camera lens calculations, and storage designs.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">09 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 10: Gate Automation -->
+  <div class="slide" id="slide-10">
+    <div class="slide-header">
+      <h2>Gate Automation</h2>
+      <p>Installing and Commissioning Automated Gate Systems</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_gate_automation.jpg" alt="Gate Automation" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>Core Syllabus Focus:</h3>
+          <ul class="service-list">
+            <li>Mounting and wiring sliding and swing gate motors on test rigs.</li>
+            <li>Installing ground loop detectors and safety photo-beams.</li>
+            <li>Aligning physical gear racks and programming motor limit switches.</li>
+            <li>Pairing RF remote transmitters and integrating smart mobile apps.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">10 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 11: VDP, Access Control & Attendance -->
+  <div class="slide" id="slide-11">
+    <div class="slide-header">
+      <h2>VDP, Access Control & Attendance Systems</h2>
+      <p>Video Door Phones, Biometric Enrollment, and Attendance Logs</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_biometrics_vdp.jpg" alt="VDP, Biometrics, and Attendance" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>Core Syllabus Focus:</h3>
+          <ul class="service-list">
+            <li>Wiring 2-wire/IP video door phones and solenoid lock release relays.</li>
+            <li>Configuring Wiegand access controllers, RFID cards, and reader interfaces.</li>
+            <li>Enrolling fingerprints/faces and retrieving logs via management software.</li>
+            <li>Integrating boom barriers, elevator access, and visitor badging systems.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">11 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 12: Home Automation -->
+  <div class="slide" id="slide-12">
+    <div class="slide-header">
+      <h2>Home Automation</h2>
+      <p>Smart Living Systems and Building Actuators</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_home_automation.jpg" alt="Smart Home Panel" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>Core Syllabus Focus:</h3>
+          <ul class="service-list">
+            <li>KNX green bus TP1 wiring, group addressing, and ETS programming.</li>
+            <li>Designing Zigbee and Z-Wave wireless mesh networks.</li>
+            <li>Multi-admin pairing setups using Matter and Thread protocols.</li>
+            <li>Local Home Assistant OS installations and Alexa/Google Home voice routines.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">12 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 13: Solar & IoT Power (Introduction) -->
+  <div class="slide" id="slide-13">
+    <div class="slide-header">
+      <h2>Solar & IoT Power (Introduction)</h2>
+      <p>Solar PV Basics, Charger Controllers, and Backup Calculations</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_solar.jpg" alt="Solar Panels & CCTV" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>Introductory Focus Only:</h3>
+          <ul class="service-list">
+            <li>Introductory overview of solar panels and off-grid PV system layouts.</li>
+            <li>Explaining MPPT charge controllers and grid inverter configurations.</li>
+            <li>Basic calculations for LiFePO4 battery capacity and backup runtimes.</li>
+            <li>Demonstrating solar-powered CCTV cameras and 4G APN router setups.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">13 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 14: PA System -->
+  <div class="slide" id="slide-14">
+    <div class="slide-header">
+      <h2>Public Address & BGM Systems</h2>
+      <p>100V Line Distribution and Sound Reinforcement</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_pa_system.jpg" alt="PA Microphone & Speaker" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>Core Syllabus Focus:</h3>
+          <ul class="service-list">
+            <li>Understanding 100V line amplifiers and step-down speaker transformers.</li>
+            <li>Setting ceiling/wall speaker wattage taps to match amplifier loads.</li>
+            <li>Wiring paging microphones and configuring voice-override priorities.</li>
+            <li>Designing multi-zone BGM distribution networks and PABX paging loops.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">14 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 15: Intruder Alarm Systems -->
+  <div class="slide" id="slide-15">
+    <div class="slide-header">
+      <h2>Intruder Alarm Systems</h2>
+      <p>Burglar Alarms, Hardwired Zones, and Sensor Integration</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_alarm_system.jpg" alt="Alarm Panel" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>Core Syllabus Focus:</h3>
+          <ul class="service-list">
+            <li>Designing zone loops using End-of-Line (EOL) resistors.</li>
+            <li>Wiring PIR motion detectors, vibration sensors, and magnetic door contacts.</li>
+            <li>Programming alarm panel zones, arming profiles, and siren sirens.</li>
+            <li>Linking GSM automatic telephone dialers for real-time mobile notifications.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">15 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 16: Fire Alarm Systems -->
+  <div class="slide" id="slide-16">
+    <div class="slide-header">
+      <h2>Fire Alarm Systems</h2>
+      <p>Fire Detection, Smoke Zones, and Emergency Relays</p>
+    </div>
+    <div class="slide-content">
+      <div class="service-layout">
+        <div class="img-container">
+          <img src="../assets/offer_fire_alarm.jpg" alt="Fire Alarm System" class="img-slot">
+        </div>
+        <div class="service-details">
+          <h3>Core Syllabus Focus:</h3>
+          <ul class="service-list">
+            <li>Comparing conventional loops with addressable fire alarm panels.</li>
+            <li>Wiring loops for photoelectric smoke detectors and thermal heat sensors.</li>
+            <li>Installing manual call points (break-glass) and fire notification hooters.</li>
+            <li>Programming auxiliary relay outputs to trigger elevator recall and air shutoff.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">16 / 17</span>
+    </div>
+  </div>
+
+  <!-- Slide 17 -->
+  <div class="slide" id="slide-17">
+    <div class="slide-content">
+      <div class="outro-layout">
+        <div class="img-container">
+          <img src="../assets/slide8.jpg" alt="Systems Integrator Professional" class="img-slot">
+        </div>
+        <div class="outro-box">
+          <h2>We don't guarantee your job. We guarantee your future.</h2>
+          <p>BotGi Tech School - Low-Voltage & Smart Automation Certification</p>
+          <div class="contact-info">
+            <span>🌐 &nbsp;www.botgi.com</span>
+            <span>📧 &nbsp;admissions@botgi.com</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-footer">
+      <img src="../assets/BotGI_logo_with_white_background-removebg-preview.png" alt="BotGi Logo" class="brand-logo">
+      <span class="page-number">17 / 17</span>
+    </div>
+  </div>
+
+  <!-- Navigation Controls for Browser View -->
+  <div class="nav-controls">
+    <button class="nav-btn" onclick="prevSlide()">Previous</button>
+    <button class="nav-btn" onclick="nextSlide()">Next</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 17;
+
+    function showSlide(index) {
+      if (index < 1 || index > totalSlides) return;
+      document.getElementById(`slide-${currentSlide}`).style.display = 'none';
+      document.getElementById(`slide-${index}`).style.display = 'flex';
+      currentSlide = index;
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) {
+        showSlide(currentSlide + 1);
+      }
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) {
+        showSlide(currentSlide - 1);
+      }
+    }
+
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    // Initialize presentation mode
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!window.matchMedia('print').matches) {
+        for (let i = 2; i <= totalSlides; i++) {
+          document.getElementById(`slide-${i}`).style.display = 'none';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

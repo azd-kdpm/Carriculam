@@ -1,0 +1,901 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Practical Curriculum Design: Security, Automation, & IoT Systems</title>
+<style>
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    color: #333333;
+    line-height: 1.3;
+    padding: 0;
+    margin: 0;
+  }
+  h1 {
+    font-size: 22px;
+    color: #1a1a1a;
+    border-bottom: 2px solid #eaeaea;
+    padding-bottom: 6px;
+    margin-top: 25px;
+  }
+  h2 {
+    font-size: 18px;
+    color: #2c3e50;
+    margin-top: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 4px;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 14px;
+    color: #34495e;
+    margin-top: 15px;
+    page-break-after: avoid;
+  }
+  table {
+    width: 100%;
+    max-width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 11px;
+    page-break-inside: auto;
+  }
+  th {
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    font-weight: 600;
+    border: 1px solid #dee2e6;
+    padding: 6px 8px;
+    text-align: left;
+  }
+  td {
+    border: 1px solid #dee2e6;
+    padding: 6px 8px;
+    vertical-align: top;
+    line-height: 1.4;
+  }
+  tr:nth-child(even) {
+    background-color: #fdfdfd;
+  }
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+  ul {
+    padding-left: 20px;
+    margin: 8px 0;
+  }
+  li {
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+  .alert {
+    padding: 10px;
+    margin: 12px 0;
+    border-left: 5px solid;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+    font-size: 12px;
+  }
+  .alert-important {
+    border-left-color: #d9534f;
+    background-color: #fdf7f7;
+  }
+  .alert-tip {
+    border-left-color: #5cb85c;
+    background-color: #f4faf4;
+  }
+  .alert-note {
+    border-left-color: #5bc0de;
+    background-color: #f4fafd;
+  }
+  hr {
+    border: 0;
+    border-top: 1px solid #eee;
+    margin: 25px 0;
+  }
+  p {
+    font-size: 11px;
+    margin: 6px 0;
+  }
+  @media print {
+    body {
+      font-size: 9px;
+    }
+    h1, h2, h3 {
+      page-break-after: avoid;
+    }
+  }
+</style>
+</head>
+<body>
+<h1>Practical Curriculum Design: Security, Automation, & IoT Systems</h1>
+<p>Total Course Duration: 16 Weeks (80 Days)</p>
+<p>Time Commitment: 5 Days/Week, 2 Hours/Day (Total: 160 Hours)</p>
+<p>Delivery Model: Practical-Oriented (30% Concepts/Theory, 70% Hands-On Labs)</p>
+<h2>1. Overall Module Weightage & Time Allocation</h2>
+<p>To ensure students are industry-ready, the curriculum is divided into 4 Core Modules plus dedicated capstone Practical Labs. The time allocation is weighted based on the complexity of installation, programming requirements, and market demand.</p>
+<table><thead><tr>
+<th>Module</th>
+<th>Duration</th>
+<th>Total Hours</th>
+<th>Weightage (%)</th>
+<th>Primary Focus</th>
+</tr></thead><tbody>
+<tr>
+<td>Module 1: Electrical & Networking</td>
+<td>3 Weeks</td>
+<td>30 Hours</td>
+<td>18.75%</td>
+<td>Safe power wiring, network configuration, cabling</td>
+</tr>
+<tr>
+<td>Module 2: Professional CCTV Systems</td>
+<td>3.5 Weeks</td>
+<td>35 Hours</td>
+<td>21.875%</td>
+<td>Camera selection, storage design, analytics, IP configuration</td>
+</tr>
+<tr>
+<td>Module 3: Security & Building Automation</td>
+<td>3.5 Weeks</td>
+<td>35 Hours</td>
+<td>21.875%</td>
+<td>Commercial security systems, fire alarms, access control</td>
+</tr>
+<tr>
+<td>Module 4: Smart Home, IoT & Business</td>
+<td>4 Weeks</td>
+<td>40 Hours</td>
+<td>25.00%</td>
+<td>Home protocols, system integration, entrepreneurship, sales</td>
+</tr>
+<tr>
+<td>Professional Practical Labs (Capstone)</td>
+<td>2 Weeks</td>
+<td>20 Hours</td>
+<td>12.50%</td>
+<td>Integrated system deployment, splicing, troubleshooting</td>
+</tr>
+<tr>
+<td>Total</td>
+<td><strong>16 Weeks</strong></td>
+<td><strong>160 Hours</strong></td>
+<td><strong>100%</strong></td>
+<td><strong>Comprehensive practical competency</strong></td>
+</tr>
+</tbody></table>
+<h2>2. Detailed Topic Weightage & Hours Breakdown</h2>
+<p>Below is the recommended weightage for each topic within the modules, structured as compact 7-column tables indicating weeks (Wk), hours (Hrs), sessions (Sess), focus, materials required, and practical session works.</p>
+<h3>Module 1: Electrical & Networking (30 Hours)</h3>
+<p>This module establishes the foundational hardware and network infrastructure.</p>
+<table><thead><tr>
+<th>Wk</th>
+<th>Topic</th>
+<th>Hrs</th>
+<th>Sess</th>
+<th>Focus & Practical Scope</th>
+<th>Materials Required</th>
+<th>Practical Session Works</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>W1</strong></td>
+<td><strong>Electrical Fundamentals (AC/DC)</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Concept of voltage and current<br>- Resistance basics<br>- Series/parallel loop topologies</td>
+<td>- Modular switch & 3-pin socket<br>- Bulb indicator & PVC base<br>- 1.5 sq mm copper wire<br>- Digital multimeter</td>
+<td>- Mount switch/socket on board<br>- Wire live/neutral loop connections<br>- Verify 230V AC socket output voltage</td>
+</tr>
+<tr>
+<td><strong>W1</strong></td>
+<td><strong>Electrical Safety & PPE</strong></td>
+<td>1 Hr</td>
+<td>0.5</td>
+<td>- Shock current threshold levels<br>- LOTO isolation guidelines<br>- Safety breaker topologies</td>
+<td>- Single-phase DB board<br>- Double-pole MCB breaker<br>- 30mA RCCB leakage safety<br>- 60W test lamp & holder</td>
+<td>- Install MCB & RCCB inside DB<br>- Wire switchboard through breakers<br>- Connect test lamp Phase-to-Earth to trip RCCB</td>
+</tr>
+<tr>
+<td><strong>W1</strong></td>
+<td><strong>Earthing & Lightning Protection</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Earth pit low resistance path<br>- Chemical vs salt-charcoal pits<br>- Surge Protection Devices (SPDs)</td>
+<td>- GI earth pipe & grounding wire<br>- Brass connection bolts<br>- Salt, charcoal, sand backfill<br>- Series test lamp</td>
+<td>- Connect ground wire clamp to pipe<br>- Layout backfill layers in test pit<br>- Perform Phase-to-Earth bulb glow test</td>
+</tr>
+<tr>
+<td><strong>W1</strong></td>
+<td><strong>Reading Electrical Drawings</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Standard legend electrical symbols<br>- Single-Line Diagrams (SLDs)<br>- Schematic terminal coordinates</td>
+<td>- Site wiring schematics<br>- 24V relay & 12V EM lock<br>- Cable wire ferrule tags<br>- Hand crimping tool</td>
+<td>- Trace active paths on 3-page schematic<br>- Wire relay and lock matching print terminals<br>- Crimp and ferrule wire ends correctly</td>
+</tr>
+<tr>
+<td><strong>W1</strong></td>
+<td><strong>Cable Selection & Management</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- AWG vs metric sq mm sizing<br>- Line voltage drop calculations<br>- Conduit 40% fill rule</td>
+<td>- PVC conduits, spacer clips, plugs<br>- Manual bending spring<br>- Binding wire & junction boxes<br>- PVC insulation tape</td>
+<td>- Mount PVC conduits onto board<br>- Bend $90^\circ$ curves using spring<br>- Pull wires using binding wire<br>- Make pigtail joints inside box & tape-wrap</td>
+</tr>
+<tr>
+<td><strong>W1/2</strong></td>
+<td><strong>Power Supply & SMPS</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Linear vs SMPS conversion<br>- Overload capacity safety margins<br>- Battery backup sizing calculations</td>
+<td>- 12V 10A CCTV SMPS unit<br>- Multi-output block<br>- 12V 7Ah SLA battery<br>- Digital multimeter</td>
+<td>- Mount and wire SMPS input terminals<br>- Adjust output pot to 12.2V DC<br>- Connect backup battery and test load runtime</td>
+</tr>
+<tr>
+<td><strong>W2</strong></td>
+<td><strong>Multimeter Practical</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- AC/DC voltage dial settings<br>- Continuity test limits<br>- Insulation resistance checks</td>
+<td>- Multimeter & probes<br>- Test lamp<br>- Junction box with simulated faults</td>
+<td>- Measure Phase-Neutral/Phase-Earth/Neutral-Earth<br>- Use continuity mode to find broken cores<br>- Hunt for short-circuit faults inside box</td>
+</tr>
+<tr>
+<td><strong>W2</strong></td>
+<td><strong>IP Addressing & Subnetting</strong></td>
+<td>4 Hrs</td>
+<td>2.0</td>
+<td>- IPv4 subnet CIDR masks (/24, /28)<br>- Default gateways & static IPs<br>- Private RFC 1918 ranges</td>
+<td>- Laptops (Windows)<br>- Cat6 network patch cords<br>- 8-port network switch<br>- Marker board</td>
+<td>- Set up static IPs on two laptops<br>- Verify end-to-end ping connection<br>- Diagnose and resolve wrong gateway settings</td>
+</tr>
+<tr>
+<td><strong>W2/3</strong></td>
+<td><strong>Router & Switch Configuration</strong></td>
+<td>4 Hrs</td>
+<td>2.0</td>
+<td>- WAN vs LAN interface setup<br>- NAT & Port forwarding rules<br>- Wi-Fi SSID and WPA2 setup</td>
+<td>- Dual-band Wi-Fi router<br>- 8-port network switch<br>- Ethernet cables & laptops</td>
+<td>- Access router administrator panel<br>- Configure IP pool and reservation<br>- Set up port forwarding for external cameras<br>- Calibrate Wi-Fi channel spacing</td>
+</tr>
+<tr>
+<td><strong>W3</strong></td>
+<td><strong>VLAN Basics</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- VLAN broadcast segment separation<br>- IEEE 802.1Q tagging standards<br>- Access vs Trunk port routing</td>
+<td>- Layer 2 Managed switch<br>- Internet router<br>- Laptops & patch cords</td>
+<td>- Access managed switch GUI console<br>- Create VLAN 10 (Data) & VLAN 20 (CCTV)<br>- Assign specific access ports & configure trunk link</td>
+</tr>
+<tr>
+<td><strong>W3</strong></td>
+<td><strong>PoE & PoE Switches</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- 802.3af/at/bt wattage levels<br>- Active vs Passive PoE<br>- Switch power budgets</td>
+<td>- PoE Switch<br>- PoE IP camera & non-PoE camera<br>- PoE splitter<br>- Multimeter</td>
+<td>- Measure active PoE pin voltages<br>- Calculate total camera load budget<br>- Wire non-PoE camera using splitter</td>
+</tr>
+<tr>
+<td><strong>W3</strong></td>
+<td><strong>Fiber Optic Basics</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Single-mode vs Multi-mode fiber<br>- SFP transceiver standard speeds<br>- Optical media converter setup</td>
+<td>- SC-LC fiber patch cords<br>- Fiber media converters<br>- Gigabit switches with SFP ports<br>- SFP modules</td>
+<td>- Install SFPs in switch ports<br>- Link switches using fiber patch cable<br>- Verify fiber link status on media converters</td>
+</tr>
+<tr>
+<td><strong>W3</strong></td>
+<td><strong>Network Troubleshooting</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Diagnostic ping/tracert tools<br>- Network cable testers<br>- resolving IP clash loop faults</td>
+<td>- RJ45 connectors & Cat6 cable<br>- RJ45 crimper tool<br>- LAN wiremap tester</td>
+<td>- Crimp Cat6 cable & test with wiremap tester<br>- Troubleshoot induced network loop storm<br>- Trace routes using Command Prompt</td>
+</tr>
+</tbody></table>
+<h3>Module 2: Professional CCTV Systems (35 Hours)</h3>
+<p>CCTV is one of the highest-demand skills. This module balances video analytics design with hardware setup.</p>
+<table><thead><tr>
+<th>Wk</th>
+<th>Topic</th>
+<th>Hrs</th>
+<th>Sess</th>
+<th>Focus & Practical Scope</th>
+<th>Materials Required</th>
+<th>Practical Session Works</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>W4</strong></td>
+<td><strong>Analog & IP CCTV</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Coaxial vs Cat6 layouts<br>- HD-TVI analog protocols<br>- Video balun impedance matching</td>
+<td>- HD-TVI Analog camera & IP Dome<br>- Coaxial cable & Cat6 spool<br>- BNC connectors & video baluns</td>
+<td>- Crimp BNC connector on coaxial cable<br>- Wire video baluns over Cat6 runs<br>- Connect feeds to DVR/NVR to compare latency</td>
+</tr>
+<tr>
+<td><strong>W4</strong></td>
+<td><strong>Camera Selection & Design</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- Camera form factors (Dome, Bullet)<br>- Low-light lux ratings<br>- DORI standard guidelines</td>
+<td>- Dome, Bullet, and Turret cameras<br>- Wall bracket mounts<br>- Lux level datasheets</td>
+<td>- Mount Dome and Bullet cameras on brackets<br>- Verify WDR backlight compensation settings<br>- Test camera output under dark/low lux settings</td>
+</tr>
+<tr>
+<td><strong>W4</strong></td>
+<td><strong>Lens & Field of View</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Focal length vs angle of view<br>- Fixed vs varifocal lenses<br>- Lens calculation software</td>
+<td>- Fixed cameras (2.8mm & 4mm)<br>- Motorized varifocal camera<br>- Lens calculator mobile application</td>
+<td>- Compare FOV angles of 2.8mm and 4mm lenses<br>- Calibrate varifocal zoom/focus remotely<br>- Run lens calculations for a mock warehouse</td>
+</tr>
+<tr>
+<td><strong>W4</strong></td>
+<td><strong>DVR, NVR & Hybrid Systems</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- NVR vs DVR architecture<br>- SATA storage interfaces<br>- PoE ports integration</td>
+<td>- 8-ch NVR & 8-ch DVR<br>- 1TB Surveillance HDD<br>- SATA cables & screwdriver</td>
+<td>- Install hard drive inside NVR casing<br>- Connect SATA power and data cables<br>- Initialize HDD and configure recording profiles</td>
+</tr>
+<tr>
+<td><strong>W5</strong></td>
+<td><strong>RAID & Storage Design</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- RAID 0, 1, 5, 10 redundancy<br>- Storage retention calculators<br>- surveillance vs desktop HDDs</td>
+<td>- Laptops<br>- Storage calculator tool<br>- Multi-bay test NVR</td>
+<td>- Set up a RAID 1 backup array inside NVR<br>- Calculate storage storage for 10 IP cameras<br>- Test hot-swapping a HDD in RAID array</td>
+</tr>
+<tr>
+<td><strong>W5</strong></td>
+<td><strong>ONVIF Standards</strong></td>
+<td>1 Hr</td>
+<td>0.5</td>
+<td>- Profile S, G, and T differences<br>- Cross-brand device compatibility<br>- ONVIF discovery protocols</td>
+<td>- Hikvision NVR & Dahua IP camera<br>- POE switch & patch cords</td>
+<td>- Link Dahua IP camera to Hikvision NVR<br>- Configure connection via ONVIF Profile S<br>- Test video feed and PTZ command link</td>
+</tr>
+<tr>
+<td><strong>W5</strong></td>
+<td><strong>Video Compression (H.264/H.265/H.265+)</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- H.264 vs H.265 vs H.265+ codecs<br>- CBR vs VBR bandwidth control<br>- FPS impact on storage</td>
+<td>- IP camera & NVR<br>- Network bandwidth monitoring app</td>
+<td>- Change camera compression profile to H.265+<br>- Measure live bandwidth drop compared to H.264<br>- Configure variable bitrate threshold settings</td>
+</tr>
+<tr>
+<td><strong>W5</strong></td>
+<td><strong>AI Analytics</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Line crossing rules setup<br>- Intrusion detection parameters<br>- human vs vehicle classification</td>
+<td>- Smart IP camera & NVR<br>- Laptop client</td>
+<td>- Define line-crossing parameters on NVR<br>- Configure intrusion detection alert zone<br>- Test and record human/vehicle alarm filter</td>
+</tr>
+<tr>
+<td><strong>W5</strong></td>
+<td><strong>ANPR (Automatic Number Plate Recognition)</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- ANPR camera mounting angles<br>- Shutter speed configuration<br>- Whitelist database triggers</td>
+<td>- ANPR camera & NVR<br>- Test vehicle license plates<br>- Laptop client</td>
+<td>- Adjust camera shutter speed to 1/1000s<br>- Align camera angle within $30^\circ$ limit<br>- Upload whitelist database to trigger relay lock</td>
+</tr>
+<tr>
+<td><strong>W5/6</strong></td>
+<td><strong>Facial Recognition</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Face pixels enrollment criteria<br>- Matching similarity thresholds<br>- Database blacklisting rules</td>
+<td>- Face recognition camera & NVR<br>- Face database photos<br>- Laptop client</td>
+<td>- Enroll student faces into NVR database<br>- Configure facial similarity limit to 85%<br>- Test blacklist matching alert sound trigger</td>
+</tr>
+<tr>
+<td><strong>W6</strong></td>
+<td><strong>ColorVu, AcuSense & Thermal Cameras</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- ColorVu supplemental lighting<br>- AcuSense classification logic<br>- Thermal fire point detection</td>
+<td>- ColorVu camera & AcuSense camera<br>- Handheld heat source (solder iron)</td>
+<td>- Configure ColorVu night warm light settings<br>- Verify AcuSense false-alarm tree-branch filter<br>- Monitor heat spot alert on thermal camera feed</td>
+</tr>
+<tr>
+<td><strong>W6</strong></td>
+<td><strong>PTZ Cameras</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- PTZ pan/tilt mechanics<br>- Preset coordinates setup<br>- Auto-tracking logic</td>
+<td>- PTZ Dome camera<br>- Controller joystick<br>- NVR</td>
+<td>- Connect PTZ control via RS485/IP<br>- Program 5 preset camera locations<br>- Configure a continuous scanning patrol tour</td>
+</tr>
+<tr>
+<td><strong>W6</strong></td>
+<td><strong>Remote Viewing & Cloud</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- Cloud P2P server connection<br>- Dynamic DNS (DDNS) setup<br>- Mobile client apps configurations</td>
+<td>â€¢ NVR & internet router<br>â€¢ Phone with Hik-Connect/DMSS app<br>â€¢ Laptop client</td>
+<td>- Link NVR to Cloud P2P portal<br>- Scan QR code to add device on mobile app<br>- Set up port-forwarding for DDNS connection</td>
+</tr>
+<tr>
+<td><strong>W6/7</strong></td>
+<td><strong>Cybersecurity</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Disabling default ports (80, 554)<br>- Password complexity criteria<br>- HTTPS certificate creation</td>
+<td>- IP camera, NVR, laptop</td>
+<td>- Modify default HTTP/RTSP ports on camera<br>- Disable UPnP network settings on NVR<br>- Install HTTPS security certificate on camera</td>
+</tr>
+<tr>
+<td><strong>W7</strong></td>
+<td><strong>Troubleshooting & Maintenance</strong></td>
+<td>4 Hrs</td>
+<td>2.0</td>
+<td>- No-video loop isolation<br>- Resolving IP address clashes<br>- IR halo ring cleaning</td>
+<td>- Multimeter, lens cleaning fluid<br>- Faulty cameras<br>- IP scanner software</td>
+<td>- Troubleshoot camera offline fault on bench<br>- Resolve duplicate IP address clashes<br>- Perform lens cleaning to remove IR light halo</td>
+</tr>
+</tbody></table>
+<h3>Module 3: Security & Building Automation (35 Hours)</h3>
+<p>This module covers commercial low-voltage (ELV) systems.</p>
+<table><thead><tr>
+<th>Wk</th>
+<th>Topic</th>
+<th>Hrs</th>
+<th>Sess</th>
+<th>Focus & Practical Scope</th>
+<th>Materials Required</th>
+<th>Practical Session Works</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>W7</strong></td>
+<td><strong>Video Door Phone</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- 2-wire vs IP VDP layouts<br>- Lock relay integrations<br>- SIP apartment routing</td>
+<td>- VDP outdoor call station & monitor<br>- 12V solenoid lock<br>- 4-core signal cable</td>
+<td>- Wire outdoor call station to indoor monitor<br>- Connect lock release relay to solenoid lock<br>- Test voice/video communication & lock release</td>
+</tr>
+<tr>
+<td><strong>W7</strong></td>
+<td><strong>Access Control</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- Wiegand controller connections<br>- Card reader configurations<br>- Exit push-button loops</td>
+<td>- Access control panel<br>- RFID card reader & exit button<br>- 12V electromagnetic lock<br>- 12V 5A power supply</td>
+<td>- Wire RFID reader and exit button to controller<br>- Terminate EM lock power supply lines to panel<br>- Register RFID cards & test access control loop</td>
+</tr>
+<tr>
+<td><strong>W8</strong></td>
+<td><strong>Biometric Systems</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Fingerprint/Facial scanner metrics<br>- Standalone vs Network panels<br>- Access software log retrieval</td>
+<td>- Standalone biometric reader<br>- RFID cards & network switch<br>- Laptop with management software</td>
+<td>- Enroll fingerprints and faces on reader panel<br>- Configure network IP settings on reader<br>- Retrieve access database log onto laptop</td>
+</tr>
+<tr>
+<td><strong>W8</strong></td>
+<td><strong>Smart Locks</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- EM locks fail-safe vs fail-secure<br>- Lock mounting bracket sizing<br>- Flyback protection diode loop</td>
+<td>- EM lock & Drop-bolt lock<br>- L/Z mounting brackets<br>- 1N4007 flyback diode<br>- Screwdriver set</td>
+<td>- Mount L/Z bracket to mock door frame<br>- Install EM lock on bracket plates<br>- Terminate flyback diode across lock terminals</td>
+</tr>
+<tr>
+<td><strong>W8</strong></td>
+<td><strong>Boom Barrier</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Barrier motor balance springs<br>- Loop detector vehicle loops<br>- Photo-beam safety sensors</td>
+<td>- Boom barrier gate unit<br>- Loop detector card<br>- Loop coil wire spool<br>- Safety photo-beams</td>
+<td>- Wire loop detector card to barrier board<br>- Lay loop wire coil in test pattern on floor<br>- Test barrier safety auto-reverse using loop</td>
+</tr>
+<tr>
+<td><strong>W8</strong></td>
+<td><strong>Gate Automation</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Sliding vs swing motors<br>- Gear rack alignment rules<br>- Remote control pairing</td>
+<td>- Sliding gate motor & gear rack<br>- Limit switch contacts<br>- Remote transmitter keyfobs</td>
+<td>- Align gear rack to sliding motor pinion<br>- Wire magnetic limit switches to controller<br>- Pair RF remote keyfobs to receiver board</td>
+</tr>
+<tr>
+<td><strong>W8/9</strong></td>
+<td><strong>Intruder Alarm Systems</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- Hardwired EOL resistor loops<br>- PIR motion detector zones<br>- Arming profiles setup</td>
+<td>- Alarm panel unit<br>- PIR motion detector & door contacts<br>- EOL resistors & warning siren</td>
+<td>- Wire PIR sensor to alarm panel zone terminals<br>- Connect EOL resistor to zone loop contact<br>- Configure panel arm profiles & trigger alarm</td>
+</tr>
+<tr>
+<td><strong>W9</strong></td>
+<td><strong>Fire Alarm Systems</strong></td>
+<td>4 Hrs</td>
+<td>2.0</td>
+<td>- Conventional vs addressable panels<br>- Smoke & heat detector layouts<br>- Trip integration relays</td>
+<td>- Conventional fire alarm panel<br>- Smoke detector & heat detector<br>- Fire hooter & EOL capacitor<br>- Test smoke aerosol spray</td>
+<td>- Wire smoke detector in zone terminal loop<br>- Install EOL resistor on final zone terminal<br>- Test trigger using smoke aerosol spray</td>
+</tr>
+<tr>
+<td><strong>W9</strong></td>
+<td><strong>PA/BGM Systems</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- 100V line power step-up/down<br>- Speaker impedance matching<br>- Microphone override priority</td>
+<td>- 100V PA amplifier<br>- Ceiling speaker with LMT<br>- Paging microphone</td>
+<td>- Connect ceiling speaker on 100V line tap<br>- Calculate speaker wattage match to amp load<br>- Test microphone voice override trigger</td>
+</tr>
+<tr>
+<td><strong>W9</strong></td>
+<td><strong>Intercom Systems</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- PABX trunk/extension ports<br>- IP PBX SIP routing loops<br>- Extension programming codes</td>
+<td>- Analog PABX unit (1x4)<br>- Analog phone instruments<br>- RJ11 cables & punch-down tool</td>
+<td>- Terminate extension lines onto PABX board<br>- Configure extension call group settings<br>- Run extension call forwarding test drills</td>
+</tr>
+<tr>
+<td><strong>W9/10</strong></td>
+<td><strong>Elevator Access Control</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Floor relay board connections<br>- Restricted access mapping<br>- Emergency override relays</td>
+<td>- Access controller<br>- 8-ch relay output board<br>- LED indicators & laptop</td>
+<td>- Wire relay outputs to simulate elevator floor buttons<br>- Program access level restrictions in software<br>- Trigger fire input loop to release all relays</td>
+</tr>
+<tr>
+<td><strong>W10</strong></td>
+<td><strong>Visitor Management</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Badging card printing setup<br>- Barcode scanning checks<br>- Database logging parameters</td>
+<td>- PC with visitor software<br>- Webcam & USB barcode scanner<br>- Thermal badge printer</td>
+<td>- Install visitor management desktop client<br>- Configure webcam visitor photo capture<br>- Generate and print barcode visitor pass</td>
+</tr>
+<tr>
+<td><strong>W10</strong></td>
+<td><strong>Hotel Lock Systems</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Mifare card encryption logic<br>- Energy saver room switches<br>- PMS software connectivity</td>
+<td>- Hotel lock unit & card encoder<br>- Mifare cards<br>- Energy saver room switch</td>
+<td>- Encode check-in card using hotel software<br>- Verify card opens offline hotel door lock<br>- Test energy saver switch room power activation</td>
+</tr>
+<tr>
+<td><strong>W10</strong></td>
+<td><strong>Parking Management</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Ticket dispenser systems<br>- Loop card collector wiring<br>- Workstation parking logic</td>
+<td>- Ticket dispenser unit<br>- Loop coil wire spool<br>- Barrier gate cabinet<br>- Printer</td>
+<td>- Wire ticket dispenser card to barrier board<br>- Simulate loop input to print parking ticket<br>- Test ticket barcode verification loop</td>
+</tr>
+<tr>
+<td><strong>W10</strong></td>
+<td><strong>Basic Building Management Systems (BMS)</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- DDC input/output configurations<br>- Modbus/BACnet standard setups<br>- Sensor signal calibrations</td>
+<td>- DDC controller unit<br>- Temperature sensor probe<br>- Laptop with BMS software</td>
+<td>- Terminate temp sensor to DDC analog input<br>- Calibrate sensor voltage scaling parameters<br>- Verify Modbus register map readouts on PC</td>
+</tr>
+</tbody></table>
+<h3>Module 4: Smart Home, IoT & Business (40 Hours)</h3>
+<p>Smart Home integration requires high logical skill (programming systems), and establishing the business requires commercial execution.</p>
+<table><thead><tr>
+<th>Wk</th>
+<th>Topic</th>
+<th>Hrs</th>
+<th>Sess</th>
+<th>Focus & Practical Scope</th>
+<th>Materials Required</th>
+<th>Practical Session Works</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>W11</strong></td>
+<td><strong>KNX Fundamentals</strong></td>
+<td>4 Hrs</td>
+<td>2.0</td>
+<td>- KNX bus TP1 green wiring<br>- ETS system configurations<br>- Group addressing principles</td>
+<td>- KNX power supply & choke<br>- KNX switch actuator module<br>- KNX wall switch panel<br>- Green bus wire & ETS laptop</td>
+<td>- Wire KNX devices in standard bus loop<br>- Configure group addresses inside ETS software<br>- Program KNX switch to activate actuator light</td>
+</tr>
+<tr>
+<td><strong>W11</strong></td>
+<td><strong>Wi-Fi Smart Home</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Tuya gateway configurations<br>- Neutral vs capacitor wiring<br>- Router client limit troubleshooting</td>
+<td>- Wi-Fi smart switch modules<br>- Tuya Zigbee hub gateway<br>- Smart plug socket & router</td>
+<td>- Wire Tuya switch on test board setup<br>- Link smart switch to Tuya mobile application<br>- Configure voice linking to Google Assistant</td>
+</tr>
+<tr>
+<td><strong>W11</strong></td>
+<td><strong>Zigbee & Z-Wave</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- Mesh network architectures<br>- Coordinator vs router roles<br>- Low power sensor sleep states</td>
+<td>- Zigbee USB coordinator hub<br>- Zigbee motion sensor & bulbs<br>- Laptops</td>
+<td>- Form a Zigbee mesh network via coordinator<br>- Add Zigbee motion sensor and smart bulb<br>- Test mesh self-healing by powering off router</td>
+</tr>
+<tr>
+<td><strong>W11/12</strong></td>
+<td><strong>Matter & Thread</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Matter unified standard layers<br>- Thread border router mesh<br>- Multi-admin pairing setups</td>
+<td>- Apple HomePod Mini (Thread)<br>- Matter smart plug module<br>- Phone</td>
+<td>- Connect Thread plug to HomePod border router<br>- Pair device to Google Home using Matter code<br>- Test control from iOS and Android devices</td>
+</tr>
+<tr>
+<td><strong>W12</strong></td>
+<td><strong>Alexa & Google Home Integration</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Cloud-to-Cloud OAuth linking<br>- Custom routine scripting<br>- Voice profile calibrations</td>
+<td>- Amazon Echo Dot speaker<br>- Smart switches & phone</td>
+<td>- Link smart home app skills to Amazon Alexa<br>- Write a "Good Night" routine for switches<br>- Calibrate voice commands trigger triggers</td>
+</tr>
+<tr>
+<td><strong>W12</strong></td>
+<td><strong>Home Assistant</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- Local HAOS hub installations<br>- HACS custom integrations<br>- YAML script automation rules</td>
+<td>- Raspberry Pi 4 (HAOS ready)<br>- Zigbee sensors & router</td>
+<td>- Set up Home Assistant configuration panel<br>- Integrate Zigbee coordinator dongle<br>- Write automation (turn on light when motion)</td>
+</tr>
+<tr>
+<td><strong>W12</strong></td>
+<td><strong>Smart Lighting & Curtain</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Phase dimming (leading/trailing)<br>- Curtain motor track calibrations<br>- Switch relay wiring</td>
+<td>- Smart dimmer module & lamp<br>- Curtain motor with track spool<br>- Control panel switch</td>
+<td>- Wire smart dimmer module to lamp load<br>- Set curtain motor physical open/close limits<br>- Program manual switch override controls</td>
+</tr>
+<tr>
+<td><strong>W12/13</strong></td>
+<td><strong>Smart Irrigation & Energy Monitoring</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Solenoid valve wiring loops<br>- Non-invasive CT clamp setup<br>- Energy dashboard settings</td>
+<td>- 24VAC water solenoid valve<br>- Smart current transformer clamp<br>- Main DB panel board</td>
+<td>- Wire water valve to smart switch relay board<br>- Install current clamp on mains power line<br>- Verify load metrics display on HA dashboard</td>
+</tr>
+<tr>
+<td><strong>W13</strong></td>
+<td><strong>Solar CCTV & IoT Fundamentals</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- MPPT charge controller sizing<br>- Battery depth of discharge calculations<br>- 4G industrial router configurations</td>
+<td>- Solar panel & MPPT controller<br>- 12V LiFePO4 battery pack<br>- 4G LTE SIM router</td>
+<td>- Wire solar panel to MPPT charger terminals<br>- Terminate charger line to LiFePO4 battery<br>- Configure 4G SIM APN and test failover link</td>
+</tr>
+<tr>
+<td><strong>W13</strong></td>
+<td><strong>Site Survey & BOQ/Quotation</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- Site surveys checklists design<br>- BOQ template structures<br>- Pricing markup margins</td>
+<td>- Site survey templates sheets<br>- Laser distance meter tape<br>- Laptops with Excel</td>
+<td>- Perform physical room site survey measurements<br>- Map camera node locations on layout sheet<br>- Generate formal BOQ with hardware margins</td>
+</tr>
+<tr>
+<td><strong>W13</strong></td>
+<td><strong>Project Planning & Installation Standards</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- Conduit path planning<br>- Height mounting standards<br>- Cable labeling schemas</td>
+<td>- Wire label printer & markers<br>- PVC conduit conduits<br>- Cable binders</td>
+<td>- Draw conduit pathways layouts for villa plan<br>- Print and apply wire tags matching drawings<br>- Secure cables with velcro straps inside rack</td>
+</tr>
+<tr>
+<td><strong>W13/14</strong></td>
+<td><strong>Testing, Commissioning & AMC</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Loop testing logs design<br>- Handover checklist templates<br>- AMC contract structures</td>
+<td>- Handover checklists forms<br>- AMC contract templates</td>
+<td>- Complete mock system handover checklist<br>- Draft comprehensive system AMC proposal<br>- Conduct client training walkthrough script</td>
+</tr>
+<tr>
+<td><strong>W14</strong></td>
+<td><strong>Customer Support & Sales/Negotiation</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- SLA support ticketing guidelines<br>- Handling pricing objections<br>- Value-based sales pitches</td>
+<td>- SLA ticket templates<br>- Sales script worksheets</td>
+<td>- Roleplay client sales negotiations on site<br>- Design support SLA ticket priority grid<br>- Practice pitching custom design advantages</td>
+</tr>
+<tr>
+<td><strong>W14</strong></td>
+<td><strong>Digital Marketing & Business Automation</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- GBP local SEO optimization<br>- WhatsApp catalog setups<br>- Automated quick replies</td>
+<td>- PC client & smartphone<br>- WhatsApp Business profile<br>- Google Business Profile</td>
+<td>- Setup and optimize Google Business Profile<br>- Create WhatsApp Business product catalogs<br>- Write automated greeting/away replies templates</td>
+</tr>
+<tr>
+<td><strong>W14</strong></td>
+<td><strong>Business Setup & Entrepreneurship</strong></td>
+<td>1 Hr</td>
+<td>0.5</td>
+<td>- Company registration laws<br>- Distributor registrations<br>- Markup margins calculations</td>
+<td>- Dealer registration forms<br>- Business plan template</td>
+<td>- Complete dealer registration forms<br>- Calculate project startup costs and cash flow<br>- Outline tax licensing guidelines (GST/VAT)</td>
+</tr>
+<tr>
+<td><strong>W14</strong></td>
+<td><strong>Placement Training & Career Prep</strong></td>
+<td>4 Hrs</td>
+<td>2.0</td>
+<td>- Resume designs layouts<br>- LinkedIn profile optimizations<br>- Mock technical interviews</td>
+<td>- Resume templates sheets<br>- Job search check list</td>
+<td>- Draft professional resume with ELV portfolio<br>- Setup and optimize LinkedIn career profile<br>- Conduct mock technical interview sessions</td>
+</tr>
+</tbody></table>
+<h3>Professional Practical Labs (20 Hours)</h3>
+<table><thead><tr>
+<th>Week</th>
+<th>Lab Name</th>
+<th>Hours</th>
+<th>Sessions</th>
+<th>Target Lab Activities</th>
+<th>Materials Required</th>
+<th>Practical Session Works</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>W15</strong></td>
+<td><strong>Network Rack Setup & Fiber Splicing</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Rack unit layout arrangements<br>- Fiber core stripping & cleaving<br>- Fusion splicing operations</td>
+<td>- 9U wall-mount network rack<br>- patch panels & Cat6 cable spool<br>- Fiber splicer, cleaver, pigtails</td>
+<td>- Mount patch panels inside 9U rack cabinet<br>- Strip and cleave fiber core clean using tools<br>- Perform fusion splice and check core DB loss</td>
+</tr>
+<tr>
+<td><strong>W15</strong></td>
+<td><strong>Complete Office CCTV Installation</strong></td>
+<td>4 Hrs</td>
+<td>2.0</td>
+<td>- Coaxial/Cat6 routing runs<br>- Camera hardware mountings<br>- NVR network config</td>
+<td>- 4 IP Dome & 4 analog cameras<br>- NVR, DVR, Cat6 patch panel<br>- BNC/RJ45 jacks, display screen</td>
+<td>- Run cables from cameras to central DB rack<br>- Mount cameras, terminate BNC/RJ45 ends<br>- Power up NVR, initialize HDD, configure feeds</td>
+</tr>
+<tr>
+<td><strong>W15</strong></td>
+<td><strong>Villa Smart Home Installation</strong></td>
+<td>4 Hrs</td>
+<td>2.0</td>
+<td>- Switches loops wiring<br>- HAOS hub installations<br>- Smart device integrations</td>
+<td>- Raspberry Pi, switch modules<br>- Dimmer modules, curtain track<br>- Amazon Echo Dot speaker</td>
+<td>- Wire switch board modules on wall board<br>- Install HAOS on Pi, integrate switch relay<br>- Configure Alexa voice routine triggers</td>
+</tr>
+<tr>
+<td><strong>W16</strong></td>
+<td><strong>Access Control & Video Door Phone Setup</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- VDP wiring integrations<br>- Access panel loop wirings<br>- EM locks bracket setups</td>
+<td>- Access board, RFID reader panel<br>- EM lock, VDP monitor station<br>- 1.5mm wire coils, screwdriver</td>
+<td>- Connect outdoor call station to VDP monitor<br>- Wire access panel release relay to EM lock<br>- Register RFID cards & test access lock loop</td>
+</tr>
+<tr>
+<td><strong>W16</strong></td>
+<td><strong>Gate Automation & Boom Barrier Setup</strong></td>
+<td>3 Hrs</td>
+<td>1.5</td>
+<td>- Gear rack pinion alignments<br>- Loop coil floor layouts<br>- RF remote key pairings</td>
+<td>- Gate motor, gears, barrier cabinet<br>- Loop detector card, loop wire<br>- RF keyfobs remotes</td>
+<td>- Align gear rack to sliding gate motor gears<br>- Wire loop detector card to barrier board<br>- Pair RF remote keyfob to receiver card</td>
+</tr>
+<tr>
+<td><strong>W16</strong></td>
+<td><strong>Fire & Intruder Alarm Installation</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Conventional fire loop wirings<br>- Wireless sensor integrations<br>- Siren alarms trigger check</td>
+<td>- Fire panel, smoke detector<br>- Alarm panel, PIR, door contacts<br>- EOL resistors, hooter sounder</td>
+<td>- Wire smoke detector in conventional loop<br>- Integrate wireless PIR to alarm panel zones<br>- Configure entry/exit delay zones & test siren</td>
+</tr>
+<tr>
+<td><strong>W16</strong></td>
+<td><strong>Troubleshooting Lab</strong></td>
+<td>2 Hrs</td>
+<td>1.0</td>
+<td>- Bench loop diagnostics<br>- Multimeter voltage tests<br>- Fault repair verifications</td>
+<td>- Installed trainer boards<br>- Multimeter & probes<br>- Fault diagnostic sheet</td>
+<td>- Check Phase-Earth voltage using test lamp<br>- Find short circuit fault inside junction box<br>- Resolve induced IP clashes on camera net</td>
+</tr>
+</tbody></table>
+<h2>3. Recommended Weekly Schedule Template</h2>
+<p>To maximize hands-on capability, each weekly topic is split across a 5-day progression. The daily 2-hour session is structured to minimize passive listening and maximize physical interaction with hardware.</p>
+<h3>Daily Session Time-Block Allocation</h3>
+<p>Within each 2-hour (120 minutes) daily session, manage time using the following split:</p>
+<table><thead><tr>
+<th>Phase</th>
+<th>Duration</th>
+<th>Focus Area</th>
+<th>Key Activities</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>1. Concept & Demo</strong></td>
+<td>30 Minutes</td>
+<td>Instructor-led briefing</td>
+<td>Explaining core concepts, safety standards, and reviewing real-world wiring diagrams.</td>
+</tr>
+<tr>
+<td><strong>2. Active Lab Time</strong></td>
+<td>75 Minutes</td>
+<td>Hands-on student execution</td>
+<td>Wiring physical devices, configuring software settings, and running integration tests.</td>
+</tr>
+<tr>
+<td><strong>3. Review & Reset</strong></td>
+<td>15 Minutes</td>
+<td>Verification & lab hygiene</td>
+<td>Checking connections, backing up configurations, cleaning the workbench, and Q&A.</td>
+</tr>
+</tbody></table>
+<h3>5-Day Weekly Rotation</h3>
+<p>Each weekly topic should follow this progression:</p>
+<table><thead><tr>
+<th>Day</th>
+<th>Focus</th>
+<th>Session breakdown</th>
+<th>Expected Student Output</th>
+</tr></thead><tbody>
+<tr>
+<td><strong>Day 1</strong></td>
+<td><strong>Concept & Wiring Topology</strong></td>
+<td>â€¢ <strong>30 mins:</strong> Diagram explanation, spec sheets.<br>â€¢ <strong>75 mins:</strong> Unboxing, identification, physical mounting on workbench.<br>â€¢ <strong>15 mins:</strong> Component safety check.</td>
+<td>Accurate block diagram drawn in lab book; components physically set up.</td>
+</tr>
+<tr>
+<td><strong>Day 2</strong></td>
+<td><strong>Configuration & Setup</strong></td>
+<td>â€¢ <strong>30 mins:</strong> Software parameters & programming theory.<br>â€¢ <strong>75 mins:</strong> Setting IPs, configuring software, testing initial controls.<br>â€¢ <strong>15 mins:</strong> Configurations backed up.</td>
+<td>Configured individual device accessible via control terminal.</td>
+</tr>
+<tr>
+<td><strong>Day 3</strong></td>
+<td><strong>Hardware Deployment & Cabling</strong></td>
+<td>â€¢ <strong>30 mins:</strong> Termination standards (RJ45, RS485, Coaxial).<br>â€¢ <strong>75 mins:</strong> Crimping, routing, powering through POE/SMPS.<br>â€¢ <strong>15 mins:</strong> Multimeter voltage testing.</td>
+<td>Fully wired and powered subsystem.</td>
+</tr>
+<tr>
+<td><strong>Day 4</strong></td>
+<td><strong>System Integration</strong></td>
+<td>â€¢ <strong>30 mins:</strong> Relays, dry/wet contacts, trigger logic schemas.<br>â€¢ <strong>75 mins:</strong> Interfacing subsystems (e.g. Video Door Phone triggering EM Lock).<br>â€¢ <strong>15 mins:</strong> End-to-end flow validation.</td>
+<td>Multi-device functional system executing logical commands.</td>
+</tr>
+<tr>
+<td><strong>Day 5</strong></td>
+<td><strong>Troubleshooting Lab & Assessment</strong></td>
+<td>â€¢ <strong>15 mins:</strong> Fault-finding checklist methodology.<br>â€¢ <strong>90 mins:</strong> Instructor-injected hardware/software fault resolution.<br>â€¢ <strong>15 mins:</strong> Clean workbench reset.</td>
+<td>Student successfully finds and repairs 2-3 faults.</td>
+</tr>
+</tbody></table>
+<h2>4. Key Implementation Guidelines</h2>
+<div class='alert alert-important'><strong>IMPORTANT:</strong> **Theory to Practical Ratio (30:70)** Do not spend more than 35 minutes per day on slide presentations. Use physical devices on the workbench from Day 1. </div>
+<div class='alert alert-tip'><strong>TIP:</strong> **The Fault-Injection Method** The best way to build troubleshooting skills is for the instructor to secretly create problems (e.g., swapping Tx/Rx wires, setting static IP conflicts, cutting power supply channels) and having students resolve them using multimeters and software diagnostic tools. </div>
+<div class='alert alert-note'><strong>NOTE:</strong> **BOQ & Survey Portfolio** By the end of Module 4, every student should have built at least 3 custom proposals (Villa Smart Home, Office CCTV, Warehouse Security) to present as their portfolio. </div>
+
+</body>
+</html>

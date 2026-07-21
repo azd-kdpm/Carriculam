@@ -1,0 +1,1182 @@
+﻿"Session Number","Week","Module","Topic","Hours","Focus & Practical Scope","Materials Required","Practical Session Works","Merged Lab Activities","Included in Slides"
+"1","W1","Module 1: Electrical & Networking","Electrical Fundamentals (AC/DC)","2 Hrs","[x] Slide 1: Title Slide - Electrical Fundamentals (AC/DC)
+[x] Slide 2: Atomic Level Properties
+[x] Slide 3: Voltage & Ohm's Law
+[x] Slide 4: Resistance & Heat
+[x] Slide 5: Power & Watt's Law
+[x] Slide 6: AC, DC & DC Ripple Profiles
+[x] Slide 7: Resistor Types & Color Code
+[x] Slide 8: Resistor Series & Parallel Connections
+[x] Slide 9: Electrical Series & Parallel Circuits
+[x] Slide 10: Two-Way Switch Connection (Staircase)
+[x] Slide 11: Wire Crimping & Ferrule Standards
+[x] Slide 12: Lab Session Work","- Modular switch & 3-pin socket
+- Two-way SPDT switches & bulb
+- 1.5 sq mm copper wire
+- Digital DMM","- Mount switch/socket on board
+- Wire live/neutral loop connections
+- Wire two-way switch staircase loop","","TRUE"
+"2","W1","Module 1: Electrical & Networking","Earthing & Lightning Protection","2 Hrs","[x] Slide 1: Title Slide - Earthing & Surge Protection
+[x] Slide 2: What is Earthing?
+[x] Slide 3: Earthing Topologies
+[x] Slide 4: Soil Resistivity & Moisture
+[x] Slide 5: Earth Resistance Target Thresholds
+[x] Slide 6: Lightning Protection Systems (LPS)
+[x] Slide 7: Surge Protection Devices (SPDs)
+[x] Slide 8: Wiring SPDs in DB Panels
+[x] Slide 9: Earthing in Security & ELV Systems
+[x] Slide 10: Practical Lab Guide","- GI earth pipe & grounding wire
+- Brass connection bolts
+- Salt, charcoal, sand backfill
+- Series test lamp","- Connect ground wire clamp to pipe
+- Layout backfill layers in test pit
+- Perform Phase-to-Earth bulb glow test","","TRUE"
+"3","W1","Module 1: Electrical & Networking","Multimeter Practical","3 Hrs","[x] Slide 1: Title Slide - Multimeter & Diagnostics
+[x] Slide 2: What is a Multimeter?
+[x] Slide 3: Selector Dial Symbols
+[x] Slide 4: Lead Port Connections
+[x] Slide 5: Measuring Voltage Safely
+[x] Slide 6: Measuring Resistance
+[x] Slide 7: Continuity Testing
+[x] Slide 8: Diagnostic: Socket Voltage Audit
+[x] Slide 9: Diagnostic: Security EOL Loops
+[x] Slide 10: Practical Lab Guide","- Multimeter & probes
+- Test lamp
+- Junction box with simulated faults","- Measure Phase-Neutral/Phase-Earth/Neutral-Earth
+- Use continuity mode to find broken cores
+- Hunt for short-circuit faults inside box","","TRUE"
+"4","W1","Module 1: Electrical & Networking","Electrical Safety & PPE","1 Hr","[x] Slide 1: Title Slide - Electrical Safety & Breakers
+[x] Slide 2: Danger of Electricity
+[x] Slide 3: Current Damage Thresholds
+[x] Slide 4: Lockout-Tagout (LOTO) Rules
+[x] Slide 5: Overcurrent: Overload vs Short
+[x] Slide 6: Miniature Circuit Breakers (MCBs)
+[x] Slide 7: Residual Current Breakers (RCCBs)
+[x] Slide 8: Leakage Protection standard
+[x] Slide 9: Breaker Testing & Audits
+[x] Slide 10: Practical Lab Guide","- Single-phase DB board
+- double-pole MCB breaker
+- 30mA RCCB leakage safety
+- 60W test lamp & holder","- Install MCB & RCCB inside DB
+- Wire switchboard through breakers
+- Connect test lamp Phase-to-Earth to trip RCCB","","TRUE"
+"5","W2","Module 1: Electrical & Networking","Power Supply & SMPS","2 Hrs","[x] Slide 1: Title Slide - Power Supply & SMPS
+[x] Slide 2: Linear vs. Switch-Mode (SMPS)
+[x] Slide 3: Inside an SMPS
+[x] Slide 4: SMPS Specification Plates
+[x] Slide 5: Output Voltage Calibration
+[x] Slide 6: Backup Battery Charging
+[x] Slide 7: SLA Battery Runtime Sizing
+[x] Slide 8: Troubleshooting SMPS Faults
+[x] Slide 9: Multi-Output Distribution Panels
+[x] Slide 10: Practical Lab Guide","- 12V 10A CCTV SMPS unit
+- Multi-output block
+- 12V 7Ah SLA battery
+- Digital multimeter","- Mount and wire SMPS input terminals
+- Adjust output pot to 12.2V DC
+- Connect backup battery and test load runtime","","TRUE"
+"6","W2","Module 1: Electrical & Networking","Reading Electrical Drawings","2 Hrs","[x] Slide 1: Title Slide - Reading Drawings & Schematics
+[x] Slide 2: Schematic Symbol Legends
+[x] Slide 3: Single Line Diagrams (SLDs)
+[x] Slide 4: Schematic Grid Coordinates
+[x] Slide 5: Wiring Tagging & Ferruling Standards
+[x] Slide 6: What is a Relay & How It Works
+[x] Slide 7: Types of Relays
+[x] Slide 8: The 0/1 Digital Signal Concept
+[x] Slide 9: Switching Triggers: Dry vs. Wet
+[x] Slide 10: Relays & Electromagnetic Locks
+[x] Slide 11: Access Control Loop Blueprint
+[x] Slide 12: Fire Alarm Relay Integration
+[x] Slide 13: Blueprint Troubleshooting
+[x] Slide 14: Practical Lab Guide","- Site wiring schematics & relay board
+- 12V EM lock & exit push button
+- Wire ferrule tags & crimper","- Trace active paths on 3-page schematic
+- Wire relay door lock loops matching prints
+- Test fire panels emergency cut-off trip","","TRUE"
+"7","W2","Module 1: Electrical & Networking","Cable Selection & Management","2 Hrs","[x] Slide 1: Title Slide - Cable Selection & Conduits
+[x] Slide 2: Wire Sizing Standards
+[x] Slide 3: Line Voltage Drop Calculations
+[x] Slide 4: ELV Cable Selection Profiles
+[x] Slide 5: PVC & GI Conduits
+[x] Slide 6: The 40% Fill Rule
+[x] Slide 7: Bending & Saddling PVC Pipes
+[x] Slide 8: Separation of Services
+[x] Slide 9: Splicing & Jointing Standards
+[x] Slide 10: Practical Lab Guide","- PVC conduits, spacer clips, plugs
+- Manual bending spring
+- Binding wire & junction boxes
+- PVC insulation tape","- Mount PVC conduits onto board
+- Bend $90^\circ$ curves using spring
+- Pull wires using binding wire
+- Make pigtail joints inside box & tape-wrap","","TRUE"
+"8","W2","Module 2: Professional CCTV Systems","Analog & IP CCTV","2 Hrs","[x] Slide 1: Title Slide - Analog & IP CCTV Systems
+[x] Slide 2: Analog CCTV Basics
+[x] Slide 3: IP CCTV Basics
+[x] Slide 4: Signal Latency Comparison
+[x] Slide 5: HD-TVI Protocols
+[x] Slide 6: Video Baluns
+[x] Slide 7: Coaxial Distance Sizing Limits
+[x] Slide 8: Ethernet Sizing Limits
+[x] Slide 9: DVR, NVR & Hybrid Recorders
+[x] Slide 10: Practical Lab Guide","- HD-TVI Analog camera & IP Dome
+- Coaxial cable & Cat6 spool
+- BNC connectors & video baluns","- Crimp BNC connector on coaxial cable
+- Wire video baluns over Cat6 runs
+- Connect feeds to DVR/NVR to compare latency","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"9","W3","Module 2: Professional CCTV Systems","Camera Selection & Design","3 Hrs","[x] Slide 1: Title Slide - Camera Selection & Design
+[x] Slide 2: Dome Camera Enclosures
+[x] Slide 3: Bullet Camera Enclosures
+[x] Slide 4: Turret / Eyeball Cameras
+[x] Slide 5: Low-Light Sensors & Lux Ratings
+[x] Slide 6: WDR (Wide Dynamic Range)
+[x] Slide 7: Infrared Night Illumination
+[x] Slide 8: DORI Design Standards
+[x] Slide 9: Mounts & Brackets Sizing
+[x] Slide 10: Practical Lab Guide","- Dome, Bullet, and Turret cameras
+- Wall bracket mounts
+- Lux level datasheets","- Mount Dome and Bullet cameras on brackets
+- Verify WDR backlight compensation settings
+- Test camera output under dark/low lux settings","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"10","W3","Module 2: Professional CCTV Systems","Lens & Field of View","2 Hrs","[x] Slide 1: Title Slide - Lens & Field of View
+[x] Slide 2: Lens Focal Length
+[x] Slide 3: Aperture (F-Stop)
+[x] Slide 4: Fixed vs. Varifocal Lenses
+[x] Slide 5: Motorized Varifocal Lenses
+[x] Slide 6: Angle of View Calculations
+[x] Slide 7: Optical vs. Digital Zoom
+[x] Slide 8: Depth of Field (DOF)
+[x] Slide 9: Lens Calculation Software
+[x] Slide 10: Practical Lab Guide","- Fixed cameras (2.8mm & 4mm)
+- Motorized varifocal camera
+- Lens calculator mobile application","- Compare FOV angles of 2.8mm and 4mm lenses
+- Calibrate varifocal zoom/focus remotely
+- Run lens calculations for a mock warehouse","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"11","W3","Module 1: Electrical & Networking","IP Addressing & Subnetting","4 Hrs","[x] Slide 1: Title Slide - IP Addressing & Subnetting
+[x] Slide 2: What is an IP Address?
+[x] Slide 3: The Subnet Mask
+[x] Slide 4: CIDR Classless Notation
+[x] Slide 5: Private vs. Public IP Ranges
+[x] Slide 6: Gateway & DNS Basics
+[x] Slide 7: Static IP vs. DHCP Dynamic
+[x] Slide 8: Sizing a CCTV Subnet
+[x] Slide 9: Common Configuration Errors
+[x] Slide 10: Lab Session Work","- Laptops (Windows)
+- Cat6 network patch cords
+- 8-port network switch
+- Marker board","- Set up static IPs on two laptops
+- Verify end-to-end ping connection
+- Diagnose and resolve wrong gateway settings","","TRUE"
+"12","W3","Module 1: Electrical & Networking","Router & Switch Configuration","4 Hrs","[x] Slide 1: Title Slide - Router & Switch Configuration
+[x] Slide 2: Router vs. Switch
+[x] Slide 3: WAN vs. LAN Interfaces
+[x] Slide 4: NAT (Network Address Translation)
+[x] Slide 5: Port Forwarding Rules
+[x] Slide 6: IP Reservation (Static DHCP)
+[x] Slide 7: Wi-Fi Channel Spacing
+[x] Slide 8: Wi-Fi Security standards
+[x] Slide 9: Switch Backplane Bandwidth
+[x] Slide 10: Lab Session Work","- Dual-band Wi-Fi router
+- 8-port network switch
+- Ethernet cables & laptops","- Access router administrator panel
+- Configure IP pool and reservation
+- Set up port forwarding for external cameras
+- Calibrate Wi-Fi channel spacing","","TRUE"
+"13","W4","Module 1: Electrical & Networking","VLAN Basics","2 Hrs","[x] Slide 1: Title Slide - VLAN Basics & Segmentation
+[x] Slide 2: What is a VLAN?
+[x] Slide 3: Why Segment CCTV Traffic?
+[x] Slide 4: Access Switch Ports
+[x] Slide 5: Trunk Switch Ports
+[x] Slide 6: Layer 2 vs. Layer 3 Switches
+[x] Slide 7: Inter-VLAN Routing
+[x] Slide 8: VLAN Security Rules
+[x] Slide 9: Managed Switch Interface
+[x] Slide 10: Lab Session Work","- Layer 2 Managed switch
+- Internet router
+- Laptops & patch cords","- Access managed switch GUI console
+- Create VLAN 10 (Data) & VLAN 20 (CCTV)
+- Assign specific access ports & configure trunk link","","TRUE"
+"14","W4","Module 1: Electrical & Networking","PoE & PoE Switches","2 Hrs","[x] Slide 1: Title Slide - PoE & PoE Switches
+[x] Slide 2: What is PoE?
+[x] Slide 3: PoE Standards: af, at, bt
+[x] Slide 4: Power Budget Calculations
+[x] Slide 5: Active vs. Passive PoE
+[x] Slide 6: PoE Pinout Wiring Modes
+[x] Slide 7: PoE Splitters & Extenders
+[x] Slide 8: Distance Limits & Voltage Drop
+[x] Slide 9: PoE Switch Port Diagnostics
+[x] Slide 10: Lab Session Work","- PoE Switch
+- PoE IP camera & non-PoE camera
+- PoE splitter
+- Multimeter","- Measure active PoE pin voltages
+- Calculate total camera load budget
+- Wire non-PoE camera using splitter","","TRUE"
+"15","W4","Module 1: Electrical & Networking","Fiber Optic Basics","2 Hrs","[x] Slide 1: Title Slide - Fiber Optic Basics
+[x] Slide 2: Copper vs. Fiber Optic
+[x] Slide 3: Single-Mode vs. Multi-Mode
+[x] Slide 4: SFP Transceiver Modules
+[x] Slide 5: Fiber Connector Types
+[x] Slide 6: Fiber Media Converters
+[x] Slide 7: Optical Insertion Loss & Audits
+[x] Slide 8: Enclosures & Splicing (LIU)
+[x] Slide 9: Laser Safety & Handling Rules
+[x] Slide 10: Lab Session Work","- SC-LC fiber patch cords
+- Fiber media converters
+- Gigabit switches with SFP ports
+- SFP modules","- Install SFPs in switch ports
+- Link switches using fiber patch cable
+- Verify fiber link status on media converters","[Network Rack Setup & Fiber Splicing]
+Activities:
+- Rack unit layout arrangements
+- Fiber core stripping & cleaving
+- Fusion splicing operations
+Works:
+- Mount patch panels inside 9U rack cabinet
+- Strip and cleave fiber core clean using tools
+- Perform fusion splice and check core DB loss","TRUE"
+"16","W5","Module 1: Electrical & Networking","Network Troubleshooting","2 Hrs","[x] Slide 1: Title Slide - Network Troubleshooting
+[x] Slide 2: RJ45 Ethernet Crimping (T568A & T568B)
+[x] Slide 3: RJ11 Telephone Crimping Standard
+[x] Slide 4: Network Cable Testers
+[x] Slide 5: Diagnostic: Ping Command
+[x] Slide 6: Diagnostic: Traceroute (tracert)
+[x] Slide 7: IP Network Scanner Audits
+[x] Slide 8: Resolving IP Address Conflicts
+[x] Slide 9: Switch Loops & Spanning Tree
+[x] Slide 10: Lab Session Work","- RJ45/RJ11 plugs & Cat6/Phone cables
+- Crimper tools & LAN wiremap tester
+- Workstations & managed switch","- Crimp Cat6 (RJ45) & phone (RJ11) plugs
+- Run CMD pings/tracert link audits
+- Troubleshoot and resolve switch loops","[Network Rack Setup & Fiber Splicing]
+Activities:
+- Rack unit layout arrangements
+- Fiber core stripping & cleaving
+- Fusion splicing operations
+Works:
+- Mount patch panels inside 9U rack cabinet
+- Strip and cleave fiber core clean using tools
+- Perform fusion splice and check core DB loss
+
+[Troubleshooting Lab]
+Activities:
+- Bench loop diagnostics
+- Multimeter voltage tests
+- Fault repair verifications
+Works:
+- Check Phase-Earth voltage using test lamp
+- Find short circuit fault inside junction box
+- Resolve induced IP clashes on camera net","TRUE"
+"17","W5","Module 2: Professional CCTV Systems","DVR, NVR & Hybrid Systems","3 Hrs","[x] Slide 1: Title Slide - DVR, NVR & Hybrid Systems
+[x] Slide 2: DVR Hardware Architecture
+[x] Slide 3: NVR Hardware Architecture
+[x] Slide 4: Hybrid XVRs
+[x] Slide 5: SATA Storage Interfaces
+[x] Slide 6: Storage Sizing Parameters
+[x] Slide 7: Thermal Cooling & Venting
+[x] Slide 8: PoE Power Budgets
+[x] Slide 9: Firmware Recording Profiles
+[x] Slide 10: Practical Lab Guide","- 8-ch NVR & 8-ch DVR
+- 1TB Surveillance HDD
+- SATA cables & screwdriver","- Install hard drive inside NVR casing
+- Connect SATA power and data cables
+- Initialize HDD and configure recording profiles","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"18","W5","Module 2: Professional CCTV Systems","RAID & Storage Design","2 Hrs","[x] Slide 1: Title Slide - RAID & Storage Design
+[x] Slide 2: RAID 0 (Striping)
+[x] Slide 3: RAID 1 (Mirroring)
+[x] Slide 4: RAID 5 (Striping with Parity)
+[x] Slide 5: RAID 10 Nested Array
+[x] Slide 6: Hot-Swapping Drives
+[x] Slide 7: Surveillance-Grade vs. Desktop HDDs
+[x] Slide 8: Calculating Retention Schedules
+[x] Slide 9: Storage Calculator Software
+[x] Slide 10: Practical Lab Guide","- Laptops
+- Storage calculator tool
+- Multi-bay test NVR","- Set up a RAID 1 backup array inside NVR
+- Calculate storage storage for 10 IP cameras
+- Test hot-swapping a HDD in RAID array","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"19","W5","Module 2: Professional CCTV Systems","ONVIF Standards","1 Hr","[x] Slide 1: Title Slide - ONVIF Standards & Profiles
+[x] Slide 2: What is ONVIF?
+[x] Slide 3: ONVIF Profile S
+[x] Slide 4: ONVIF Profile G
+[x] Slide 5: ONVIF Profile T
+[x] Slide 6: ONVIF Device Discovery
+[x] Slide 7: ONVIF User Accounts
+[x] Slide 8: Common Integration Pitfalls
+[x] Slide 9: Troubleshooting Tools
+[x] Slide 10: Practical Lab Guide","- Hikvision NVR & Dahua IP camera
+- POE switch & patch cords","- Link Dahua IP camera to Hikvision NVR
+- Configure connection via ONVIF Profile S
+- Test video feed and PTZ command link","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"20","W6","Module 2: Professional CCTV Systems","Video Compression (H.264/H.265/H.265+)","2 Hrs","[x] Slide 1: Title Slide - Video Compression (H.264/H.265)
+[x] Slide 2: What is Compression?
+[x] Slide 3: H.264 Codec Standard
+[x] Slide 4: H.265 Codec Standard
+[x] Slide 5: Smart Codecs (H.265+)
+[x] Slide 6: I-Frames & P-Frames
+[x] Slide 7: CBR vs. VBR Profiles
+[x] Slide 8: Frame Rate (FPS) Sizing
+[x] Slide 9: Resolution Impact on Bandwidth
+[x] Slide 10: Practical Lab Guide","- IP camera & NVR
+- Network bandwidth monitoring app","- Change camera compression profile to H.265+
+- Measure live bandwidth drop compared to H.264
+- Configure variable bitrate threshold settings","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"21","W6","Module 2: Professional CCTV Systems","AI Analytics","2 Hrs","[x] Slide 1: Title Slide - AI Analytics & Perimeter Security
+[x] Slide 2: AI vs. Standard Motion Detection
+[x] Slide 3: Line Crossing Detection
+[x] Slide 4: Intrusion Zone Detection
+[x] Slide 5: Object Classification
+[x] Slide 6: False Alarm Filtering (AcuSense)
+[x] Slide 7: Smart Search Engine
+[x] Slide 8: Alarm Action Triggers
+[x] Slide 9: Designing Perimeter Zones
+[x] Slide 10: Practical Lab Guide","- Smart IP camera & NVR
+- Laptop client","- Define line-crossing parameters on NVR
+- Configure intrusion detection alert zone
+- Test and record human/vehicle alarm filter","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"22","W6","Module 2: Professional CCTV Systems","ANPR (Automatic Number Plate Recognition)","2 Hrs","[x] Slide 1: Title Slide - ANPR (Plate Recognition)
+[x] Slide 2: ANPR Cameras
+[x] Slide 3: Shutter Speed Calibration
+[x] Slide 4: Mounting Height & Angles
+[x] Slide 5: License Plate Illumination
+[x] Slide 6: ANPR Database Lists
+[x] Slide 7: Barrier Relay Triggers
+[x] Slide 8: Vehicle Statistics
+[x] Slide 9: Debugging ANPR Failures
+[x] Slide 10: Practical Lab Guide","- ANPR camera & NVR
+- Test vehicle license plates
+- Laptop client","- Adjust camera shutter speed to 1/1000s
+- Align camera angle within $30^\circ$ limit
+- Upload whitelist database to trigger relay lock","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"23","W6","Module 2: Professional CCTV Systems","Facial Recognition","2 Hrs","[x] Slide 1: Title Slide - Facial Recognition Diagnostics
+[x] Slide 2: Face Detection vs. Recognition
+[x] Slide 3: Pixel Sizing Criteria
+[x] Slide 4: Facial Database Enrollment
+[x] Slide 5: Similarity Thresholds
+[x] Slide 6: Lighting Compensation
+[x] Slide 7: Blacklist Alert Triggers
+[x] Slide 8: Searching by Face Image
+[x] Slide 9: Database Management
+[x] Slide 10: Practical Lab Guide","- Face recognition camera & NVR
+- Face database photos
+- Laptop client","- Enroll student faces into NVR database
+- Configure facial similarity limit to 85%
+- Test blacklist matching alert sound trigger","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"24","W7","Module 2: Professional CCTV Systems","ColorVu, AcuSense & Thermal Cameras","3 Hrs","[x] Slide 1: Title Slide - ColorVu, AcuSense & Thermal Cameras
+[x] Slide 2: ColorVu Night Technology
+[x] Slide 3: AcuSense Analytics
+[x] Slide 4: Thermal Imaging Physics
+[x] Slide 5: Thermal Fire Detection
+[x] Slide 6: Bi-Spectrum Cameras
+[x] Slide 7: Long-Range Perimeter Protection
+[x] Slide 8: Temperature Threshold Audits
+[x] Slide 9: Specialized Mounts & Alignments
+[x] Slide 10: Practical Lab Guide","- ColorVu camera & AcuSense camera
+- Handheld heat source (solder iron)","- Configure ColorVu night warm light settings
+- Verify AcuSense false-alarm tree-branch filter
+- Monitor heat spot alert on thermal camera feed","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"25","W7","Module 2: Professional CCTV Systems","PTZ Cameras","2 Hrs","[x] Slide 1: Title Slide - PTZ Cameras & Patrols
+[x] Slide 2: PTZ pan/tilt mechanics
+[x] Slide 3: Optical Zoom Ratios
+[x] Slide 4: PTZ Preset Coordinates
+[x] Slide 5: Patrol Tours (Sequence)
+[x] Slide 6: Auto-Tracking AI Logic
+[x] Slide 7: RS485 Serial Control
+[x] Slide 8: Joystick Controller Desks
+[x] Slide 9: Mechanical Limit Stops
+[x] Slide 10: Practical Lab Guide","- PTZ Dome camera
+- Controller joystick
+- NVR","- Connect PTZ control via RS485/IP
+- Program 5 preset camera locations
+- Configure a continuous scanning patrol tour","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"26","W7","Module 2: Professional CCTV Systems","Remote Viewing & Cloud","3 Hrs","[x] Slide 1: Title Slide - Remote Viewing & Cloud Systems
+[x] Slide 2: Cloud P2P Connection Engine
+[x] Slide 3: QR Code Registration
+[x] Slide 4: Dynamic DNS (DDNS) Setup
+[x] Slide 5: Port Forwarding Safety
+[x] Slide 6: Stream Profiles: Main vs. Sub
+[x] Slide 7: Push Notifications Alert Rules
+[x] Slide 8: Multi-Site VMS Client Software
+[x] Slide 9: Bandwidth Sizing Calculations
+[x] Slide 10: Practical Lab Guide","• NVR & internet router
+• Phone with Hik-Connect/DMSS app
+• Laptop client","- Link NVR to Cloud P2P portal
+- Scan QR code to add device on mobile app
+- Set up port-forwarding for DDNS connection","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"27","W8","Module 2: Professional CCTV Systems","Cybersecurity","2 Hrs","[x] Slide 1: Title Slide - CCTV Cybersecurity Standards
+[x] Slide 2: CCTV Vulnerabilities
+[x] Slide 3: Password Complexity Rules
+[x] Slide 4: Changing Default Ports
+[x] Slide 5: Disabling UPnP & Telnet
+[x] Slide 6: HTTPS Certificate Installation
+[x] Slide 7: IP Address Access Filtering
+[x] Slide 8: User Roles & Permissions
+[x] Slide 9: Firmware Updates
+[x] Slide 10: Practical Lab Guide","- IP camera, NVR, laptop","- Modify default HTTP/RTSP ports on camera
+- Disable UPnP network settings on NVR
+- Install HTTPS security certificate on camera","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds","TRUE"
+"28","W8","Module 2: Professional CCTV Systems","Troubleshooting & Maintenance","4 Hrs","[x] Slide 1: Title Slide - CCTV Troubleshooting & Maintenance
+[x] Slide 2: No Video Diagnostics
+[x] Slide 3: IP Address Mismatch Clashes
+[x] Slide 4: Video Packet Loss Dropouts
+[x] Slide 5: IR Halo Ring Reflections
+[x] Slide 6: Ground Loop Video Hum Bars
+[x] Slide 7: Camera Focus Adjustments
+[x] Slide 8: Firmware Recovery Loops
+[x] Slide 9: Physical Cleaning & Maintenance Tools
+[x] Slide 10: Maintenance Schedules
+[x] Slide 11: Practical Lab Guide","- Multimeter, lens cleaning fluid
+- Faulty cameras
+- IP scanner software","- Troubleshoot camera offline fault on bench
+- Resolve duplicate IP address clashes
+- Perform lens cleaning to remove IR light halo","[Complete Office CCTV Installation]
+Activities:
+- Coaxial/Cat6 routing runs
+- Camera hardware mountings
+- NVR network config
+Works:
+- Run cables from cameras to central DB rack
+- Mount cameras, terminate BNC/RJ45 ends
+- Power up NVR, initialize HDD, configure feeds
+
+[Troubleshooting Lab]
+Activities:
+- Bench loop diagnostics
+- Multimeter voltage tests
+- Fault repair verifications
+Works:
+- Check Phase-Earth voltage using test lamp
+- Find short circuit fault inside junction box
+- Resolve induced IP clashes on camera net","TRUE"
+"29","W8","Module 3: Security & Building Automation","Video Door Phone","2 Hrs","[x] Slide 1: Title Slide - Video Door Phone
+[x] Slide 2: 2-Wire Analog VDP
+[x] Slide 3: IP VDP Infrastructure
+[x] Slide 4: Solenoid Lock Mechanics
+[x] Slide 5: Relay Logic - Wet vs. Dry Contacts
+[x] Slide 6: Power Budget & External PSUs
+[x] Slide 7: SIP Calling & Mobile Gateways
+[x] Slide 8: Multi-Apartment Distributors
+[x] Slide 9: Troubleshooting - Audio Hum & Video Noise
+[x] Slide 10: Lab Work: VDP Interfacing","- VDP outdoor call station & monitor
+- 12V solenoid lock
+- 4-core signal cable","- Wire outdoor call station to indoor monitor
+- Connect lock release relay to solenoid lock
+- Test voice/video communication & lock release","[Access Control & Video Door Phone Setup]
+Activities:
+- VDP wiring integrations
+- Access panel loop wirings
+- EM locks bracket setups
+Works:
+- Connect outdoor call station to VDP monitor
+- Wire access panel release relay to EM lock
+- Register RFID cards & test access lock loop","TRUE"
+"30","W8","Module 3: Security & Building Automation","Access Control","3 Hrs","[x] Slide 1: Title Slide - Access Control
+[x] Slide 2: RFID Principles (125kHz vs 13.56MHz)
+[x] Slide 3: Wiegand Hardware Interface
+[x] Slide 4: Controller Architecture
+[x] Slide 5: Request to Exit (REX) Loops
+[x] Slide 6: Electromagnetic Lock NC Loops
+[x] Slide 7: Fire Integration Overrides
+[x] Slide 8: Management Software Databases
+[x] Slide 9: Troubleshooting - Reader and Lock Noise
+[x] Slide 10: Lab Work: Access Panel Wiring","- Access control panel
+- RFID card reader & exit button
+- 12V electromagnetic lock
+- 12V 5A power supply","- Wire RFID reader and exit button to controller
+- Terminate EM lock power supply lines to panel
+- Register RFID cards & test access control loop","[Access Control & Video Door Phone Setup]
+Activities:
+- VDP wiring integrations
+- Access panel loop wirings
+- EM locks bracket setups
+Works:
+- Connect outdoor call station to VDP monitor
+- Wire access panel release relay to EM lock
+- Register RFID cards & test access lock loop","TRUE"
+"31","W9","Module 3: Security & Building Automation","Biometric Systems","2 Hrs","[x] Slide 1: Title Slide - Biometric Systems
+[x] Slide 2: Introduction to Biometric Systems
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: Biometric Systems Commissioning","- Standalone biometric reader
+- RFID cards & network switch
+- Laptop with management software","- Enroll fingerprints and faces on reader panel
+- Configure network IP settings on reader
+- Retrieve access database log onto laptop","[Access Control & Video Door Phone Setup]
+Activities:
+- VDP wiring integrations
+- Access panel loop wirings
+- EM locks bracket setups
+Works:
+- Connect outdoor call station to VDP monitor
+- Wire access panel release relay to EM lock
+- Register RFID cards & test access lock loop","TRUE"
+"32","W9","Module 3: Security & Building Automation","Smart Locks","2 Hrs","[x] Slide 1: Title Slide - Smart Locks
+[x] Slide 2: Introduction to Smart Locks
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: Smart Locks Commissioning","- EM lock & Drop-bolt lock
+- L/Z mounting brackets
+- 1N4007 flyback diode
+- Screwdriver set","- Mount L/Z bracket to mock door frame
+- Install EM lock on bracket plates
+- Terminate flyback diode across lock terminals","[Access Control & Video Door Phone Setup]
+Activities:
+- VDP wiring integrations
+- Access panel loop wirings
+- EM locks bracket setups
+Works:
+- Connect outdoor call station to VDP monitor
+- Wire access panel release relay to EM lock
+- Register RFID cards & test access lock loop","TRUE"
+"33","W9","Module 3: Security & Building Automation","Boom Barrier","2 Hrs","[x] Slide 1: Title Slide - Boom Barrier
+[x] Slide 2: Introduction to Boom Barrier
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: Boom Barrier Commissioning","- Boom barrier gate unit
+- Loop detector card
+- Loop coil wire spool
+- Safety photo-beams","- Wire loop detector card to barrier board
+- Lay loop wire coil in test pattern on floor
+- Test barrier safety auto-reverse using loop","[Gate Automation & Boom Barrier Setup]
+Activities:
+- Gear rack pinion alignments
+- Loop coil floor layouts
+- RF remote key pairings
+Works:
+- Align gear rack to sliding gate motor gears
+- Wire loop detector card to barrier board
+- Pair RF remote keyfob to receiver card","TRUE"
+"34","W9","Module 3: Security & Building Automation","Gate Automation","2 Hrs","[x] Slide 1: Title Slide - Gate Automation
+[x] Slide 2: Introduction to Gate Automation
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: Gate Automation Commissioning","- Sliding gate motor & gear rack
+- Limit switch contacts
+- Remote transmitter keyfobs","- Align gear rack to sliding motor pinion
+- Wire magnetic limit switches to controller
+- Pair RF remote keyfobs to receiver board","[Gate Automation & Boom Barrier Setup]
+Activities:
+- Gear rack pinion alignments
+- Loop coil floor layouts
+- RF remote key pairings
+Works:
+- Align gear rack to sliding gate motor gears
+- Wire loop detector card to barrier board
+- Pair RF remote keyfob to receiver card","TRUE"
+"35","W10","Module 3: Security & Building Automation","Intruder Alarm Systems","3 Hrs","[x] Slide 1: Title Slide - Intruder Alarm Systems
+[x] Slide 2: Introduction to Intruder Alarm Systems
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: Intruder Alarm Systems Commissioning","- Alarm panel unit
+- PIR motion detector & door contacts
+- EOL resistors & warning siren","- Wire PIR sensor to alarm panel zone terminals
+- Connect EOL resistor to zone loop contact
+- Configure panel arm profiles & trigger alarm","[Fire & Intruder Alarm Installation]
+Activities:
+- Conventional fire loop wirings
+- Wireless sensor integrations
+- Siren alarms trigger check
+Works:
+- Wire smoke detector in conventional loop
+- Integrate wireless PIR to alarm panel zones
+- Configure entry/exit delay zones & test siren","TRUE"
+"36","W10","Module 3: Security & Building Automation","Fire Alarm Systems","4 Hrs","[x] Slide 1: Title Slide - Fire Alarm Systems
+[x] Slide 2: Introduction to Fire Alarm Systems
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: Fire Alarm Systems Commissioning","- Conventional fire alarm panel
+- Smoke detector & heat detector
+- Fire hooter & EOL capacitor
+- Test smoke aerosol spray","- Wire smoke detector in zone terminal loop
+- Install EOL resistor on final zone terminal
+- Test trigger using smoke aerosol spray","[Fire & Intruder Alarm Installation]
+Activities:
+- Conventional fire loop wirings
+- Wireless sensor integrations
+- Siren alarms trigger check
+Works:
+- Wire smoke detector in conventional loop
+- Integrate wireless PIR to alarm panel zones
+- Configure entry/exit delay zones & test siren","TRUE"
+"37","W10","Module 3: Security & Building Automation","PA/BGM Systems","2 Hrs","[x] Slide 1: Title Slide - PA BGM Systems
+[x] Slide 2: Introduction to PA BGM Systems
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: PA BGM Systems Commissioning","- 100V PA amplifier
+- Ceiling speaker with LMT
+- Paging microphone","- Connect ceiling speaker on 100V line tap
+- Calculate speaker wattage match to amp load
+- Test microphone voice override trigger","","TRUE"
+"38","W11","Module 3: Security & Building Automation","Intercom Systems","2 Hrs","[x] Slide 1: Title Slide - Intercom Systems
+[x] Slide 2: Introduction to Intercom Systems
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: Intercom Systems Commissioning","- Analog PABX unit (1x4)
+- Analog phone instruments
+- RJ11 cables & punch-down tool","- Terminate extension lines onto PABX board
+- Configure extension call group settings
+- Run extension call forwarding test drills","","TRUE"
+"39","W11","Module 3: Security & Building Automation","Elevator Access Control","2 Hrs","[x] Slide 1: Title Slide - Elevator Access Control
+[x] Slide 2: Introduction to Elevator Access Control
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: Elevator Access Control Commissioning","- Access controller
+- 8-ch relay output board
+- LED indicators & laptop","- Wire relay outputs to simulate elevator floor buttons
+- Program access level restrictions in software
+- Trigger fire input loop to release all relays","[Access Control & Video Door Phone Setup]
+Activities:
+- VDP wiring integrations
+- Access panel loop wirings
+- EM locks bracket setups
+Works:
+- Connect outdoor call station to VDP monitor
+- Wire access panel release relay to EM lock
+- Register RFID cards & test access lock loop","TRUE"
+"40","W11","Module 3: Security & Building Automation","Visitor Management","2 Hrs","[x] Slide 1: Title Slide - Visitor Management
+[x] Slide 2: Introduction to Visitor Management
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: Visitor Management Commissioning","- PC with visitor software
+- Webcam & USB barcode scanner
+- Thermal badge printer","- Install visitor management desktop client
+- Configure webcam visitor photo capture
+- Generate and print barcode visitor pass","[Access Control & Video Door Phone Setup]
+Activities:
+- VDP wiring integrations
+- Access panel loop wirings
+- EM locks bracket setups
+Works:
+- Connect outdoor call station to VDP monitor
+- Wire access panel release relay to EM lock
+- Register RFID cards & test access lock loop","TRUE"
+"41","W11","Module 3: Security & Building Automation","Hotel Lock Systems","2 Hrs","[x] Slide 1: Title Slide - Hotel Lock Systems
+[x] Slide 2: Introduction to Hotel Lock Systems
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: Hotel Lock Systems Commissioning","- Hotel lock unit & card encoder
+- Mifare cards
+- Energy saver room switch","- Encode check-in card using hotel software
+- Verify card opens offline hotel door lock
+- Test energy saver switch room power activation","[Access Control & Video Door Phone Setup]
+Activities:
+- VDP wiring integrations
+- Access panel loop wirings
+- EM locks bracket setups
+Works:
+- Connect outdoor call station to VDP monitor
+- Wire access panel release relay to EM lock
+- Register RFID cards & test access lock loop
+
+[Troubleshooting Lab]
+Activities:
+- Bench loop diagnostics
+- Multimeter voltage tests
+- Fault repair verifications
+Works:
+- Check Phase-Earth voltage using test lamp
+- Find short circuit fault inside junction box
+- Resolve induced IP clashes on camera net","TRUE"
+"42","W12","Module 3: Security & Building Automation","Parking Management","2 Hrs","[x] Slide 1: Title Slide - Parking Management
+[x] Slide 2: Introduction to Parking Management
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: Parking Management Commissioning","- Ticket dispenser unit
+- Loop coil wire spool
+- Barrier gate cabinet
+- Printer","- Wire ticket dispenser card to barrier board
+- Simulate loop input to print parking ticket
+- Test ticket barcode verification loop","[Gate Automation & Boom Barrier Setup]
+Activities:
+- Gear rack pinion alignments
+- Loop coil floor layouts
+- RF remote key pairings
+Works:
+- Align gear rack to sliding gate motor gears
+- Wire loop detector card to barrier board
+- Pair RF remote keyfob to receiver card","TRUE"
+"43","W12","Module 3: Security & Building Automation","Basic Building Management Systems (BMS)","3 Hrs","[x] Slide 1: Title Slide - Basic BMS
+[x] Slide 2: Introduction to Basic BMS
+[x] Slide 3: Core Working Principles
+[x] Slide 4: Hardware Components & Wiring
+[x] Slide 5: Electrical Protections
+[x] Slide 6: Software & Configuration Settings
+[x] Slide 7: Safety Interlocks & Overrides
+[x] Slide 8: Installation Guidelines
+[x] Slide 9: Troubleshooting Workflows
+[x] Slide 10: Lab Work: Basic BMS Commissioning","- DDC controller unit
+- Temperature sensor probe
+- Laptop with BMS software","- Terminate temp sensor to DDC analog input
+- Calibrate sensor voltage scaling parameters
+- Verify Modbus register map readouts on PC","","TRUE"
+"44","W12","Module 4: Smart Home, IoT & Business","KNX Fundamentals","4 Hrs","[x] Slide 1: Title Slide - KNX Fundamentals
+[x] Slide 2: Introduction to KNX Fundamentals
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: KNX Fundamentals Integration","- KNX power supply & choke
+- KNX switch actuator module
+- KNX wall switch panel
+- Green bus wire & ETS laptop","- Wire KNX devices in standard bus loop
+- Configure group addresses inside ETS software
+- Program KNX switch to activate actuator light","[Villa Smart Home Installation]
+Activities:
+- Switches loops wiring
+- HAOS hub installations
+- Smart device integrations
+Works:
+- Wire switch board modules on wall board
+- Install HAOS on Pi, integrate switch relay
+- Configure Alexa voice routine triggers","TRUE"
+"45","W12","Module 4: Smart Home, IoT & Business","Wi-Fi Smart Home","2 Hrs","[x] Slide 1: Title Slide - Wi-Fi Smart Home
+[x] Slide 2: Introduction to Wi-Fi Smart Home
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Wi-Fi Smart Home Integration","- Wi-Fi smart switch modules
+- Tuya Zigbee hub gateway
+- Smart plug socket & router","- Wire Tuya switch on test board setup
+- Link smart switch to Tuya mobile application
+- Configure voice linking to Google Assistant","[Villa Smart Home Installation]
+Activities:
+- Switches loops wiring
+- HAOS hub installations
+- Smart device integrations
+Works:
+- Wire switch board modules on wall board
+- Install HAOS on Pi, integrate switch relay
+- Configure Alexa voice routine triggers","TRUE"
+"46","W13","Module 4: Smart Home, IoT & Business","Zigbee & Z-Wave","3 Hrs","[x] Slide 1: Title Slide - Zigbee & Z-Wave
+[x] Slide 2: Introduction to Zigbee & Z-Wave
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Zigbee & Z-Wave Integration","- Zigbee USB coordinator hub
+- Zigbee motion sensor & bulbs
+- Laptops","- Form a Zigbee mesh network via coordinator
+- Add Zigbee motion sensor and smart bulb
+- Test mesh self-healing by powering off router","[Villa Smart Home Installation]
+Activities:
+- Switches loops wiring
+- HAOS hub installations
+- Smart device integrations
+Works:
+- Wire switch board modules on wall board
+- Install HAOS on Pi, integrate switch relay
+- Configure Alexa voice routine triggers","TRUE"
+"47","W13","Module 4: Smart Home, IoT & Business","Matter & Thread","2 Hrs","[x] Slide 1: Title Slide - Matter & Thread
+[x] Slide 2: Introduction to Matter & Thread
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Matter & Thread Integration","- Apple HomePod Mini (Thread)
+- Matter smart plug module
+- Phone","- Connect Thread plug to HomePod border router
+- Pair device to Google Home using Matter code
+- Test control from iOS and Android devices","[Villa Smart Home Installation]
+Activities:
+- Switches loops wiring
+- HAOS hub installations
+- Smart device integrations
+Works:
+- Wire switch board modules on wall board
+- Install HAOS on Pi, integrate switch relay
+- Configure Alexa voice routine triggers","TRUE"
+"48","W13","Module 4: Smart Home, IoT & Business","Alexa & Google Home Integration","2 Hrs","[x] Slide 1: Title Slide - Alexa & Google Home Integration
+[x] Slide 2: Introduction to Alexa & Google Home Integration
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Alexa & Google Home Integration Integration","- Amazon Echo Dot speaker
+- Smart switches & phone","- Link smart home app skills to Amazon Alexa
+- Write a ""Good Night"" routine for switches
+- Calibrate voice commands trigger triggers","[Villa Smart Home Installation]
+Activities:
+- Switches loops wiring
+- HAOS hub installations
+- Smart device integrations
+Works:
+- Wire switch board modules on wall board
+- Install HAOS on Pi, integrate switch relay
+- Configure Alexa voice routine triggers","TRUE"
+"49","W13","Module 4: Smart Home, IoT & Business","Home Assistant","3 Hrs","[x] Slide 1: Title Slide - Home Assistant
+[x] Slide 2: Introduction to Home Assistant
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Home Assistant Integration","- Raspberry Pi 4 (HAOS ready)
+- Zigbee sensors & router","- Set up Home Assistant configuration panel
+- Integrate Zigbee coordinator dongle
+- Write automation (turn on light when motion)","[Villa Smart Home Installation]
+Activities:
+- Switches loops wiring
+- HAOS hub installations
+- Smart device integrations
+Works:
+- Wire switch board modules on wall board
+- Install HAOS on Pi, integrate switch relay
+- Configure Alexa voice routine triggers","TRUE"
+"50","W14","Module 4: Smart Home, IoT & Business","Smart Lighting & Curtain","2 Hrs","[x] Slide 1: Title Slide - Smart Lighting & Curtain
+[x] Slide 2: Introduction to Smart Lighting & Curtain
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Smart Lighting & Curtain Integration","- Smart dimmer module & lamp
+- Curtain motor with track spool
+- Control panel switch","- Wire smart dimmer module to lamp load
+- Set curtain motor physical open/close limits
+- Program manual switch override controls","[Villa Smart Home Installation]
+Activities:
+- Switches loops wiring
+- HAOS hub installations
+- Smart device integrations
+Works:
+- Wire switch board modules on wall board
+- Install HAOS on Pi, integrate switch relay
+- Configure Alexa voice routine triggers","TRUE"
+"51","W14","Module 4: Smart Home, IoT & Business","Smart Irrigation & Energy Monitoring","2 Hrs","[x] Slide 1: Title Slide - Smart Irrigation & Energy Monitoring
+[x] Slide 2: Introduction to Smart Irrigation & Energy Monitoring
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Smart Irrigation & Energy Monitoring Integration","- 24VAC water solenoid valve
+- Smart current transformer clamp
+- Main DB panel board","- Wire water valve to smart switch relay board
+- Install current clamp on mains power line
+- Verify load metrics display on HA dashboard","[Villa Smart Home Installation]
+Activities:
+- Switches loops wiring
+- HAOS hub installations
+- Smart device integrations
+Works:
+- Wire switch board modules on wall board
+- Install HAOS on Pi, integrate switch relay
+- Configure Alexa voice routine triggers","TRUE"
+"52","W14","Module 4: Smart Home, IoT & Business","Solar CCTV & IoT Fundamentals","2 Hrs","[x] Slide 1: Title Slide - Solar CCTV & IoT Fundamentals
+[x] Slide 2: Introduction to Solar CCTV & IoT Fundamentals
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Solar CCTV & IoT Fundamentals Integration","- Solar panel & MPPT controller
+- 12V LiFePO4 battery pack
+- 4G LTE SIM router","- Wire solar panel to MPPT charger terminals
+- Terminate charger line to LiFePO4 battery
+- Configure 4G SIM APN and test failover link","[Villa Smart Home Installation]
+Activities:
+- Switches loops wiring
+- HAOS hub installations
+- Smart device integrations
+Works:
+- Wire switch board modules on wall board
+- Install HAOS on Pi, integrate switch relay
+- Configure Alexa voice routine triggers
+
+[Troubleshooting Lab]
+Activities:
+- Bench loop diagnostics
+- Multimeter voltage tests
+- Fault repair verifications
+Works:
+- Check Phase-Earth voltage using test lamp
+- Find short circuit fault inside junction box
+- Resolve induced IP clashes on camera net","TRUE"
+"53","W15","Module 4: Smart Home, IoT & Business","Site Survey & BOQ/Quotation","3 Hrs","[x] Slide 1: Title Slide - Site Survey & BOQ/Quotation
+[x] Slide 2: Introduction to Site Survey & BOQ/Quotation
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Site Survey & BOQ/Quotation Integration","- Site survey templates sheets
+- Laser distance meter tape
+- Laptops with Excel","- Perform physical room site survey measurements
+- Map camera node locations on layout sheet
+- Generate formal BOQ with hardware margins","","TRUE"
+"54","W15","Module 4: Smart Home, IoT & Business","Project Planning & Installation Standards","3 Hrs","[x] Slide 1: Title Slide - Project Planning & Installation Standards
+[x] Slide 2: Introduction to Project Planning & Installation Standards
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Project Planning & Installation Standards Integration","- Wire label printer & markers
+- PVC conduit conduits
+- Cable binders","- Draw conduit pathways layouts for villa plan
+- Print and apply wire tags matching drawings
+- Secure cables with velcro straps inside rack","","TRUE"
+"55","W15","Module 4: Smart Home, IoT & Business","Testing, Commissioning & AMC","2 Hrs","[x] Slide 1: Title Slide - Testing, Commissioning & AMC
+[x] Slide 2: Introduction to Testing, Commissioning & AMC
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Testing, Commissioning & AMC Integration","- Handover checklists forms
+- AMC contract templates","- Complete mock system handover checklist
+- Draft comprehensive system AMC proposal
+- Conduct client training walkthrough script","","TRUE"
+"56","W15","Module 4: Smart Home, IoT & Business","Customer Support & Sales/Negotiation","2 Hrs","[x] Slide 1: Title Slide - Customer Support & Sales/Negotiation
+[x] Slide 2: Introduction to Customer Support & Sales/Negotiation
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Customer Support & Sales/Negotiation Integration","- SLA ticket templates
+- Sales script worksheets","- Roleplay client sales negotiations on site
+- Design support SLA ticket priority grid
+- Practice pitching custom design advantages","","TRUE"
+"57","W16","Module 4: Smart Home, IoT & Business","Digital Marketing & Business Automation","2 Hrs","[x] Slide 1: Title Slide - Digital Marketing & Business Automation
+[x] Slide 2: Introduction to Digital Marketing & Business Automation
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Digital Marketing & Business Automation Integration","- PC client & smartphone
+- WhatsApp Business profile
+- Google Business Profile","- Setup and optimize Google Business Profile
+- Create WhatsApp Business product catalogs
+- Write automated greeting/away replies templates","","TRUE"
+"58","W16","Module 4: Smart Home, IoT & Business","Business Setup & Entrepreneurship","1 Hr","[x] Slide 1: Title Slide - Business Setup & Entrepreneurship
+[x] Slide 2: Introduction to Business Setup & Entrepreneurship
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Business Setup & Entrepreneurship Integration","- Dealer registration forms
+- Business plan template","- Complete dealer registration forms
+- Calculate project startup costs and cash flow
+- Outline tax licensing guidelines (GST/VAT)","","TRUE"
+"59","W16","Module 4: Smart Home, IoT & Business","Placement Training & Career Prep","4 Hrs","[x] Slide 1: Title Slide - Placement Training & Career Prep
+[x] Slide 2: Introduction to Placement Training & Career Prep
+[x] Slide 3: Operational Concepts
+[x] Slide 4: Hardware and Wiring Schematics
+[x] Slide 5: Wireless and RF Coexistence
+[x] Slide 6: Software Logic and API Setup
+[x] Slide 7: Testing and Inspections
+[x] Slide 8: Site Installation Standards
+[x] Slide 9: Business and Client Handovers
+[x] Slide 10: Lab Work: Placement Training & Career Prep Integration","- Resume templates sheets
+- Job search check list","- Draft professional resume with ELV portfolio
+- Setup and optimize LinkedIn career profile
+- Conduct mock technical interview sessions","","TRUE"
