@@ -126,6 +126,23 @@
     align-items: center;
     gap: 5px;
   }
+
+  /* GPU Acceleration & Mobile Optimizations */
+  .card {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform;
+    contain: content;
+  }
+
+  @media (max-width: 768px), (pointer: coarse) {
+    .card {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: rgba(18, 26, 45, 0.98) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
 </style>
 </head>
 <body>
@@ -189,7 +206,7 @@
       <div class="card-title">IP Addressing & Subnetting</div>
       <div class="card-module">Module 1: Electrical & Networking</div>
       <div class="card-footer">View Interactive Slide Deck â†’</div>
-    </a>    <a href="#" class="card" data-session="12" tabindex="0">
+    </a>    <a href="m1_s12_advanced_subnetting.html" class="card" data-session="12" tabindex="0">
       <div class="card-badge">Session 12 â€¢ 4 Hrs</div>
       <div class="card-title">Router & Switch Configuration</div>
       <div class="card-module">Module 1: Electrical & Networking</div>
@@ -436,7 +453,6 @@
     const cards = Array.from(document.querySelectorAll('.card'));
     if (cards.length === 0) return;
 
-    // Read last selected session from localStorage
     const savedSession = localStorage.getItem('last_selected_session');
     let currentIndex = 0;
 
@@ -463,7 +479,6 @@
       });
     }
 
-    // Save session ID on click
     cards.forEach((card, idx) => {
       card.addEventListener('click', () => {
         const sNum = card.getAttribute('data-session');
@@ -471,7 +486,6 @@
       });
     });
 
-    // Arrow Key Navigation across the Grid
     document.addEventListener('keydown', (e) => {
       if (!['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Enter'].includes(e.key)) return;
 
@@ -515,7 +529,6 @@
       }
     });
 
-    // Focus on initial load
     updateFocus(true);
   });
 </script>

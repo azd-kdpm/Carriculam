@@ -1,0 +1,691 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 12: IP Addressing Subnetting</title>
+<style>
+  :root {
+    --bg-color: #0b0f19;
+    --card-bg: rgba(20, 30, 55, 0.6);
+    --accent-color: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.4);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    touch-action: pan-y;
+  }
+
+  .deck {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 30px;
+    touch-action: pan-y;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    max-height: 700px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.4s ease;
+    touch-action: pan-y;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+  }
+
+  .slide-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--accent-color);
+  }
+
+  .slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-main);
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .text-content {
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .visual-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-content svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  li strong {
+    color: var(--accent-color);
+  }
+
+  .highlight-block {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 4px solid var(--accent-color);
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  .lab-block {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-left: 4px solid #10b981;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+
+  .lab-block h3 {
+    color: #10b981;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 13px;
+  }
+
+  th {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--accent-color);
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    text-align: left;
+  }
+
+  td {
+    border: 1px solid var(--border-color);
+    padding: 6px;
+  }
+
+  .controls-bar {
+    height: 60px;
+    background: rgba(15, 22, 40, 0.8);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn { -webkit-tap-highlight-color: rgba(59,130,246,0.3); touch-action: manipulation; user-select: none; 
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: transparent;
+  }
+
+  .slide-counter {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .progress-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .title-slide h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .title-slide h2 {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 30px;
+  }
+
+  /* Force landscape rotation on mobile portrait screen sizes only (excluding tablets/fold displays) */
+  @media (orientation: portrait) and (max-width: 500px) {
+    body {
+      transform: rotate(90deg);
+      transform-origin: top left;
+      width: 100vh !important;
+      height: 100vw !important;
+      position: absolute;
+      top: 0;
+      left: 100%;
+      overflow: hidden;
+    }
+  }
+  /* GPU Acceleration for silky smooth 60 FPS Android transitions */
+  .slide {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: opacity, transform;
+  }
+
+  @media (max-width: 768px), (pointer: coarse) {
+    .slide {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: rgba(18, 26, 45, 0.98) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <!-- Slide 1 -->
+  <div class="slide active title-slide">
+    <div class="slide-tag">Module 1 - Session 12</div>
+    <h1>IP Addressing & Subnetting</h1>
+    <h2>IP Addressing Subnetting</h2>
+    <div class="instructor-tag">Low-Voltage Systems & Automation Training Series</div>
+  </div>  <!-- Slide 2 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 2</div>
+      <div class="slide-counter">Slide 2 of 10</div>
+    </div>
+    <h2 class="slide-title">What is an IP Address?</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>IPv4 Structure:</strong> A 32-bit address split into 4 octets (numbers 0-255).</li><li><strong>Network vs Host:</strong> The Network ID locates the subnet, while the Host ID identifies the individual device (camera, NVR).</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="10" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="55" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="100" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="145" y="45" width="45" height="25" fill="none" stroke="#10b981" stroke-width="1.5"/>
+  <text x="27" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">192</text>
+  <text x="72" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">168</text>
+  <text x="117" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">1</text>
+  <text x="167" y="60" fill="#10b981" font-family="monospace" font-size="8" text-anchor="middle">100</text>
+  <text x="65" y="90" fill="#3b82f6" font-family="sans-serif" font-size="9" text-anchor="middle">Network ID</text>
+  <text x="155" y="90" fill="#10b981" font-family="sans-serif" font-size="9" text-anchor="middle">Host ID</text>
+  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">IPv4 Address Architecture</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 3 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 3</div>
+      <div class="slide-counter">Slide 3 of 10</div>
+    </div>
+    <h2 class="slide-title">The Subnet Mask</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Subnet Mask:</strong> A filter that tells the operating system where the network section ends and host section begins.</li><li><strong>Standard Mask:</strong> Class C standard (255.255.255.0) limits local hosts to 254 devices.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="20" y="30" width="70" height="40" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <text x="55" y="55" fill="#3b82f6" font-family="monospace" font-size="9" text-anchor="middle">255.255.255.0</text>
+  <rect x="110" y="30" width="70" height="40" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <text x="145" y="55" fill="#ef4444" font-family="monospace" font-size="9" text-anchor="middle">255.255.255.240</text>
+  <text x="55" y="95" fill="#9ca3af" font-family="sans-serif" font-size="8" text-anchor="middle">/24 (256 hosts)</text>
+  <text x="145" y="95" fill="#9ca3af" font-family="sans-serif" font-size="8" text-anchor="middle">/28 (16 hosts)</text>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Subnet Mask Partitioning</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 4 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 4</div>
+      <div class="slide-counter">Slide 4 of 10</div>
+    </div>
+    <h2 class="slide-title">CIDR Classless Notation</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Slash Notation:</strong> Combines IP address and mask bits (e.g. 192.168.1.0/24).</li><li><strong>Subnet Slicing:</strong> Slicing larger IP ranges into smaller blocks (e.g. /28 offers 16 IPs, /29 offers 8 IPs).</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <!-- Pie chart slices representation -->
+  <circle cx="100" cy="70" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="100" y1="25" x2="100" y2="115" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="55" y1="70" x2="145" y2="70" stroke="#3b82f6" stroke-width="2"/>
+  <text x="70" y="55" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 10</text>
+  <text x="130" y="55" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 20</text>
+  <text x="70" y="95" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 30</text>
+  <text x="130" y="95" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 40</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Subnet Slicing</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 5 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 5</div>
+      <div class="slide-counter">Slide 5 of 10</div>
+    </div>
+    <h2 class="slide-title">Private vs. Public IP Ranges</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Private IP (RFC 1918):</strong> Intended for local LAN use (e.g. 192.168.x.x, 10.x.x.x). Cannot route on the internet.</li><li><strong>Public IP:</strong> Unique global address assigned by ISPs, allowing servers to trace internet route directions.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="45" width="150" height="50" rx="3" fill="none" stroke="#4b5563" stroke-width="2"/>
+  <!-- WAN port -->
+  <rect x="35" y="55" width="20" height="20" fill="#3b82f6" rx="1"/>
+  <text x="45" y="88" fill="#3b82f6" font-family="sans-serif" font-size="7" text-anchor="middle">WAN</text>
+  <!-- LAN ports -->
+  <rect x="75" y="55" width="20" height="20" fill="#10b981" rx="1"/>
+  <rect x="105" y="55" width="20" height="20" fill="#10b981" rx="1"/>
+  <rect x="135" y="55" width="20" height="20" fill="#10b981" rx="1"/>
+  <text x="115" y="88" fill="#10b981" font-family="sans-serif" font-size="7" text-anchor="middle">LAN Ports</text>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Standard Router Back Panel</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 6 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 6</div>
+      <div class="slide-counter">Slide 6 of 10</div>
+    </div>
+    <h2 class="slide-title">Gateway & DNS Basics</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Default Gateway:</strong> The local exit interface router port IP (usually 192.168.1.1). Routes out-of-subnet packets.</li><li><strong>DNS Server:</strong> Domain Name System converts URL text into web IPs (Google DNS standard: 8.8.8.8).</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="80" y="45" width="40" height="40" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="20" y1="65" x2="80" y2="65" stroke="#ef4444" stroke-width="2"/>
+  <line x1="120" y1="65" x2="180" y2="65" stroke="#10b981" stroke-width="2"/>
+  <text x="50" y="55" fill="#ef4444" font-family="monospace" font-size="7" text-anchor="middle">192.168.1.10</text>
+  <text x="150" y="55" fill="#10b981" font-family="monospace" font-size="7" text-anchor="middle">122.15.6.8</text>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Network Address Translation</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 7 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 7</div>
+      <div class="slide-counter">Slide 7 of 10</div>
+    </div>
+    <h2 class="slide-title">Static IP vs. DHCP Dynamic</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>DHCP Server:</strong> Automatically leases temporary IP addresses to user laptops and phones.</li><li><strong>Static IP Standard:</strong> Critical security devices (NVR, cameras, servers) must have permanent static IPs.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="10" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="55" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="100" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="145" y="45" width="45" height="25" fill="none" stroke="#10b981" stroke-width="1.5"/>
+  <text x="27" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">192</text>
+  <text x="72" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">168</text>
+  <text x="117" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">1</text>
+  <text x="167" y="60" fill="#10b981" font-family="monospace" font-size="8" text-anchor="middle">100</text>
+  <text x="65" y="90" fill="#3b82f6" font-family="sans-serif" font-size="9" text-anchor="middle">Network ID</text>
+  <text x="155" y="90" fill="#10b981" font-family="sans-serif" font-size="9" text-anchor="middle">Host ID</text>
+  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">IPv4 Address Architecture</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 8 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 8</div>
+      <div class="slide-counter">Slide 8 of 10</div>
+    </div>
+    <h2 class="slide-title">Sizing a CCTV Subnet</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Subnet Calculation:</strong> Ensure CIDR blocks offer enough host spaces for all cameras and workstations.</li><li><strong>IP Conservation:</strong> Prevents network conflicts and IP address exhaustion on large multi-camera systems.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <!-- Pie chart slices representation -->
+  <circle cx="100" cy="70" r="45" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="100" y1="25" x2="100" y2="115" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="55" y1="70" x2="145" y2="70" stroke="#3b82f6" stroke-width="2"/>
+  <text x="70" y="55" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 10</text>
+  <text x="130" y="55" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 20</text>
+  <text x="70" y="95" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 30</text>
+  <text x="130" y="95" fill="#f3f4f6" font-family="sans-serif" font-size="8">VLAN 40</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Subnet Slicing</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 9 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 9</div>
+      <div class="slide-counter">Slide 9 of 10</div>
+    </div>
+    <h2 class="slide-title">Common Configuration Errors</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Invalid IP:</strong> Setting an IP address that lies outside the defined subnet gateway block range.</li><li><strong>Mismatched Masks:</strong> Restricts target devices from listening to NVR requests.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="20" y="30" width="70" height="40" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <text x="55" y="55" fill="#3b82f6" font-family="monospace" font-size="9" text-anchor="middle">255.255.255.0</text>
+  <rect x="110" y="30" width="70" height="40" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <text x="145" y="55" fill="#ef4444" font-family="monospace" font-size="9" text-anchor="middle">255.255.255.240</text>
+  <text x="55" y="95" fill="#9ca3af" font-family="sans-serif" font-size="8" text-anchor="middle">/24 (256 hosts)</text>
+  <text x="145" y="95" fill="#9ca3af" font-family="sans-serif" font-size="8" text-anchor="middle">/28 (16 hosts)</text>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Subnet Mask Partitioning</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 10 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 12 - Slide 10</div>
+      <div class="slide-counter">Slide 10 of 10</div>
+    </div>
+    <h2 class="slide-title">Lab Session Work</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <div class='lab-block'><h3>Lab Work: Setup Local Subnet</h3><ol><li>Connect two workstations via switch, manually configure static IPs inside /24 subnet.</li><li>Execute ping command tests to confirm link setup.</li><li>Alter subnet mask on one host, observe and resolve failure.</li></ol></div>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="10" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="55" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="100" y="45" width="35" height="25" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="145" y="45" width="45" height="25" fill="none" stroke="#10b981" stroke-width="1.5"/>
+  <text x="27" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">192</text>
+  <text x="72" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">168</text>
+  <text x="117" y="60" fill="#f3f4f6" font-family="monospace" font-size="8" text-anchor="middle">1</text>
+  <text x="167" y="60" fill="#10b981" font-family="monospace" font-size="8" text-anchor="middle">100</text>
+  <text x="65" y="90" fill="#3b82f6" font-family="sans-serif" font-size="9" text-anchor="middle">Network ID</text>
+  <text x="155" y="90" fill="#10b981" font-family="sans-serif" font-size="9" text-anchor="middle">Host ID</text>
+  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">IPv4 Address Architecture</text>
+</svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="nav-buttons">
+    <a class="btn" href="slides_index.html" style="text-decoration:none;">Back to Hub</a>
+    <button class="btn" id="prevBtn" disabled>Previous</button>
+    <button class="btn" id="nextBtn">Next</button>
+  </div>
+  <button class="btn" id="fullscreenBtn">Fullscreen</button>
+</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  // ALWAYS start from Slide 0 (Slide 1)
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    prevBtn.disabled = false;
+    nextBtn.disabled = false;
+
+    if (currentSlide === 0) {
+      prevBtn.textContent = "Exit to Menu";
+    } else {
+      prevBtn.textContent = "Previous";
+    }
+
+    if (currentSlide === slides.length - 1) {
+      nextBtn.textContent = "Finish & Exit";
+    } else {
+      nextBtn.textContent = "Next";
+    }
+
+    const progress = (currentSlide / (slides.length - 1)) * 100;
+    progressBar.style.width = progress + "%";
+  }
+
+  function goToIndex() {
+    window.location.href = 'slides_index.html';
+  }
+
+  prevBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  // Laptop Keyboard Navigation inside slide deck
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (e.key === 'Escape') {
+      goToIndex();
+    }
+  });
+
+  // Touch & Swipe Handler
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      }
+    }
+  }, { passive: true });
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen().catch(err => {});
+      }
+    });
+  }
+
+  updateSlides();
+</script>
+</body>
+</html>
