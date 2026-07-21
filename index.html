@@ -126,6 +126,23 @@
     align-items: center;
     gap: 5px;
   }
+  /* GPU Acceleration & Android Performance Optimizations */
+  .card {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: transform;
+    contain: content;
+  }
+
+  /* Disable heavy real-time backdrop blurs on Android/Mobile GPUs for 60 FPS smoothness */
+  @media (max-width: 768px), (pointer: coarse) {
+    .card {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: rgba(18, 26, 45, 0.98) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
 </style>
 </head>
 <body>
