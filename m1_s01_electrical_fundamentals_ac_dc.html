@@ -202,7 +202,7 @@
     gap: 15px;
   }
 
-  .btn {
+  .btn { -webkit-tap-highlight-color: rgba(59,130,246,0.3); touch-action: manipulation; user-select: none; 
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-color);
     color: var(--text-main);
@@ -609,6 +609,7 @@
   const pagePath = window.location.pathname;
   const storageKey = 'slide_pos_' + (pagePath.split('/').pop() || 'current');
   
+  // Restore saved slide position (PERSISTS ACROSS VISITS & EXITS!)
   let currentSlide = 0;
   const savedPos = localStorage.getItem(storageKey);
   if (savedPos !== null) {
@@ -627,6 +628,7 @@
       }
     });
 
+    // Save selection position to localStorage (Never deleted!)
     localStorage.setItem(storageKey, currentSlide);
 
     prevBtn.disabled = false;
@@ -649,11 +651,12 @@
   }
 
   function goToIndex() {
-    localStorage.removeItem(storageKey);
+    // Keep progress saved in localStorage!
     window.location.href = 'slides_index.html';
   }
 
-  prevBtn.addEventListener('click', () => {
+  prevBtn.addEventListener('click', (e) => {
+    e.preventDefault();
     if (currentSlide > 0) {
       currentSlide--;
       updateSlides();
@@ -662,7 +665,8 @@
     }
   });
 
-  nextBtn.addEventListener('click', () => {
+  nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
     if (currentSlide < slides.length - 1) {
       currentSlide++;
       updateSlides();
@@ -671,6 +675,7 @@
     }
   });
 
+  // Laptop Keyboard Navigation
   document.addEventListener('keydown', (e) => {
     if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
       e.preventDefault();
@@ -693,39 +698,47 @@
     }
   });
 
+  // Android Touch & Swipe Handler
   let touchStartX = 0;
-  let touchEndX = 0;
+  let touchStartY = 0;
 
   document.addEventListener('touchstart', (e) => {
-    touchStartX = e.changedTouches[0].screenX;
-  }, false);
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
 
   document.addEventListener('touchend', (e) => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleSwipe();
-  }, false);
-
-  function handleSwipe() {
-    const diff = touchEndX - touchStartX;
-    if (diff < -50) {
-      if (currentSlide < slides.length - 1) {
-        currentSlide++;
-        updateSlides();
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
       } else {
-        goToIndex();
-      }
-    } else if (diff > 50) {
-      if (currentSlide > 0) {
-        currentSlide--;
-        updateSlides();
-      } else {
-        goToIndex();
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
       }
     }
-  }
+  }, { passive: true });
 
   if (fullscreenBtn) {
-    fullscreenBtn.addEventListener('click', () => {
+    fullscreenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(err => {});
       } else {
