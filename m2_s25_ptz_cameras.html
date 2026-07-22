@@ -1,0 +1,642 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 25: PTZ Cameras</title>
+<style>
+  :root {
+    --bg-color: #080c14;
+    --card-bg: rgba(15, 25, 45, 0.6);
+    --accent-color: #ef4444;
+    --accent-glow: rgba(239, 68, 68, 0.4);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    touch-action: pan-y;
+  }
+
+  .deck {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 30px;
+    touch-action: pan-y;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    max-height: 700px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.4s ease;
+    touch-action: pan-y;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+  }
+
+  .slide-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--accent-color);
+  }
+
+  .slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-main);
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .text-content {
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .visual-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-content svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  li strong {
+    color: var(--accent-color);
+  }
+
+  .highlight-block {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 4px solid var(--accent-color);
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  .lab-block {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-left: 4px solid #10b981;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+
+  .lab-block h3 {
+    color: #10b981;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 13px;
+  }
+
+  th {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--accent-color);
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    text-align: left;
+  }
+
+  td {
+    border: 1px solid var(--border-color);
+    padding: 6px;
+  }
+
+  .controls-bar {
+    height: 60px;
+    background: rgba(15, 22, 40, 0.8);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn { -webkit-tap-highlight-color: rgba(59,130,246,0.3); touch-action: manipulation; user-select: none; 
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: transparent;
+  }
+
+  .slide-counter {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .progress-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .title-slide h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .title-slide h2 {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 30px;
+  }
+
+  /* Force landscape rotation on mobile portrait screen sizes only (excluding tablets/fold displays) */
+  @media (orientation: portrait) and (max-width: 500px) {
+    body {
+      transform: rotate(90deg);
+      transform-origin: top left;
+      width: 100vh !important;
+      height: 100vw !important;
+      position: absolute;
+      top: 0;
+      left: 100%;
+      overflow: hidden;
+    }
+  }
+  /* GPU Acceleration for silky smooth 60 FPS Android transitions */
+  .slide {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: opacity, transform;
+  }
+
+  @media (max-width: 768px), (pointer: coarse) {
+    .slide {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: rgba(18, 26, 45, 0.98) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <!-- Slide 1 -->
+  <div class="slide active title-slide">
+    <div class="slide-tag">Module 2 - Session 25</div>
+    <h1>PTZ Cameras & Patrols</h1>
+    <h2>PTZ Cameras</h2>
+    <div class="instructor-tag">Low-Voltage Systems & Automation Training Series</div>
+  </div>  <!-- Slide 2 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 25 - Slide 2</div>
+      <div class="slide-counter">Slide 2 of 10</div>
+    </div>
+    <h2 class="slide-title">PTZ pan/tilt mechanics</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Pan/Tilt Motors:</strong> Built-in geared servo motors allow cameras to rotate 360Â° continuously and tilt up/down.</li><li><strong>Slip Rings:</strong> Allow internal wires to spin continuously without twisting or breaking.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <circle cx="100" cy="70" r="35" fill="none" stroke="#9ca3af" stroke-width="5"/>
+  <circle cx="100" cy="70" r="25" fill="none" stroke="#f59e0b" stroke-width="3"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Continuous rotation Contact Rings</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 3 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 25 - Slide 3</div>
+      <div class="slide-counter">Slide 3 of 10</div>
+    </div>
+    <h2 class="slide-title">Optical Zoom Ratios</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Zoom Rating:</strong> Rated in zoom multipliers (e.g. 25x, 32x, 48x).</li><li><strong>Telephoto range:</strong> A 32x optical zoom lens can read license plates from distances exceeding 200m.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="45" width="150" height="50" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <path d="M 60 50 C 70 50, 70 90, 60 90 Z" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <path d="M 120 50 C 130 50, 130 90, 120 90 Z" fill="none" stroke="#10b981" stroke-width="2"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Sliding Zoom element Assemblies</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 4 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 25 - Slide 4</div>
+      <div class="slide-counter">Slide 4 of 10</div>
+    </div>
+    <h2 class="slide-title">PTZ Preset Coordinates</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Presets:</strong> Programmed coordinate positions (Pan, Tilt, and Zoom values) saved in camera memory.</li><li><strong>Speed:</strong> Allows operators to jump to pre-defined view points instantly.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="25" width="150" height="95" fill="none" stroke="#4b5563" stroke-width="2"/>
+  <circle cx="50" cy="50" r="6" fill="#ef4444"/>
+  <circle cx="150" cy="90" r="6" fill="#10b981"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Preset Coordinates motor Steps</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 5 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 25 - Slide 5</div>
+      <div class="slide-counter">Slide 5 of 10</div>
+    </div>
+    <h2 class="slide-title">Patrol Tours (Sequence)</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Tours:</strong> Programming a sequence of presets for the camera to monitor in order (e.g., Preset 1 for 10s, then Preset 2 for 20s).</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <path d="M 40 40 L 160 40 L 100 100 Z" fill="none" stroke="#f59e0b" stroke-width="2"/>
+  <circle cx="40" cy="40" r="6" fill="#3b82f6"/>
+  <circle cx="160" cy="40" r="6" fill="#3b82f6"/>
+  <circle cx="100" cy="100" r="6" fill="#3b82f6"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Preset Sequence Tour Loops</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 6 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 25 - Slide 6</div>
+      <div class="slide-counter">Slide 6 of 10</div>
+    </div>
+    <h2 class="slide-title">Auto-Tracking AI Logic</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Tracking:</strong> Camera algorithms detect moving human/vehicle targets and automatically pan, tilt, and zoom to keep them centered in the frame.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="65" y="35" width="70" height="70" fill="none" stroke="#10b981" stroke-width="2"/>
+  <circle cx="100" cy="70" r="20" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Auto-Center Target Tracking Logic</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 7 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 25 - Slide 7</div>
+      <div class="slide-counter">Slide 7 of 10</div>
+    </div>
+    <h2 class="slide-title">RS485 Serial Control</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Legacy wiring:</strong> Uses 2-wire RS485 lines running Pelco-D/P protocols to control pan/tilt commands.</li><li><strong>IP Control:</strong> Modern IP PTZ cameras send control commands directly over the ethernet line.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="45" width="60" height="50" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <rect x="115" y="45" width="60" height="50" fill="none" stroke="#10b981" stroke-width="2"/>
+  <line x1="85" y1="60" x2="115" y2="60" stroke="#f59e0b" stroke-width="2"/>
+  <line x1="85" y1="80" x2="115" y2="80" stroke="#f59e0b" stroke-width="2"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">RS485 Pelco Serial Interconnects</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 8 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 25 - Slide 8</div>
+      <div class="slide-counter">Slide 8 of 10</div>
+    </div>
+    <h2 class="slide-title">Joystick Controller Desks</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Manual Control:</strong> 3-axis joysticks allow analog control of pan, tilt, and zoom speeds.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="35" y="55" width="130" height="60" rx="4" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <circle cx="65" cy="85" r="15" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">3-Axis joystick Desk Controls</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 9 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 25 - Slide 9</div>
+      <div class="slide-counter">Slide 9 of 10</div>
+    </div>
+    <h2 class="slide-title">Mechanical Limit Stops</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Stops:</strong> Physical internal limit switches prevent pan/tilt motors from over-rotating and hitting mounts.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <circle cx="100" cy="70" r="35" fill="none" stroke="#4b5563" stroke-width="3"/>
+  <rect x="95" y="30" width="10" height="15" fill="#ef4444"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Physical limit Stop Switches</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 10 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 25 - Slide 10</div>
+      <div class="slide-counter">Slide 10 of 10</div>
+    </div>
+    <h2 class="slide-title">Practical Lab Guide</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <div class='lab-block'><h3>Lab Work: Program PTZ Patrol</h3><ol><li>Wire PTZ camera to PoE switch and NVR.</li><li>Save 4 different coordinate presets (Gate, Fence, Door, Parking).</li><li>Program a patrol tour linking the presets with 10-second dwell times.</li></ol></div>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="30" y="30" width="140" height="85" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Completed Patrol Setup Lab</text>
+</svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="nav-buttons">
+    <a class="btn" href="slides_index.html" style="text-decoration:none;">Back to Hub</a>
+    <button class="btn" id="prevBtn" disabled>Previous</button>
+    <button class="btn" id="nextBtn">Next</button>
+  </div>
+  <button class="btn" id="fullscreenBtn">Fullscreen</button>
+</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  // ALWAYS start from Slide 0 (Slide 1)
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    prevBtn.disabled = false;
+    nextBtn.disabled = false;
+
+    if (currentSlide === 0) {
+      prevBtn.textContent = "Exit to Menu";
+    } else {
+      prevBtn.textContent = "Previous";
+    }
+
+    if (currentSlide === slides.length - 1) {
+      nextBtn.textContent = "Finish & Exit";
+    } else {
+      nextBtn.textContent = "Next";
+    }
+
+    const progress = (currentSlide / (slides.length - 1)) * 100;
+    progressBar.style.width = progress + "%";
+  }
+
+  function goToIndex() {
+    window.location.href = 'slides_index.html';
+  }
+
+  prevBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  // Laptop Keyboard Navigation inside slide deck
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (e.key === 'Escape') {
+      goToIndex();
+    }
+  });
+
+  // Touch & Swipe Handler
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      }
+    }
+  }, { passive: true });
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen().catch(err => {});
+      }
+    });
+  }
+
+  updateSlides();
+</script>
+</body>
+</html>

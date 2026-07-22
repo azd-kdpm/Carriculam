@@ -1,0 +1,4 @@
+# Ignore local metadata files
+*.metadata.json
+.DS_Store
+Thumbs.db

@@ -1,0 +1,667 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 7: Cable Selection Conduits</title>
+<style>
+  :root {
+    --bg-color: #0b0f19;
+    --card-bg: rgba(20, 30, 55, 0.6);
+    --accent-color: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.4);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    touch-action: pan-y;
+  }
+
+  .deck {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 30px;
+    touch-action: pan-y;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    max-height: 700px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.4s ease;
+    touch-action: pan-y;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+  }
+
+  .slide-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--accent-color);
+  }
+
+  .slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-main);
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .text-content {
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .visual-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-content svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  li strong {
+    color: var(--accent-color);
+  }
+
+  .highlight-block {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 4px solid var(--accent-color);
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  .lab-block {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-left: 4px solid #10b981;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+
+  .lab-block h3 {
+    color: #10b981;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 13px;
+  }
+
+  th {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--accent-color);
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    text-align: left;
+  }
+
+  td {
+    border: 1px solid var(--border-color);
+    padding: 6px;
+  }
+
+  .controls-bar {
+    height: 60px;
+    background: rgba(15, 22, 40, 0.8);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn { -webkit-tap-highlight-color: rgba(59,130,246,0.3); touch-action: manipulation; user-select: none; 
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: transparent;
+  }
+
+  .slide-counter {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .progress-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .title-slide h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .title-slide h2 {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 30px;
+  }
+
+  /* Force landscape rotation on mobile portrait screen sizes only (excluding tablets/fold displays) */
+  @media (orientation: portrait) and (max-width: 500px) {
+    body {
+      transform: rotate(90deg);
+      transform-origin: top left;
+      width: 100vh !important;
+      height: 100vw !important;
+      position: absolute;
+      top: 0;
+      left: 100%;
+      overflow: hidden;
+    }
+  }
+  /* GPU Acceleration for silky smooth 60 FPS Android transitions */
+  .slide {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: opacity, transform;
+  }
+
+  @media (max-width: 768px), (pointer: coarse) {
+    .slide {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: rgba(18, 26, 45, 0.98) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <!-- Slide 1 -->
+  <div class="slide active title-slide">
+    <div class="slide-tag">Module 1 - Session 7</div>
+    <h1>Cable Selection & Conduits</h1>
+    <h2>Cable Selection Conduits</h2>
+    <div class="instructor-tag">Low-Voltage Systems & Automation Training Series</div>
+  </div>  <!-- Slide 2 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 7 - Slide 2</div>
+      <div class="slide-counter">Slide 2 of 10</div>
+    </div>
+    <h2 class="slide-title">Wire Sizing Standards</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Metric sizing:</strong> Cross-section area sized in square millimeters (e.g. 1.5 sq mm).</li><li><strong>Solid Core:</strong> High copper conductivity, low bending flex. Best for structural mains run.</li><li><strong>Stranded Core:</strong> High flexing capability, resistant to metal fatigue. Best for movable security connections.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <circle cx="55" cy="65" r="20" fill="#38bdf8"/>
+  <text x="55" y="115" fill="#38bdf8" font-family="sans-serif" font-size="9" text-anchor="middle">Solid Core</text>
+  <circle cx="145" cy="65" r="7" fill="#f43f5e"/>
+  <circle cx="132" cy="55" r="7" fill="#f43f5e"/>
+  <circle cx="158" cy="55" r="7" fill="#f43f5e"/>
+  <circle cx="132" cy="75" r="7" fill="#f43f5e"/>
+  <circle cx="158" cy="75" r="7" fill="#f43f5e"/>
+  <circle cx="145" cy="50" r="7" fill="#f43f5e"/>
+  <circle cx="145" cy="80" r="7" fill="#f43f5e"/>
+  <text x="145" y="115" fill="#f43f5e" font-family="sans-serif" font-size="9" text-anchor="middle">Stranded Cores</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Cable Core Profiles</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 3 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 7 - Slide 3</div>
+      <div class="slide-counter">Slide 3 of 10</div>
+    </div>
+    <h2 class="slide-title">Line Voltage Drop Calculations</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Cable Resistance:</strong> Long cable runs act as inline resistors, dropping terminal voltages.</li><li><strong>Drop Calculation:</strong> Select thicker cables for long runs to ensure target operating voltage arrives at load.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <line x1="30" y1="20" x2="30" y2="120" stroke="#4b5563" stroke-width="1.5"/>
+  <line x1="30" y1="120" x2="190" y2="120" stroke="#4b5563" stroke-width="1.5"/>
+  <path d="M 30 40 Q 90 90 180 110" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <text x="135" y="60" fill="#ef4444" font-family="sans-serif" font-size="8">Voltage Drop</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Voltage Drop vs Cable Distance</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 4 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 7 - Slide 4</div>
+      <div class="slide-counter">Slide 4 of 10</div>
+    </div>
+    <h2 class="slide-title">ELV Cable Selection Profiles</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Coaxial RG59:</strong> For analog video signals.</li><li><strong>Cat6 UTP/FTP:</strong> For high-speed ethernet networks. FTP features aluminum foil shield to block RF noise.</li><li><strong>Multi-core Shielded:</strong> For low-power alarm loops and sensors.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="35" width="150" height="15" rx="3" fill="#3b82f6"/>
+  <circle cx="45" cy="42" r="4" fill="#eab308"/>
+  <circle cx="75" cy="42" r="4" fill="#10b981"/>
+  <circle cx="105" cy="42" r="4" fill="#ef4444"/>
+  <circle cx="135" cy="42" r="4" fill="#f3f4f6"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Multi-Pair Shielded Profiles</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 5 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 7 - Slide 5</div>
+      <div class="slide-counter">Slide 5 of 10</div>
+    </div>
+    <h2 class="slide-title">PVC & GI Conduits</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Conduits:</strong> Rigid PVC/GI pipes mount to walls to protect cables from moisture, impact, and pests.</li><li><strong>Flexible Pipes:</strong> Corrugated PVC hoses route cables across corners, doors, and moving joint gaps.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="20" y="55" width="160" height="40" rx="4" fill="none" stroke="#9ca3af" stroke-width="3"/>
+  <path d="M 10 75 Q 100 75 190 75" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round"/>
+  <text x="100" y="125" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Conduit Cable Pulling</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 6 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 7 - Slide 6</div>
+      <div class="slide-counter">Slide 6 of 10</div>
+    </div>
+    <h2 class="slide-title">The 40% Fill Rule</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>NEC Rule:</strong> Copper cable cross-section area must not exceed 40% of conduit inner area.</li><li><strong>Airflow space:</strong> Leaves 60% empty volume to prevent cable friction during pulls and ensure thermal ventilation.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <circle cx="100" cy="70" r="45" fill="none" stroke="#9ca3af" stroke-width="3"/>
+  <circle cx="90" cy="70" r="10" fill="#ef4444"/>
+  <circle cx="110" cy="60" r="10" fill="#3b82f6"/>
+  <circle cx="110" cy="80" r="10" fill="#10b981"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">40% Max Cross-Section Fill</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 7 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 7 - Slide 7</div>
+      <div class="slide-counter">Slide 7 of 10</div>
+    </div>
+    <h2 class="slide-title">Bending & Saddling PVC Pipes</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Spring Bending:</strong> Bending springs inserted inside PVC conduits allow smooth 90 degree curves without kinks.</li><li><strong>Spacing:</strong> Conduit spacer saddles must secure pipes to wall at regular intervals (every 1 meter).</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <path d="M 30 115 A 80 80 0 0 1 115 30" fill="none" stroke="#9ca3af" stroke-width="15"/>
+  <path d="M 32 113 A 78 78 0 0 1 113 32" fill="none" stroke="#f59e0b" stroke-width="6" stroke-dasharray="3 3"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Spring Insertion for PVC Bends</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 8 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 7 - Slide 8</div>
+      <div class="slide-counter">Slide 8 of 10</div>
+    </div>
+    <h2 class="slide-title">Separation of Services</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Noise Isolation:</strong> AC mains emit high-voltage electromagnetic interference fields.</li><li><strong>Spacing Rule:</strong> Low-voltage data conduits must run at least 300 mm away from parallel power pipes.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <line x1="20" y1="45" x2="180" y2="45" stroke="#ef4444" stroke-width="3"/>
+  <line x1="20" y1="105" x2="180" y2="105" stroke="#3b82f6" stroke-width="3"/>
+  <line x1="100" y1="48" x2="100" y2="102" stroke="#eab308" stroke-width="1.5"/>
+  <polygon points="100,48 96,55 104,55" fill="#eab308"/>
+  <polygon points="100,102 96,95 104,95" fill="#eab308"/>
+  <text x="112" y="80" fill="#eab308" font-family="sans-serif" font-weight="bold" font-size="9">300 mm</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Data / Power Conduit Separation</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 9 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 7 - Slide 9</div>
+      <div class="slide-counter">Slide 9 of 10</div>
+    </div>
+    <h2 class="slide-title">Splicing & Jointing Standards</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Western Union:</strong> High tensile splice for inline cable extensions.</li><li><strong>Pigtail Joint:</strong> Standard twist joint inside junction boxes.</li><li><strong>Insulation:</strong> Always wrap joints with quality PVC electrical tape or heat-shrink sleeves.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <line x1="15" y1="40" x2="60" y2="40" stroke="#f3f4f6" stroke-width="2"/>
+  <path d="M 60 40 L 70 30 L 75 50 L 80 30 L 85 50 L 95 40" fill="none" stroke="#f3f4f6" stroke-width="2"/>
+  <line x1="95" y1="40" x2="140" y2="40" stroke="#f3f4f6" stroke-width="2"/>
+  <text x="80" y="20" fill="#f3f4f6" font-family="sans-serif" font-size="8" text-anchor="middle">Western Union Joint</text>
+  <line x1="45" y1="105" x2="90" y2="105" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="45" y1="115" x2="90" y2="105" stroke="#ef4444" stroke-width="2"/>
+  <path d="M 90 105 L 110 95 L 115 110 L 120 95" fill="none" stroke="#eab308" stroke-width="2"/>
+  <text x="80" y="85" fill="#f3f4f6" font-family="sans-serif" font-size="8" text-anchor="middle">Pigtail Joint</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Splicing Standards</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 10 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 7 - Slide 10</div>
+      <div class="slide-counter">Slide 10 of 10</div>
+    </div>
+    <h2 class="slide-title">Practical Lab Guide</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <div class='lab-block'><h3>Lab Work: Conduit Pipe Layout</h3><ol><li>Bend 90 degree curves on PVC pipes using bending spring.</li><li>Mount conduits on wall board using saddles, fish Cat6 wires through routes.</li><li>Perform Western Union splice joints inside junction boxes.</li></ol></div>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="25" width="150" height="95" fill="none" stroke="#4b5563" stroke-width="2"/>
+  <line x1="35" y1="40" x2="165" y2="40" stroke="#9ca3af" stroke-width="4"/>
+  <line x1="35" y1="80" x2="165" y2="80" stroke="#9ca3af" stroke-width="4"/>
+  <rect x="55" y="35" width="5" height="14" fill="#3b82f6"/>
+  <rect x="135" y="35" width="5" height="14" fill="#3b82f6"/>
+  <rect x="55" y="75" width="5" height="14" fill="#3b82f6"/>
+  <rect x="135" y="75" width="5" height="14" fill="#3b82f6"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Completed Conduit Layout</text>
+</svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="nav-buttons">
+    <a class="btn" href="slides_index.html" style="text-decoration:none;">Back to Hub</a>
+    <button class="btn" id="prevBtn" disabled>Previous</button>
+    <button class="btn" id="nextBtn">Next</button>
+  </div>
+  <button class="btn" id="fullscreenBtn">Fullscreen</button>
+</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  // ALWAYS start from Slide 0 (Slide 1)
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    prevBtn.disabled = false;
+    nextBtn.disabled = false;
+
+    if (currentSlide === 0) {
+      prevBtn.textContent = "Exit to Menu";
+    } else {
+      prevBtn.textContent = "Previous";
+    }
+
+    if (currentSlide === slides.length - 1) {
+      nextBtn.textContent = "Finish & Exit";
+    } else {
+      nextBtn.textContent = "Next";
+    }
+
+    const progress = (currentSlide / (slides.length - 1)) * 100;
+    progressBar.style.width = progress + "%";
+  }
+
+  function goToIndex() {
+    window.location.href = 'slides_index.html';
+  }
+
+  prevBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  // Laptop Keyboard Navigation inside slide deck
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (e.key === 'Escape') {
+      goToIndex();
+    }
+  });
+
+  // Touch & Swipe Handler
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      }
+    }
+  }, { passive: true });
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen().catch(err => {});
+      }
+    });
+  }
+
+  updateSlides();
+</script>
+</body>
+</html>

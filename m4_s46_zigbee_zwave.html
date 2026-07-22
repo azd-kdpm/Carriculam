@@ -1,0 +1,668 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 46: Zigbee & Z-Wave</title>
+<style>
+  :root {
+    --bg-color: #0b0f19;
+    --card-bg: rgba(20, 30, 55, 0.6);
+    --accent-color: #f97316;
+    --accent-glow: rgba(249, 115, 22, 0.4);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    touch-action: pan-y;
+  }
+
+  .deck {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 30px;
+    touch-action: pan-y;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    max-height: 700px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.4s ease;
+    touch-action: pan-y;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+  }
+
+  .slide-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--accent-color);
+  }
+
+  .slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-main);
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .text-content {
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .visual-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-content svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  li strong {
+    color: var(--accent-color);
+  }
+
+  .highlight-block {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 4px solid var(--accent-color);
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  .lab-block {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-left: 4px solid #10b981;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+
+  .lab-block h3 {
+    color: #10b981;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .controls-bar {
+    height: 60px;
+    background: rgba(15, 22, 40, 0.8);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn { -webkit-tap-highlight-color: rgba(59,130,246,0.3); touch-action: manipulation; user-select: none; 
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+    color: #fff;
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: transparent;
+    border-color: var(--border-color);
+    color: var(--text-muted);
+  }
+
+  .progress-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .title-slide h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .title-slide h2 {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 30px;
+  }
+
+  .instructor-tag {
+    font-size: 14px;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+  }
+
+  /* Force landscape rotation on mobile portrait screen sizes only (excluding tablets/fold displays) */
+  @media (orientation: portrait) and (max-width: 500px) {
+    body {
+      transform: rotate(90deg);
+      transform-origin: top left;
+      width: 100vh !important;
+      height: 100vw !important;
+      position: absolute;
+      top: 0;
+      left: 100%;
+      overflow: hidden;
+    }
+  }
+  /* GPU Acceleration for silky smooth 60 FPS Android transitions */
+  .slide {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: opacity, transform;
+  }
+
+  @media (max-width: 768px), (pointer: coarse) {
+    .slide {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: rgba(18, 26, 45, 0.98) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <div class="slide active title-slide">
+    <div class="slide-tag">Module 4 - Session 46</div>
+    <h1>Zigbee & Z-Wave</h1>
+    <h2>Smart Home, IoT & Business Integration Series</h2>
+    <div class="instructor-tag">Session Slide Deck (10 Slide Expansion)</div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 46 - Slide 2</div>
+      <div class="slide-counter">Slide 2 of 10</div>
+    </div>
+    <h2 class="slide-title">Introduction to Zigbee & Z-Wave</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Overview:</strong> Mastering the core principles of Coordinator, Router, and End Device roles.</li><li><strong>Aesthetic Controls:</strong> Designing smart systems with dynamic user experiences.</li><li><strong>System Interlocks:</strong> Aligning low-voltage integrations with standard codes.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(30, 35)">
+              <rect x="0" y="0" width="40" height="40" rx="3" fill="none" stroke="#f97316" stroke-width="2"/>
+              <rect x="5" y="5" width="30" height="15" fill="rgba(249,115,22,0.1)" stroke="#f97316" stroke-width="1"/>
+              <text x="20" y="32" fill="#9ca3af" font-size="7" text-anchor="middle">Input controller</text>
+            </g>            <g transform="translate(130, 55)">
+              <rect x="0" y="0" width="45" height="35" rx="4" fill="none" stroke="#3b82f6" stroke-width="2"/>
+              <circle cx="22" cy="17" r="8" fill="none" stroke="#3b82f6" stroke-dasharray="2 1"/>
+              <text x="22" y="47" fill="#9ca3af" font-size="7" text-anchor="middle">Switch module</text>
+            </g><line x1='70' y1='65' x2='130' y2='65' stroke='#f97316' stroke-width='1.5'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 46 - Slide 3</div>
+      <div class="slide-counter">Slide 3 of 10</div>
+    </div>
+    <h2 class="slide-title">Operational Concepts</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Data Architecture:</strong> Communication logic, packet frames, and bus rates.</li><li><strong>Protocols:</strong> Standard protocols driving low-power smart systems.</li><li><strong>Local Processing:</strong> Running calculations locally to reduce internet dependence.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(40, 45)">
+              <circle cx="15" cy="15" r="12" fill="none" stroke="#10b981" stroke-width="2"/>
+              <circle cx="15" cy="15" r="3" fill="#10b981"/>
+              <text x="15" y="37" fill="#9ca3af" font-size="7" text-anchor="middle">Mesh Router</text>
+            </g>            <g transform="translate(130, 35)">
+              <rect x="0" y="0" width="40" height="40" rx="3" fill="none" stroke="#f97316" stroke-width="2"/>
+              <rect x="5" y="5" width="30" height="15" fill="rgba(249,115,22,0.1)" stroke="#f97316" stroke-width="1"/>
+              <text x="20" y="32" fill="#9ca3af" font-size="7" text-anchor="middle">Target Actuator</text>
+            </g><path d='M 75 65 L 130 65' stroke='#eab308' stroke-width='1.2' stroke-dasharray='2 2'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 46 - Slide 4</div>
+      <div class="slide-counter">Slide 4 of 10</div>
+    </div>
+    <h2 class="slide-title">Hardware and Wiring Schematics</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Wiring Paths:</strong> Cable choices, wire cross-sections, and line terminations.</li><li><strong>Power Sizing:</strong> Voltages, standby currents, and startup load budgets.</li><li><strong>Junction Layouts:</strong> Waterproof boxes, DIN rail mounts, and terminations.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(30, 45)">
+              <rect x="0" y="0" width="45" height="40" fill="none" stroke="#eab308" stroke-width="1.5"/>
+              <line x1="0" y1="20" x2="45" y2="20" stroke="#eab308" stroke-width="1"/>
+              <line x1="22" y1="0" x2="22" y2="40" stroke="#eab308" stroke-width="1"/>
+              <text x="22" y="52" fill="#9ca3af" font-size="7" text-anchor="middle">Panel Board</text>
+            </g>            <g transform="translate(130, 45)">
+              <rect x="5" y="0" width="30" height="40" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+              <line x1="5" y1="10" x2="35" y2="10" stroke="#3b82f6" stroke-width="1.5"/>
+              <line x1="5" y1="20" x2="35" y2="20" stroke="#3b82f6" stroke-width="1.5"/>
+              <line x1="5" y1="30" x2="35" y2="30" stroke="#3b82f6" stroke-width="1.5"/>
+              <text x="20" y="52" fill="#9ca3af" font-size="7" text-anchor="middle">Battery cells</text>
+            </g><line x1='75' y1='65' x2='130' y2='65' stroke='#ef4444' stroke-width='2'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 46 - Slide 5</div>
+      <div class="slide-counter">Slide 5 of 10</div>
+    </div>
+    <h2 class="slide-title">Wireless and RF Coexistence</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Bandwidths:</strong> Frequency channels layouts (2.4GHz vs Sub-GHz bands).</li><li><strong>Crosstalk:</strong> Channel spacing rules to isolate smart nodes from Wi-Fi channels.</li><li><strong>Mesh Routing:</strong> Self-healing paths finding secondary parent nodes.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(20, 50)">
+              <rect x="0" y="0" width="40" height="30" rx="3" fill="none" stroke="#f97316" stroke-width="1.5"/>
+              <text x="20" y="18" fill="#9ca3af" font-size="7" text-anchor="middle">Central routing</text>
+            </g>            <g transform="translate(90, 45)">
+              <path d="M10 25 A10 10 0 0 1 25 15 A15 15 0 0 1 55 15 A10 10 0 0 1 70 25 Z" fill="none" stroke="#ec4899" stroke-width="2"/>
+              <text x="40" y="42" fill="#9ca3af" font-size="7" text-anchor="middle">IP Network Cloud</text>
+            </g><line x1='65' y1='65' x2='90' y2='65' stroke='#10b981'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 46 - Slide 6</div>
+      <div class="slide-counter">Slide 6 of 10</div>
+    </div>
+    <h2 class="slide-title">Software Logic and API Setup</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Linking Accounts:</strong> OAuth token integration routines between clouds.</li><li><strong>Automation Rules:</strong> State triggers, variables, and delays.</li><li><strong>User Dashboards:</strong> Web UI design, gauges, and mobile control widgets.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(30, 45)">
+              <rect x="0" y="0" width="45" height="35" rx="4" fill="none" stroke="#3b82f6" stroke-width="2"/>
+              <circle cx="22" cy="17" r="8" fill="none" stroke="#3b82f6" stroke-dasharray="2 1"/>
+              <text x="22" y="47" fill="#9ca3af" font-size="7" text-anchor="middle">Smart light</text>
+            </g>            <g transform="translate(120, 45)">
+              <rect x="0" y="0" width="40" height="40" rx="3" fill="none" stroke="#f97316" stroke-width="2"/>
+              <rect x="5" y="5" width="30" height="15" fill="rgba(249,115,22,0.1)" stroke="#f97316" stroke-width="1"/>
+              <text x="20" y="32" fill="#9ca3af" font-size="7" text-anchor="middle">Curtain coil</text>
+            </g><line x1='75' y1='65' x2='120' y2='65' stroke='#06b6d4' stroke-width='2'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 46 - Slide 7</div>
+      <div class="slide-counter">Slide 7 of 10</div>
+    </div>
+    <h2 class="slide-title">Testing and Inspections</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Line Checks:</strong> Continuity tests and insulation tests before power-on.</li><li><strong>Functional Audits:</strong> Checking every relay switch step, sensor trigger, and warning.</li><li><strong>Safety Interlocks:</strong> Hardware overrides that bypass soft scripts during fire alerts.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(30, 45)">
+              <rect x="0" y="0" width="40" height="30" rx="3" fill="none" stroke="#f97316" stroke-width="1.5"/>
+              <text x="20" y="18" fill="#9ca3af" font-size="7" text-anchor="middle">Cabling port</text>
+            </g>            <g transform="translate(120, 50)">
+              <rect x="0" y="0" width="40" height="30" rx="3" fill="none" stroke="#f97316" stroke-width="1.5"/>
+              <text x="20" y="18" fill="#9ca3af" font-size="7" text-anchor="middle">Target junction</text>
+            </g><line x1='75' y1='65' x2='120' y2='65' stroke='#eab308' stroke-width='1.5' stroke-dasharray='3 3'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 46 - Slide 8</div>
+      <div class="slide-counter">Slide 8 of 10</div>
+    </div>
+    <h2 class="slide-title">Site Installation Standards</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Mounting Heights:</strong> Access terminals, switches, and camera heights.</li><li><strong>Conduit Rules:</strong> Pull codes and 40% maximum fill calculations.</li><li><strong>Labeling:</strong> Standard code tagging at both ends of cable runs.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(30, 50)">
+              <rect x="5" y="0" width="30" height="40" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+              <line x1="5" y1="10" x2="35" y2="10" stroke="#3b82f6" stroke-width="1.5"/>
+              <line x1="5" y1="20" x2="35" y2="20" stroke="#3b82f6" stroke-width="1.5"/>
+              <line x1="5" y1="30" x2="35" y2="30" stroke="#3b82f6" stroke-width="1.5"/>
+              <text x="20" y="52" fill="#9ca3af" font-size="7" text-anchor="middle">Battery backup</text>
+            </g>            <g transform="translate(120, 50)">
+              <rect x="0" y="0" width="40" height="40" rx="3" fill="none" stroke="#f97316" stroke-width="2"/>
+              <rect x="5" y="5" width="30" height="15" fill="rgba(249,115,22,0.1)" stroke="#f97316" stroke-width="1"/>
+              <text x="20" y="32" fill="#9ca3af" font-size="7" text-anchor="middle">Relay board</text>
+            </g><path d='M 70 65 L 120 65' stroke='#ef4444' stroke-width='1.5'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 46 - Slide 9</div>
+      <div class="slide-counter">Slide 9 of 10</div>
+    </div>
+    <h2 class="slide-title">Business and Client Handovers</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Margins:</strong> Wholesale dealer discount tiers and price calculation grids.</li><li><strong>Service SLAs:</strong> Priority response times for system fault logs.</li><li><strong>Client Training:</strong> Software handovers, backups, and app orientations.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(80, 40)">
+              <rect x="0" y="0" width="40" height="40" rx="3" fill="none" stroke="#f97316" stroke-width="2"/>
+              <rect x="5" y="5" width="30" height="15" fill="rgba(249,115,22,0.1)" stroke="#f97316" stroke-width="1"/>
+              <text x="20" y="32" fill="#9ca3af" font-size="7" text-anchor="middle">Main Gateway</text>
+            </g><circle cx='100' cy='110' r='10' fill='none' stroke='#f97316' stroke-width='1'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 46 - Slide 10</div>
+      <div class="slide-counter">Slide 10 of 10</div>
+    </div>
+    <h2 class="slide-title">Lab Work: Zigbee & Z-Wave Integration</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <div class="lab-block">
+          <h3>Lab Work Checklist</h3>
+          <ol>
+            <li>Wire and terminate the training board for Zigbee & Z-Wave exercises.</li><li>Configure addressing and code local logic logic in the control software.</li><li>Perform system audits, testing and complete the handover checklists.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(10, 10)">
+              <rect x="20" y="10" width="140" height="90" rx="6" fill="none" stroke="#10b981" stroke-width="2.5"/>
+              <path d="M 50 60 L 80 85 L 140 35" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="90" y="120" fill="#9ca3af" font-size="10" text-anchor="middle">Lab Verification Passed</text>
+            </g></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="nav-buttons">
+    <a class="btn" href="slides_index.html">Back to Hub</a>
+    <button class="btn" id="prevBtn" disabled>Previous</button>
+    <button class="btn" id="nextBtn">Next</button>
+  </div>
+  <button class="btn" id="fullscreenBtn">Fullscreen</button>
+</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  // ALWAYS start from Slide 0 (Slide 1)
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    prevBtn.disabled = false;
+    nextBtn.disabled = false;
+
+    if (currentSlide === 0) {
+      prevBtn.textContent = "Exit to Menu";
+    } else {
+      prevBtn.textContent = "Previous";
+    }
+
+    if (currentSlide === slides.length - 1) {
+      nextBtn.textContent = "Finish & Exit";
+    } else {
+      nextBtn.textContent = "Next";
+    }
+
+    const progress = (currentSlide / (slides.length - 1)) * 100;
+    progressBar.style.width = progress + "%";
+  }
+
+  function goToIndex() {
+    window.location.href = 'slides_index.html';
+  }
+
+  prevBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  // Laptop Keyboard Navigation inside slide deck
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (e.key === 'Escape') {
+      goToIndex();
+    }
+  });
+
+  // Touch & Swipe Handler
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      }
+    }
+  }, { passive: true });
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen().catch(err => {});
+      }
+    });
+  }
+
+  updateSlides();
+</script>
+</body>
+</html>

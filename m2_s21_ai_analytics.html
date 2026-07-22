@@ -1,0 +1,647 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 21: AI Analytics</title>
+<style>
+  :root {
+    --bg-color: #080c14;
+    --card-bg: rgba(15, 25, 45, 0.6);
+    --accent-color: #ef4444;
+    --accent-glow: rgba(239, 68, 68, 0.4);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    touch-action: pan-y;
+  }
+
+  .deck {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 30px;
+    touch-action: pan-y;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    max-height: 700px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.4s ease;
+    touch-action: pan-y;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+  }
+
+  .slide-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--accent-color);
+  }
+
+  .slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-main);
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .text-content {
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .visual-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-content svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  li strong {
+    color: var(--accent-color);
+  }
+
+  .highlight-block {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 4px solid var(--accent-color);
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  .lab-block {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-left: 4px solid #10b981;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+
+  .lab-block h3 {
+    color: #10b981;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 13px;
+  }
+
+  th {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--accent-color);
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    text-align: left;
+  }
+
+  td {
+    border: 1px solid var(--border-color);
+    padding: 6px;
+  }
+
+  .controls-bar {
+    height: 60px;
+    background: rgba(15, 22, 40, 0.8);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn { -webkit-tap-highlight-color: rgba(59,130,246,0.3); touch-action: manipulation; user-select: none; 
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: transparent;
+  }
+
+  .slide-counter {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .progress-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .title-slide h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .title-slide h2 {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 30px;
+  }
+
+  /* Force landscape rotation on mobile portrait screen sizes only (excluding tablets/fold displays) */
+  @media (orientation: portrait) and (max-width: 500px) {
+    body {
+      transform: rotate(90deg);
+      transform-origin: top left;
+      width: 100vh !important;
+      height: 100vw !important;
+      position: absolute;
+      top: 0;
+      left: 100%;
+      overflow: hidden;
+    }
+  }
+  /* GPU Acceleration for silky smooth 60 FPS Android transitions */
+  .slide {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: opacity, transform;
+  }
+
+  @media (max-width: 768px), (pointer: coarse) {
+    .slide {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: rgba(18, 26, 45, 0.98) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <!-- Slide 1 -->
+  <div class="slide active title-slide">
+    <div class="slide-tag">Module 2 - Session 21</div>
+    <h1>AI Analytics & Perimeter Security</h1>
+    <h2>AI Analytics</h2>
+    <div class="instructor-tag">Low-Voltage Systems & Automation Training Series</div>
+  </div>  <!-- Slide 2 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 21 - Slide 2</div>
+      <div class="slide-counter">Slide 2 of 10</div>
+    </div>
+    <h2 class="slide-title">AI vs. Standard Motion Detection</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Motion Detection:</strong> Triggers on simple pixel changes (causes false alarms from rain, shadows, insects).</li><li><strong>AI Analytics:</strong> Identifies target attributes by matching shapes to trained neural network profiles.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="40" y="30" width="120" height="80" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <rect x="60" y="50" width="20" height="20" fill="#ef4444" opacity="0.6"/>
+  <rect x="80" y="50" width="20" height="20" fill="#ef4444" opacity="0.6"/>
+  <rect x="60" y="70" width="20" height="20" fill="#ef4444" opacity="0.6"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Pixel-Change Activity Cells</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 3 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 21 - Slide 3</div>
+      <div class="slide-counter">Slide 3 of 10</div>
+    </div>
+    <h2 class="slide-title">Line Crossing Detection</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Tripwire:</strong> Virtual boundaries drawn on screens.</li><li><strong>Directional Filter:</strong> Triggers alerts only when objects cross in a specific direction (A to B, B to A, or both).</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <line x1="20" y1="75" x2="180" y2="75" stroke="#ef4444" stroke-width="3"/>
+  <polygon points="100,55 105,65 95,65" fill="#10b981"/>
+  <polygon points="100,95 105,85 95,85" fill="#ef4444"/>
+  <text x="100" y="45" fill="#10b981" font-family="sans-serif" font-size="8" text-anchor="middle">Allowed Direction</text>
+  <text x="100" y="112" fill="#ef4444" font-family="sans-serif" font-size="8" text-anchor="middle">Alarm Direction</text>
+  <text x="100" y="138" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Smart Tripwire Direction Rules</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 4 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 21 - Slide 4</div>
+      <div class="slide-counter">Slide 4 of 10</div>
+    </div>
+    <h2 class="slide-title">Intrusion Zone Detection</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Area Defense:</strong> Drawing virtual boxes around secure perimeters.</li><li><strong>Dwell Time:</strong> Triggers alerts only if targets linger inside zones for more than a set time (e.g. 5 seconds).</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <polygon points="40,40 160,35 140,110 50,105" fill="rgba(239, 68, 68, 0.15)" stroke="#ef4444" stroke-width="2"/>
+  <text x="100" y="75" fill="#ef4444" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Intrusion Zone</text>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Custom Perimeter Polygon Areas</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 5 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 21 - Slide 5</div>
+      <div class="slide-counter">Slide 5 of 10</div>
+    </div>
+    <h2 class="slide-title">Object Classification</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Human Filter:</strong> Filters out false alarms from wind and dogs, triggering only on human shapes.</li><li><strong>Vehicle Filter:</strong> Triggers alerts only on cars/bikes entering secure gates.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="35" width="55" height="70" fill="none" stroke="#10b981" stroke-width="2"/>
+  <text x="52" y="28" fill="#10b981" font-family="sans-serif" font-size="8" text-anchor="middle">Human: 98%</text>
+  <rect x="110" y="55" width="70" height="50" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <text x="145" y="48" fill="#3b82f6" font-family="sans-serif" font-size="8" text-anchor="middle">Vehicle: 94%</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Object Classification Labels</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 6 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 21 - Slide 6</div>
+      <div class="slide-counter">Slide 6 of 10</div>
+    </div>
+    <h2 class="slide-title">False Alarm Filtering (AcuSense)</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Scene Analysis:</strong> Algorithms ignore background movement like swaying tree branches or falling leaves.</li><li><strong>Saves Time:</strong> Restricts alerts to real target threats.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <path d="M 40 40 Q 60 20 80 50 T 120 40" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="3 3"/>
+  <text x="100" y="90" fill="#10b981" font-family="sans-serif" font-size="9" text-anchor="middle">Swaying Branches Ignored</text>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Dynamic Environment Filter Tree</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 7 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 21 - Slide 7</div>
+      <div class="slide-counter">Slide 7 of 10</div>
+    </div>
+    <h2 class="slide-title">Smart Search Engine</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Metadata:</strong> Video recorded with descriptive tags (e.g., Human, Red Vehicle).</li><li><strong>Retrieval:</strong> Allows operators to search through days of video instantly by filtering for tags.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="25" width="150" height="95" fill="none" stroke="#4b5563" stroke-width="2"/>
+  <rect x="35" y="40" width="40" height="40" fill="#10b981" opacity="0.3"/>
+  <rect x="85" y="40" width="40" height="40" fill="#10b981" opacity="0.3"/>
+  <rect x="135" y="40" width="40" height="40" fill="#10b981" opacity="0.3"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Database Query Filter Event logs</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 8 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 21 - Slide 8</div>
+      <div class="slide-counter">Slide 8 of 10</div>
+    </div>
+    <h2 class="slide-title">Alarm Action Triggers</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Actions:</strong> Email notifications, NVR buzzer warnings, spotlight triggers, and physical relay lock controls.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="35" y="45" width="55" height="50" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <rect x="120" y="45" width="50" height="50" fill="none" stroke="#10b981" stroke-width="2"/>
+  <line x1="90" y1="70" x2="120" y2="70" stroke="#f59e0b" stroke-width="2"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Hardware Relay Out Interconnects</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 9 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 21 - Slide 9</div>
+      <div class="slide-counter">Slide 9 of 10</div>
+    </div>
+    <h2 class="slide-title">Designing Perimeter Zones</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Camera Sizing:</strong> Cameras must be mounted at proper heights and angles to prevent target overlap.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <line x1="20" y1="20" x2="20" y2="120" stroke="#4b5563" stroke-width="3"/>
+  <polygon points="20,40 50,55 35,65" fill="#f59e0b"/>
+  <polygon points="20,40 180,100 180,120" fill="rgba(245, 158, 11, 0.1)"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Target Height Blindspot Analysis</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 10 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 21 - Slide 10</div>
+      <div class="slide-counter">Slide 10 of 10</div>
+    </div>
+    <h2 class="slide-title">Practical Lab Guide</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <div class='lab-block'><h3>Lab Work: Smart Zone Setup</h3><ol><li>Access NVR smart menu, draw an intrusion zone around mock entryway.</li><li>Enable human classification filter.</li><li>Walk through zone, confirm system triggers alert buzzer only on human entry.</li></ol></div>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="30" y="30" width="140" height="85" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Completed Analytics Configuration</text>
+</svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="nav-buttons">
+    <a class="btn" href="slides_index.html" style="text-decoration:none;">Back to Hub</a>
+    <button class="btn" id="prevBtn" disabled>Previous</button>
+    <button class="btn" id="nextBtn">Next</button>
+  </div>
+  <button class="btn" id="fullscreenBtn">Fullscreen</button>
+</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  // ALWAYS start from Slide 0 (Slide 1)
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    prevBtn.disabled = false;
+    nextBtn.disabled = false;
+
+    if (currentSlide === 0) {
+      prevBtn.textContent = "Exit to Menu";
+    } else {
+      prevBtn.textContent = "Previous";
+    }
+
+    if (currentSlide === slides.length - 1) {
+      nextBtn.textContent = "Finish & Exit";
+    } else {
+      nextBtn.textContent = "Next";
+    }
+
+    const progress = (currentSlide / (slides.length - 1)) * 100;
+    progressBar.style.width = progress + "%";
+  }
+
+  function goToIndex() {
+    window.location.href = 'slides_index.html';
+  }
+
+  prevBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  // Laptop Keyboard Navigation inside slide deck
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (e.key === 'Escape') {
+      goToIndex();
+    }
+  });
+
+  // Touch & Swipe Handler
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      }
+    }
+  }, { passive: true });
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen().catch(err => {});
+      }
+    });
+  }
+
+  updateSlides();
+</script>
+</body>
+</html>

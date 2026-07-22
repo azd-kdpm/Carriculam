@@ -1,0 +1,702 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 30: Access Control</title>
+<style>
+  :root {
+    --bg-color: #0b0f19;
+    --card-bg: rgba(20, 30, 55, 0.6);
+    --accent-color: #8b5cf6;
+    --accent-glow: rgba(139, 92, 246, 0.4);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    touch-action: pan-y;
+  }
+
+  .deck {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 30px;
+    touch-action: pan-y;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    max-height: 700px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.4s ease;
+    touch-action: pan-y;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+  }
+
+  .slide-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--accent-color);
+  }
+
+  .slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-main);
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .text-content {
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .visual-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-content svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  li strong {
+    color: var(--accent-color);
+  }
+
+  .highlight-block {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 4px solid var(--accent-color);
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  .lab-block {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-left: 4px solid #10b981;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+
+  .lab-block h3 {
+    color: #10b981;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .controls-bar {
+    height: 60px;
+    background: rgba(15, 22, 40, 0.8);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn { -webkit-tap-highlight-color: rgba(59,130,246,0.3); touch-action: manipulation; user-select: none; 
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+    color: #fff;
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: transparent;
+    border-color: var(--border-color);
+    color: var(--text-muted);
+  }
+
+  .progress-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .title-slide h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .title-slide h2 {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 30px;
+  }
+
+  .instructor-tag {
+    font-size: 14px;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+  }
+
+  /* Force landscape rotation on mobile portrait screen sizes only (excluding tablets/fold displays) */
+  @media (orientation: portrait) and (max-width: 500px) {
+    body {
+      transform: rotate(90deg);
+      transform-origin: top left;
+      width: 100vh !important;
+      height: 100vw !important;
+      position: absolute;
+      top: 0;
+      left: 100%;
+      overflow: hidden;
+    }
+  }
+  /* GPU Acceleration for silky smooth 60 FPS Android transitions */
+  .slide {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: opacity, transform;
+  }
+
+  @media (max-width: 768px), (pointer: coarse) {
+    .slide {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: rgba(18, 26, 45, 0.98) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <div class="slide active title-slide">
+    <div class="slide-tag">Module 3 - Session 30</div>
+    <h1>Access Control</h1>
+    <h2>Low-Voltage Systems & Building Automation Training Series</h2>
+    <div class="instructor-tag">Session Slide Deck (10 Slide Expansion)</div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 30 - Slide 2</div>
+      <div class="slide-counter">Slide 2 of 10</div>
+    </div>
+    <h2 class="slide-title">RFID Principles (125kHz vs 13.56MHz)</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>125kHz (Proximity):</strong> Low frequency; simple card ID reading, no encryption. Fast and inexpensive.</li><li><strong>13.56MHz (Mifare/Smart):</strong> High frequency; supports encrypted sectors, read/write features, and secure keys.</li><li><strong>Magnetic Coupling:</strong> Reader antenna creates an RF field; card draws power and transmits its serial number.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(30, 45)">
+              <rect x="0" y="0" width="30" height="50" rx="3" fill="none" stroke="#3b82f6" stroke-width="2"/>
+              <path d="M 5 15 Q 15 2 25 15" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+              <path d="M 8 20 Q 15 10 22 20" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+              <circle cx="15" cy="35" r="4" fill="#3b82f6"/>
+              <text x="15" y="62" fill="#9ca3af" font-size="7" text-anchor="middle">RFID Reader</text>
+            </g><circle cx='100' cy='70' r='10' fill='none' stroke='#3b82f6' stroke-dasharray='2 2'/><circle cx='100' cy='70' r='20' fill='none' stroke='#3b82f6' stroke-dasharray='3 3'/>            <g transform="translate(130, 45)">
+              <rect x="0" y="0" width="30" height="50" rx="3" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+              <circle cx="15" cy="12" r="5" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+              <circle cx="15" cy="12" r="1.5" fill="#8b5cf6"/>
+              <rect x="7" y="30" width="16" height="8" rx="1" fill="none" stroke="#8b5cf6" stroke-width="1"/>
+              <text x="15" y="60" fill="#9ca3af" font-size="7" text-anchor="middle">Smart Card</text>
+            </g></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 30 - Slide 3</div>
+      <div class="slide-counter">Slide 3 of 10</div>
+    </div>
+    <h2 class="slide-title">Wiegand Hardware Interface</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Hardware Interface:</strong> Standard 5-to-6 wire interface transmitting card data. Uses D0 (Green) and D1 (White) lines.</li><li><strong>Pulse Signaling:</strong> Falling voltage pulses on D0 transmit binary 0s; pulses on D1 transmit binary 1s.</li><li><strong>Common Ground:</strong> The black wire is the common reference ground; without it, card reads fail.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(20, 45)">
+              <rect x="0" y="0" width="30" height="50" rx="3" fill="none" stroke="#3b82f6" stroke-width="2"/>
+              <path d="M 5 15 Q 15 2 25 15" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+              <path d="M 8 20 Q 15 10 22 20" fill="none" stroke="#3b82f6" stroke-width="1.5"/>
+              <circle cx="15" cy="35" r="4" fill="#3b82f6"/>
+              <text x="15" y="62" fill="#9ca3af" font-size="7" text-anchor="middle">Reader</text>
+            </g>            <g transform="translate(130, 35)">
+              <rect x="0" y="0" width="55" height="70" rx="4" fill="none" stroke="#f59e0b" stroke-width="2"/>
+              <rect x="10" y="10" width="35" height="20" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1"/>
+              <text x="27" y="22" fill="#f59e0b" font-size="7" text-anchor="middle">MCU</text>
+              <rect x="5" y="45" width="45" height="15" fill="none" stroke="#9ca3af" stroke-width="1"/>
+              <text x="27" y="55" fill="#9ca3af" font-size="6" text-anchor="middle">Terminals</text>
+              <text x="27" y="82" fill="#9ca3af" font-size="7" text-anchor="middle">Panel</text>
+            </g><line x1='50' y1='55' x2='130' y2='55' stroke='#ef4444'/><line x1='50' y1='70' x2='130' y2='70' stroke='#22c55e'/><line x1='50' y1='85' x2='130' y2='85' stroke='#ffffff'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 30 - Slide 4</div>
+      <div class="slide-counter">Slide 4 of 10</div>
+    </div>
+    <h2 class="slide-title">Controller Architecture</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Processor Core:</strong> The central board processes Wiegand inputs, validates permissions, and triggers lock relays.</li><li><strong>Input Buffers:</strong> Protect the main processor from static discharges on long reader cable runs.</li><li><strong>Offline Memory:</strong> Stores card logs locally, keeping the system running during network drops.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(70, 35)">
+              <rect x="0" y="0" width="55" height="70" rx="4" fill="none" stroke="#f59e0b" stroke-width="2"/>
+              <rect x="10" y="10" width="35" height="20" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1"/>
+              <text x="27" y="22" fill="#f59e0b" font-size="7" text-anchor="middle">MCU</text>
+              <rect x="5" y="45" width="45" height="15" fill="none" stroke="#9ca3af" stroke-width="1"/>
+              <text x="27" y="55" fill="#9ca3af" font-size="6" text-anchor="middle">Terminals</text>
+              <text x="27" y="82" fill="#9ca3af" font-size="7" text-anchor="middle">2-Door Board</text>
+            </g></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 30 - Slide 5</div>
+      <div class="slide-counter">Slide 5 of 10</div>
+    </div>
+    <h2 class="slide-title">Request to Exit (REX) Loops</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Push Button Loops:</strong> REX buttons use NO (Normally Open) contacts that close when pressed.</li><li><strong>Motion REX Detectors:</strong> PIR sensors automatically release doors when users approach from inside.</li><li><strong>Shunt Timing:</strong> The controller unlocks the door and disables door-forced alarms for a set duration.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(30, 50)">
+              <rect x="0" y="0" width="30" height="30" rx="3" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <circle cx="15" cy="15" r="5" fill="none" stroke="#ef4444" stroke-width="1.5"/>
+              <line x1="5" y1="15" x2="10" y2="15" stroke="#ef4444" stroke-width="1.5"/>
+              <line x1="20" y1="15" x2="25" y2="15" stroke="#ef4444" stroke-width="1.5"/>
+              <text x="15" y="42" fill="#9ca3af" font-size="7" text-anchor="middle">REX Button</text>
+            </g>            <g transform="translate(120, 35)">
+              <rect x="0" y="0" width="55" height="70" rx="4" fill="none" stroke="#f59e0b" stroke-width="2"/>
+              <rect x="10" y="10" width="35" height="20" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1"/>
+              <text x="27" y="22" fill="#f59e0b" font-size="7" text-anchor="middle">MCU</text>
+              <rect x="5" y="45" width="45" height="15" fill="none" stroke="#9ca3af" stroke-width="1"/>
+              <text x="27" y="55" fill="#9ca3af" font-size="6" text-anchor="middle">Terminals</text>
+              <text x="27" y="82" fill="#9ca3af" font-size="7" text-anchor="middle">Controller</text>
+            </g><path d='M 60 65 L 120 65' stroke='#10b981' stroke-width='1.5'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 30 - Slide 6</div>
+      <div class="slide-counter">Slide 6 of 10</div>
+    </div>
+    <h2 class="slide-title">Electromagnetic Lock NC Loops</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Holding Force:</strong> EM locks use electromagnets matching a steel armature plate, holding up to 600/1200 lbs.</li><li><strong>NC Logic:</strong> Active NC (Normally Closed) loop keeps the magnet powered; cutting power releases the lock.</li><li><strong>Residual Magnetism:</strong> Plunger pins release residual charge to prevent doors from sticking when power is cut.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(20, 35)">
+              <rect x="0" y="0" width="55" height="70" rx="4" fill="none" stroke="#f59e0b" stroke-width="2"/>
+              <rect x="10" y="10" width="35" height="20" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1"/>
+              <text x="27" y="22" fill="#f59e0b" font-size="7" text-anchor="middle">MCU</text>
+              <rect x="5" y="45" width="45" height="15" fill="none" stroke="#9ca3af" stroke-width="1"/>
+              <text x="27" y="55" fill="#9ca3af" font-size="6" text-anchor="middle">Terminals</text>
+              <text x="27" y="82" fill="#9ca3af" font-size="7" text-anchor="middle">Controller NC</text>
+            </g>            <g transform="translate(120, 50)">
+              <rect x="0" y="0" width="40" height="25" rx="2" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <path d="M 40 12 L 52 12" stroke="#ef4444" stroke-width="3"/>
+              <rect x="5" y="5" width="15" height="15" fill="rgba(239,68,68,0.1)" stroke="#ef4444" stroke-width="1"/>
+              <text x="20" y="37" fill="#9ca3af" font-size="7" text-anchor="middle">EM Mag Lock</text>
+            </g><path d='M 75 65 L 120 65' stroke='#ef4444' stroke-width='1.5'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 30 - Slide 7</div>
+      <div class="slide-counter">Slide 7 of 10</div>
+    </div>
+    <h2 class="slide-title">Fire Integration Overrides</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Emergency Overrides:</strong> Fire control panels use master contacts to cut power to all fail-safe lock loops.</li><li><strong>Hardware Interlocking:</strong> Override switches are hardwired, bypassing the software controller to guarantee exit.</li><li><strong>Life Safety Standards:</strong> Building codes require exit doors to unlock automatically when fire alarms trip.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(20, 50)">
+              <rect x="0" y="0" width="30" height="30" rx="3" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <circle cx="15" cy="15" r="5" fill="none" stroke="#ef4444" stroke-width="1.5"/>
+              <line x1="5" y1="15" x2="10" y2="15" stroke="#ef4444" stroke-width="1.5"/>
+              <line x1="20" y1="15" x2="25" y2="15" stroke="#ef4444" stroke-width="1.5"/>
+              <text x="15" y="42" fill="#9ca3af" font-size="7" text-anchor="middle">Fire Contact</text>
+            </g>            <g transform="translate(80, 35)">
+              <rect x="0" y="0" width="55" height="70" rx="4" fill="none" stroke="#f59e0b" stroke-width="2"/>
+              <rect x="10" y="10" width="35" height="20" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1"/>
+              <text x="27" y="22" fill="#f59e0b" font-size="7" text-anchor="middle">MCU</text>
+              <rect x="5" y="45" width="45" height="15" fill="none" stroke="#9ca3af" stroke-width="1"/>
+              <text x="27" y="55" fill="#9ca3af" font-size="6" text-anchor="middle">Terminals</text>
+              <text x="27" y="82" fill="#9ca3af" font-size="7" text-anchor="middle">Controller NC</text>
+            </g>            <g transform="translate(145, 50)">
+              <rect x="0" y="0" width="40" height="25" rx="2" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <path d="M 40 12 L 52 12" stroke="#ef4444" stroke-width="3"/>
+              <rect x="5" y="5" width="15" height="15" fill="rgba(239,68,68,0.1)" stroke="#ef4444" stroke-width="1"/>
+              <text x="20" y="37" fill="#9ca3af" font-size="7" text-anchor="middle">EM Lock</text>
+            </g><line x1='50' y1='65' x2='80' y2='65' stroke='#ef4444' stroke-width='2'/><line x1='135' y1='65' x2='145' y2='65' stroke='#ef4444' stroke-width='2'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 30 - Slide 8</div>
+      <div class="slide-counter">Slide 8 of 10</div>
+    </div>
+    <h2 class="slide-title">Management Software Databases</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Access Groups:</strong> Link users, reader groups, and time zones to control when and where doors open.</li><li><strong>Anti-Passback:</strong> Blocks cards from entering again unless they registered checkout scans.</li><li><strong>Active Monitoring:</strong> Real-time log monitors show card photos, door states, and system warnings.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(30, 35)">
+              <rect x="0" y="0" width="55" height="70" rx="4" fill="none" stroke="#f59e0b" stroke-width="2"/>
+              <rect x="10" y="10" width="35" height="20" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1"/>
+              <text x="27" y="22" fill="#f59e0b" font-size="7" text-anchor="middle">MCU</text>
+              <rect x="5" y="45" width="45" height="15" fill="none" stroke="#9ca3af" stroke-width="1"/>
+              <text x="27" y="55" fill="#9ca3af" font-size="6" text-anchor="middle">Terminals</text>
+              <text x="27" y="82" fill="#9ca3af" font-size="7" text-anchor="middle">Panel</text>
+            </g>            <g transform="translate(120, 45)">
+              <path d="M10 25 A10 10 0 0 1 25 15 A15 15 0 0 1 55 15 A10 10 0 0 1 70 25 Z" fill="none" stroke="#3b82f6" stroke-width="2"/>
+              <text x="40" y="42" fill="#9ca3af" font-size="7" text-anchor="middle">SQL DB server</text>
+            </g><line x1='85' y1='70' x2='120' y2='70' stroke='#3b82f6' stroke-width='1.5' stroke-dasharray='3 3'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 30 - Slide 9</div>
+      <div class="slide-counter">Slide 9 of 10</div>
+    </div>
+    <h2 class="slide-title">Troubleshooting - Reader and Lock Noise</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Wiegand Noise:</strong> Signal degradation on runs over 150 meters; resolved using shielded cables grounded at the panel.</li><li><strong>Voltage Drop:</strong> Lock failures happen if undersized cables cause voltage to drop below 11V at the lock.</li><li><strong>Contact Sparking:</strong> Relay contact points burn due to voltage spikes; fixed using flyback protection diodes.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(30, 35)">
+              <rect x="0" y="0" width="55" height="70" rx="4" fill="none" stroke="#f59e0b" stroke-width="2"/>
+              <rect x="10" y="10" width="35" height="20" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1"/>
+              <text x="27" y="22" fill="#f59e0b" font-size="7" text-anchor="middle">MCU</text>
+              <rect x="5" y="45" width="45" height="15" fill="none" stroke="#9ca3af" stroke-width="1"/>
+              <text x="27" y="55" fill="#9ca3af" font-size="6" text-anchor="middle">Terminals</text>
+              <text x="27" y="82" fill="#9ca3af" font-size="7" text-anchor="middle">Panel</text>
+            </g>            <g transform="translate(120, 45)">
+              <path d="M10 25 A10 10 0 0 1 25 15 A15 15 0 0 1 55 15 A10 10 0 0 1 70 25 Z" fill="none" stroke="#3b82f6" stroke-width="2"/>
+              <text x="40" y="42" fill="#9ca3af" font-size="7" text-anchor="middle">SQL DB server</text>
+            </g><line x1='85' y1='70' x2='120' y2='70' stroke='#3b82f6' stroke-width='1.5' stroke-dasharray='3 3'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 30 - Slide 10</div>
+      <div class="slide-counter">Slide 10 of 10</div>
+    </div>
+    <h2 class="slide-title">Lab Work: Access Panel Wiring</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <div class="lab-block">
+          <h3>Lab Work Checklist</h3>
+          <ol>
+            <li>Wire an RFID Wiegand reader to controller inputs matching D0, D1, Power, and Ground.</li><li>Connect an electromagnetic lock to the panel's NC relay output and wire the exit button to the REX loop.</li><li>Sync card credentials via management software and verify access log sync over LAN.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(10, 10)">
+              <rect x="20" y="10" width="140" height="90" rx="6" fill="none" stroke="#10b981" stroke-width="2.5"/>
+              <path d="M 50 60 L 80 85 L 140 35" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="90" y="120" fill="#9ca3af" font-size="10" text-anchor="middle">Lab Verification Passed</text>
+            </g></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="nav-buttons">
+    <a class="btn" href="slides_index.html">Back to Hub</a>
+    <button class="btn" id="prevBtn" disabled>Previous</button>
+    <button class="btn" id="nextBtn">Next</button>
+  </div>
+  <button class="btn" id="fullscreenBtn">Fullscreen</button>
+</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  // ALWAYS start from Slide 0 (Slide 1)
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    prevBtn.disabled = false;
+    nextBtn.disabled = false;
+
+    if (currentSlide === 0) {
+      prevBtn.textContent = "Exit to Menu";
+    } else {
+      prevBtn.textContent = "Previous";
+    }
+
+    if (currentSlide === slides.length - 1) {
+      nextBtn.textContent = "Finish & Exit";
+    } else {
+      nextBtn.textContent = "Next";
+    }
+
+    const progress = (currentSlide / (slides.length - 1)) * 100;
+    progressBar.style.width = progress + "%";
+  }
+
+  function goToIndex() {
+    window.location.href = 'slides_index.html';
+  }
+
+  prevBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  // Laptop Keyboard Navigation inside slide deck
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (e.key === 'Escape') {
+      goToIndex();
+    }
+  });
+
+  // Touch & Swipe Handler
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      }
+    }
+  }, { passive: true });
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen().catch(err => {});
+      }
+    });
+  }
+
+  updateSlides();
+</script>
+</body>
+</html>

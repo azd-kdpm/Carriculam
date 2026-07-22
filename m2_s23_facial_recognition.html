@@ -1,0 +1,644 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 23: Facial Recognition</title>
+<style>
+  :root {
+    --bg-color: #080c14;
+    --card-bg: rgba(15, 25, 45, 0.6);
+    --accent-color: #10b981;
+    --accent-glow: rgba(16, 185, 129, 0.4);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    touch-action: pan-y;
+  }
+
+  .deck {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 30px;
+    touch-action: pan-y;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    max-height: 700px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.4s ease;
+    touch-action: pan-y;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+  }
+
+  .slide-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--accent-color);
+  }
+
+  .slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-main);
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .text-content {
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .visual-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-content svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  li strong {
+    color: var(--accent-color);
+  }
+
+  .highlight-block {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 4px solid var(--accent-color);
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  .lab-block {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-left: 4px solid #10b981;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+
+  .lab-block h3 {
+    color: #10b981;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 13px;
+  }
+
+  th {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--accent-color);
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    text-align: left;
+  }
+
+  td {
+    border: 1px solid var(--border-color);
+    padding: 6px;
+  }
+
+  .controls-bar {
+    height: 60px;
+    background: rgba(15, 22, 40, 0.8);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn { -webkit-tap-highlight-color: rgba(59,130,246,0.3); touch-action: manipulation; user-select: none; 
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: transparent;
+  }
+
+  .slide-counter {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .progress-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .title-slide h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .title-slide h2 {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 30px;
+  }
+
+  /* Force landscape rotation on mobile portrait screen sizes only (excluding tablets/fold displays) */
+  @media (orientation: portrait) and (max-width: 500px) {
+    body {
+      transform: rotate(90deg);
+      transform-origin: top left;
+      width: 100vh !important;
+      height: 100vw !important;
+      position: absolute;
+      top: 0;
+      left: 100%;
+      overflow: hidden;
+    }
+  }
+  /* GPU Acceleration for silky smooth 60 FPS Android transitions */
+  .slide {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: opacity, transform;
+  }
+
+  @media (max-width: 768px), (pointer: coarse) {
+    .slide {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: rgba(18, 26, 45, 0.98) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <!-- Slide 1 -->
+  <div class="slide active title-slide">
+    <div class="slide-tag">Module 2 - Session 23</div>
+    <h1>Facial Recognition Diagnostics</h1>
+    <h2>Facial Recognition</h2>
+    <div class="instructor-tag">Low-Voltage Systems & Automation Training Series</div>
+  </div>  <!-- Slide 2 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 23 - Slide 2</div>
+      <div class="slide-counter">Slide 2 of 10</div>
+    </div>
+    <h2 class="slide-title">Face Detection vs. Recognition</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Detection:</strong> Simply locates a human face inside a video frame.</li><li><strong>Recognition:</strong> Compares facial features against database templates to identify individuals.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <circle cx="100" cy="65" r="30" fill="none" stroke="#10b981" stroke-width="2"/>
+  <rect x="65" y="30" width="70" height="75" fill="none" stroke="#10b981" stroke-width="1.5"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Head Detection Box Overlays</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 3 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 23 - Slide 3</div>
+      <div class="slide-counter">Slide 3 of 10</div>
+    </div>
+    <h2 class="slide-title">Pixel Sizing Criteria</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Resolution target:</strong> Requires a minimum of 80 to 120 pixels between eyes for accurate facial recognition.</li><li><strong>Calculations:</strong> Lens focal lengths must be sized to achieve this pixel density at target distances.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <circle cx="75" cy="65" r="4" fill="#3b82f6"/>
+  <circle cx="125" cy="65" r="4" fill="#3b82f6"/>
+  <line x1="75" y1="65" x2="125" y2="65" stroke="#f59e0b" stroke-width="2"/>
+  <text x="100" y="55" fill="#f59e0b" font-family="sans-serif" font-size="8" text-anchor="middle">Min 80 Pixels</text>
+  <text x="100" y="130" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Pupil Sizing density constraints</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 4 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 23 - Slide 4</div>
+      <div class="slide-counter">Slide 4 of 10</div>
+    </div>
+    <h2 class="slide-title">Facial Database Enrollment</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Database:</strong> Storing user face profiles with clear, front-facing passport photos.</li><li><strong>Group Lists:</strong> Segment databases (Staff, Blacklist, VIPs).</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="45" width="40" height="40" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <rect x="80" y="45" width="40" height="40" fill="none" stroke="#10b981" stroke-width="2"/>
+  <rect x="135" y="45" width="40" height="40" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <text x="45" y="110" fill="#9ca3af" font-family="sans-serif" font-size="8" text-anchor="middle">Staff</text>
+  <text x="100" y="110" fill="#10b981" font-family="sans-serif" font-size="8" text-anchor="middle">VIP</text>
+  <text x="155" y="110" fill="#ef4444" font-family="sans-serif" font-size="8" text-anchor="middle">Blacklist</text>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Enrollment Database segment Categories</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 5 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 23 - Slide 5</div>
+      <div class="slide-counter">Slide 5 of 10</div>
+    </div>
+    <h2 class="slide-title">Similarity Thresholds</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Confidence:</strong> Set similarity thresholds (e.g. 85%).</li><li><strong>False Match Tradeoff:</strong> Setting confidence values too high causes missed matches; too low causes false alarms.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <circle cx="100" cy="70" r="35" fill="none" stroke="#4b5563" stroke-width="5"/>
+  <path d="M 100 35 A 35 35 0 0 1 135 70" fill="none" stroke="#10b981" stroke-width="5"/>
+  <text x="100" y="75" fill="#10b981" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">85%</text>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Biometric Match Similarity Gauge</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 6 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 23 - Slide 6</div>
+      <div class="slide-counter">Slide 6 of 10</div>
+    </div>
+    <h2 class="slide-title">Lighting Compensation</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Backlight Issues:</strong> Shadows on faces degrade recognition accuracy.</li><li><strong>WDR & Lighting:</strong> Enforce front-facing fill lights and True WDR settings at entryways.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <circle cx="100" cy="55" r="20" fill="none" stroke="#3b82f6"/>
+  <line x1="50" y1="110" x2="80" y2="80" stroke="#f59e0b" stroke-width="2"/>
+  <line x1="150" y1="110" x2="120" y2="80" stroke="#f59e0b" stroke-width="2"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Face shadow Compensation Lights</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 7 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 23 - Slide 7</div>
+      <div class="slide-counter">Slide 7 of 10</div>
+    </div>
+    <h2 class="slide-title">Blacklist Alert Triggers</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Rules:</strong> System matches stranger faces to blacklists, instantly triggering email alerts or security buzzers.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="45" width="55" height="50" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <path d="M 130 75 Q 150 75 160 90 L 120 90 Z" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <line x1="80" y1="70" x2="125" y2="70" stroke="#f59e0b" stroke-width="2"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Blacklist Horn & Strobe Relay Links</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 8 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 23 - Slide 8</div>
+      <div class="slide-counter">Slide 8 of 10</div>
+    </div>
+    <h2 class="slide-title">Searching by Face Image</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Smart Query:</strong> Upload a snapshot of a stranger to search hours of NVR history for matches.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="25" width="150" height="95" fill="none" stroke="#4b5563" stroke-width="2"/>
+  <circle cx="60" cy="72" r="16" fill="#10b981" opacity="0.3"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Face query Snapshot Search Dashboard</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 9 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 23 - Slide 9</div>
+      <div class="slide-counter">Slide 9 of 10</div>
+    </div>
+    <h2 class="slide-title">Database Management</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Privacy limits:</strong> Compliance regulations mandate secure encryption and auto-deletion policies for facial databases.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <path d="M 100 30 Q 115 25 130 30 L 130 70 Q 100 100 100 100 Q 100 100 70 70 L 70 30 Q 85 25 100 30 Z" fill="none" stroke="#10b981" stroke-width="3"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Encrypted Biometric Data Shield</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 10 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 23 - Slide 10</div>
+      <div class="slide-counter">Slide 10 of 10</div>
+    </div>
+    <h2 class="slide-title">Practical Lab Guide</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <div class='lab-block'><h3>Lab Work: Facial Database Config</h3><ol><li>Setup facial capture camera at doorway.</li><li>Enroll student photo profiles into NVR database.</li><li>Configure similarity threshold to 85%, test matching and blacklist buzzer triggers.</li></ol></div>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="30" y="30" width="140" height="85" fill="none" stroke="#9ca3af" stroke-width="2"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Completed Face Database Setup</text>
+</svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="nav-buttons">
+    <a class="btn" href="slides_index.html" style="text-decoration:none;">Back to Hub</a>
+    <button class="btn" id="prevBtn" disabled>Previous</button>
+    <button class="btn" id="nextBtn">Next</button>
+  </div>
+  <button class="btn" id="fullscreenBtn">Fullscreen</button>
+</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  // ALWAYS start from Slide 0 (Slide 1)
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    prevBtn.disabled = false;
+    nextBtn.disabled = false;
+
+    if (currentSlide === 0) {
+      prevBtn.textContent = "Exit to Menu";
+    } else {
+      prevBtn.textContent = "Previous";
+    }
+
+    if (currentSlide === slides.length - 1) {
+      nextBtn.textContent = "Finish & Exit";
+    } else {
+      nextBtn.textContent = "Next";
+    }
+
+    const progress = (currentSlide / (slides.length - 1)) * 100;
+    progressBar.style.width = progress + "%";
+  }
+
+  function goToIndex() {
+    window.location.href = 'slides_index.html';
+  }
+
+  prevBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  // Laptop Keyboard Navigation inside slide deck
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (e.key === 'Escape') {
+      goToIndex();
+    }
+  });
+
+  // Touch & Swipe Handler
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      }
+    }
+  }, { passive: true });
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen().catch(err => {});
+      }
+    });
+  }
+
+  updateSlides();
+</script>
+</body>
+</html>

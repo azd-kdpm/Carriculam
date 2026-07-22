@@ -1,0 +1,733 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 29: Video Door Phone</title>
+<style>
+  :root {
+    --bg-color: #0b0f19;
+    --card-bg: rgba(20, 30, 55, 0.6);
+    --accent-color: #8b5cf6;
+    --accent-glow: rgba(139, 92, 246, 0.4);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    touch-action: pan-y;
+  }
+
+  .deck {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 30px;
+    touch-action: pan-y;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    max-height: 700px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.4s ease;
+    touch-action: pan-y;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+  }
+
+  .slide-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--accent-color);
+  }
+
+  .slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-main);
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .text-content {
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .visual-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-content svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  li strong {
+    color: var(--accent-color);
+  }
+
+  .highlight-block {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 4px solid var(--accent-color);
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  .lab-block {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-left: 4px solid #10b981;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+
+  .lab-block h3 {
+    color: #10b981;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .controls-bar {
+    height: 60px;
+    background: rgba(15, 22, 40, 0.8);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn { -webkit-tap-highlight-color: rgba(59,130,246,0.3); touch-action: manipulation; user-select: none; 
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+    color: #fff;
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: transparent;
+    border-color: var(--border-color);
+    color: var(--text-muted);
+  }
+
+  .progress-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .title-slide h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .title-slide h2 {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 30px;
+  }
+
+  .instructor-tag {
+    font-size: 14px;
+    color: var(--accent-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
+  }
+
+  /* Force landscape rotation on mobile portrait screen sizes only (excluding tablets/fold displays) */
+  @media (orientation: portrait) and (max-width: 500px) {
+    body {
+      transform: rotate(90deg);
+      transform-origin: top left;
+      width: 100vh !important;
+      height: 100vw !important;
+      position: absolute;
+      top: 0;
+      left: 100%;
+      overflow: hidden;
+    }
+  }
+  /* GPU Acceleration for silky smooth 60 FPS Android transitions */
+  .slide {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: opacity, transform;
+  }
+
+  @media (max-width: 768px), (pointer: coarse) {
+    .slide {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: rgba(18, 26, 45, 0.98) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <div class="slide active title-slide">
+    <div class="slide-tag">Module 3 - Session 29</div>
+    <h1>Video Door Phone</h1>
+    <h2>Low-Voltage Systems & Building Automation Training Series</h2>
+    <div class="instructor-tag">Session Slide Deck (10 Slide Expansion)</div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 29 - Slide 2</div>
+      <div class="slide-counter">Slide 2 of 10</div>
+    </div>
+    <h2 class="slide-title">2-Wire Analog VDP</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Signal Multiplexing:</strong> Power, analog video, and duplex audio are sent over a single non-polarized 2-wire copper line.</li><li><strong>Voltage Levels:</strong> VDP bus runs at 24V DC during standby and drops during high-power calls.</li><li><strong>Distance Limits:</strong> Maximum run length is capped at 100 meters using 1.0 sq mm copper core cables.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(20, 45)">
+              <rect x="0" y="0" width="30" height="50" rx="3" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+              <circle cx="15" cy="12" r="5" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+              <circle cx="15" cy="12" r="1.5" fill="#8b5cf6"/>
+              <rect x="7" y="30" width="16" height="8" rx="1" fill="none" stroke="#8b5cf6" stroke-width="1"/>
+              <text x="15" y="60" fill="#9ca3af" font-size="7" text-anchor="middle">Outdoor Panel</text>
+            </g>            <g transform="translate(130, 50)">
+              <rect x="0" y="0" width="50" height="35" rx="3" fill="none" stroke="#10b981" stroke-width="2"/>
+              <rect x="5" y="5" width="40" height="20" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1"/>
+              <line x1="20" y1="35" x2="30" y2="35" stroke="#10b981" stroke-width="2"/>
+              <text x="25" y="47" fill="#9ca3af" font-size="7" text-anchor="middle">Indoor Mon</text>
+            </g><line x1='50' y1='70' x2='130' y2='70' stroke='#8b5cf6' stroke-width='2'/><line x1='50' y1='80' x2='130' y2='80' stroke='#8b5cf6' stroke-width='2'/><text x='90' y='60' fill='#8b5cf6' font-size='7' text-anchor='middle'>2-Wire bus</text></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 29 - Slide 3</div>
+      <div class="slide-counter">Slide 3 of 10</div>
+    </div>
+    <h2 class="slide-title">IP VDP Infrastructure</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Network Backbone:</strong> Utilizes standard Cat6 Ethernet cables with PoE (802.3af/at) carrying digital TCP/IP packets.</li><li><strong>Video Streams:</strong> Transmits high-definition H.264/H.265 video streams to indoor terminals.</li><li><strong>Scalability:</strong> Allows adding hundreds of outdoor panels and monitors on managed network switch segments.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(15, 45)">
+              <rect x="0" y="0" width="30" height="50" rx="3" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+              <circle cx="15" cy="12" r="5" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+              <circle cx="15" cy="12" r="1.5" fill="#8b5cf6"/>
+              <rect x="7" y="30" width="16" height="8" rx="1" fill="none" stroke="#8b5cf6" stroke-width="1"/>
+              <text x="15" y="60" fill="#9ca3af" font-size="7" text-anchor="middle">IP Outdoor</text>
+            </g>            <g transform="translate(80, 50)">
+              <rect x="0" y="10" width="45" height="20" rx="2" fill="none" stroke="#10b981" stroke-width="2"/>
+              <line x1="10" y1="10" x2="10" y2="2" stroke="#10b981" stroke-width="1.5"/>
+              <line x1="35" y1="10" x2="35" y2="2" stroke="#10b981" stroke-width="1.5"/>
+              <circle cx="15" cy="20" r="2" fill="#10b981"/>
+              <circle cx="25" cy="20" r="2" fill="#10b981"/>
+              <circle cx="35" cy="20" r="2" fill="#10b981"/>
+              <text x="22" y="42" fill="#9ca3af" font-size="7" text-anchor="middle">PoE Switch</text>
+            </g>            <g transform="translate(140, 50)">
+              <rect x="0" y="0" width="50" height="35" rx="3" fill="none" stroke="#10b981" stroke-width="2"/>
+              <rect x="5" y="5" width="40" height="20" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1"/>
+              <line x1="20" y1="35" x2="30" y2="35" stroke="#10b981" stroke-width="2"/>
+              <text x="25" y="47" fill="#9ca3af" font-size="7" text-anchor="middle">IP Monitor</text>
+            </g><line x1='45' y1='70' x2='80' y2='70' stroke='#10b981' stroke-width='1.5'/><line x1='125' y1='70' x2='140' y2='70' stroke='#10b981' stroke-width='1.5'/><text x='95' y='105' fill='#9ca3af' font-size='7' text-anchor='middle'>Cat6 PoE lines</text></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 29 - Slide 4</div>
+      <div class="slide-counter">Slide 4 of 10</div>
+    </div>
+    <h2 class="slide-title">Solenoid Lock Mechanics</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Solenoid Coil:</strong> Uses electromagnetism to pull back a metal latch plunger when energized.</li><li><strong>Strike Plates:</strong> Replaces standard door frame keeper plates, opening the door lock mechanically.</li><li><strong>Fail-Secure Standard:</strong> Retains locked state if power drops to secure building parameters during emergencies.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(80, 50)">
+              <rect x="0" y="0" width="40" height="25" rx="2" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <path d="M 40 12 L 52 12" stroke="#ef4444" stroke-width="3"/>
+              <rect x="5" y="5" width="15" height="15" fill="rgba(239,68,68,0.1)" stroke="#ef4444" stroke-width="1"/>
+              <text x="20" y="37" fill="#9ca3af" font-size="7" text-anchor="middle">Solenoid</text>
+            </g><circle cx='100' cy='62' r='8' fill='none' stroke='#ef4444' stroke-width='1.5'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 29 - Slide 5</div>
+      <div class="slide-counter">Slide 5 of 10</div>
+    </div>
+    <h2 class="slide-title">Relay Logic - Wet vs. Dry Contacts</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Wet Contact:</strong> The outdoor station outputs internal 12V DC power directly to the lock terminals.</li><li><strong>Dry Contact:</strong> The station acts as a simple switch (COM/NO contacts), requiring external power to activate the lock.</li><li><strong>Relay Isolation:</strong> Dry contacts isolate high-voltage lock currents from sensitive panel microprocessors.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(30, 50)">
+              <rect x="0" y="0" width="30" height="30" rx="3" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <circle cx="15" cy="15" r="5" fill="none" stroke="#ef4444" stroke-width="1.5"/>
+              <line x1="5" y1="15" x2="10" y2="15" stroke="#ef4444" stroke-width="1.5"/>
+              <line x1="20" y1="15" x2="25" y2="15" stroke="#ef4444" stroke-width="1.5"/>
+              <text x="15" y="42" fill="#9ca3af" font-size="7" text-anchor="middle">VDP Relay</text>
+            </g>            <g transform="translate(130, 50)">
+              <rect x="0" y="0" width="40" height="25" rx="2" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <path d="M 40 12 L 52 12" stroke="#ef4444" stroke-width="3"/>
+              <rect x="5" y="5" width="15" height="15" fill="rgba(239,68,68,0.1)" stroke="#ef4444" stroke-width="1"/>
+              <text x="20" y="37" fill="#9ca3af" font-size="7" text-anchor="middle">Lock</text>
+            </g><path d='M 60 65 L 130 65' stroke='#f59e0b' stroke-width='1.5'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 29 - Slide 6</div>
+      <div class="slide-counter">Slide 6 of 10</div>
+    </div>
+    <h2 class="slide-title">Power Budget & External PSUs</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Inrush Current:</strong> Solenoid locks draw up to 2A during start-up, which can cause VDP monitors to crash.</li><li><strong>External PSU:</strong> A dedicated 12V DC power supply handles lock currents, switched by the VDP dry contacts.</li><li><strong>Wire Gauges:</strong> Power loops use 1.5 sq mm copper wire to minimize voltage drop over distance.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(20, 40)">
+              <rect x="0" y="10" width="45" height="20" rx="2" fill="none" stroke="#10b981" stroke-width="2"/>
+              <line x1="10" y1="10" x2="10" y2="2" stroke="#10b981" stroke-width="1.5"/>
+              <line x1="35" y1="10" x2="35" y2="2" stroke="#10b981" stroke-width="1.5"/>
+              <circle cx="15" cy="20" r="2" fill="#10b981"/>
+              <circle cx="25" cy="20" r="2" fill="#10b981"/>
+              <circle cx="35" cy="20" r="2" fill="#10b981"/>
+              <text x="22" y="42" fill="#9ca3af" font-size="7" text-anchor="middle">Ext 12V PSU</text>
+            </g>            <g transform="translate(85, 55)">
+              <rect x="0" y="0" width="30" height="30" rx="3" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <circle cx="15" cy="15" r="5" fill="none" stroke="#ef4444" stroke-width="1.5"/>
+              <line x1="5" y1="15" x2="10" y2="15" stroke="#ef4444" stroke-width="1.5"/>
+              <line x1="20" y1="15" x2="25" y2="15" stroke="#ef4444" stroke-width="1.5"/>
+              <text x="15" y="42" fill="#9ca3af" font-size="7" text-anchor="middle">Relay</text>
+            </g>            <g transform="translate(145, 50)">
+              <rect x="0" y="0" width="40" height="25" rx="2" fill="none" stroke="#ef4444" stroke-width="2"/>
+              <path d="M 40 12 L 52 12" stroke="#ef4444" stroke-width="3"/>
+              <rect x="5" y="5" width="15" height="15" fill="rgba(239,68,68,0.1)" stroke="#ef4444" stroke-width="1"/>
+              <text x="20" y="37" fill="#9ca3af" font-size="7" text-anchor="middle">Solenoid</text>
+            </g><path d='M 65 50 L 85 55 M 115 55 L 145 62' stroke='#ef4444' stroke-width='1.5'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 29 - Slide 7</div>
+      <div class="slide-counter">Slide 7 of 10</div>
+    </div>
+    <h2 class="slide-title">SIP Calling & Mobile Gateways</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>SIP Protocol:</strong> Session Initiation Protocol converts doorbell presses into digital IP voice calls.</li><li><strong>Cloud Gateway:</strong> Bridges calls to mobile networks, ringing user smartphone applications remotely.</li><li><strong>Bandwidth Requirements:</strong> Needs 100 Kbps stable uplink upload speeds for smooth video calls on smartphones.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(20, 45)">
+              <rect x="0" y="0" width="30" height="50" rx="3" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+              <circle cx="15" cy="12" r="5" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+              <circle cx="15" cy="12" r="1.5" fill="#8b5cf6"/>
+              <rect x="7" y="30" width="16" height="8" rx="1" fill="none" stroke="#8b5cf6" stroke-width="1"/>
+              <text x="15" y="60" fill="#9ca3af" font-size="7" text-anchor="middle">VDP Outdoor</text>
+            </g>            <g transform="translate(80, 45)">
+              <path d="M10 25 A10 10 0 0 1 25 15 A15 15 0 0 1 55 15 A10 10 0 0 1 70 25 Z" fill="none" stroke="#3b82f6" stroke-width="2"/>
+              <text x="40" y="42" fill="#9ca3af" font-size="7" text-anchor="middle">SIP Cloud</text>
+            </g>            <g transform="translate(145, 45)">
+              <rect x="5" y="10" width="35" height="30" rx="2" fill="none" stroke="#eab308" stroke-width="1.5"/>
+              <path d="M 10 5 L 15 15 L 30 15 L 35 5" fill="none" stroke="#eab308" stroke-width="2"/>
+              <text x="22" y="52" fill="#9ca3af" font-size="7" text-anchor="middle">Smart App</text>
+            </g><line x1='50' y1='70' x2='80' y2='70' stroke='#3b82f6' stroke-width='1.5' stroke-dasharray='2 2'/><line x1='135' y1='70' x2='145' y2='70' stroke='#3b82f6' stroke-width='1.5' stroke-dasharray='2 2'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 29 - Slide 8</div>
+      <div class="slide-counter">Slide 8 of 10</div>
+    </div>
+    <h2 class="slide-title">Multi-Apartment Distributors</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Bus Splitters:</strong> Audio/video distributors branch the main trunk line out to individual apartments.</li><li><strong>Impedance Terminations:</strong> End-of-line resistors prevent video signals from bouncing back and distorting feeds.</li><li><strong>Address Selectors:</strong> Monitors use DIP switches to set apartment IDs (e.g. Apartment 101, 102).</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(20, 45)">
+              <rect x="0" y="0" width="30" height="50" rx="3" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+              <circle cx="15" cy="12" r="5" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+              <circle cx="15" cy="12" r="1.5" fill="#8b5cf6"/>
+              <rect x="7" y="30" width="16" height="8" rx="1" fill="none" stroke="#8b5cf6" stroke-width="1"/>
+              <text x="15" y="60" fill="#9ca3af" font-size="7" text-anchor="middle">Outdoor</text>
+            </g>            <g transform="translate(80, 50)">
+              <rect x="0" y="10" width="45" height="20" rx="2" fill="none" stroke="#10b981" stroke-width="2"/>
+              <line x1="10" y1="10" x2="10" y2="2" stroke="#10b981" stroke-width="1.5"/>
+              <line x1="35" y1="10" x2="35" y2="2" stroke="#10b981" stroke-width="1.5"/>
+              <circle cx="15" cy="20" r="2" fill="#10b981"/>
+              <circle cx="25" cy="20" r="2" fill="#10b981"/>
+              <circle cx="35" cy="20" r="2" fill="#10b981"/>
+              <text x="22" y="42" fill="#9ca3af" font-size="7" text-anchor="middle">Splitter</text>
+            </g>            <g transform="translate(145, 25)">
+              <rect x="0" y="0" width="50" height="35" rx="3" fill="none" stroke="#10b981" stroke-width="2"/>
+              <rect x="5" y="5" width="40" height="20" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1"/>
+              <line x1="20" y1="35" x2="30" y2="35" stroke="#10b981" stroke-width="2"/>
+              <text x="25" y="47" fill="#9ca3af" font-size="7" text-anchor="middle">Flat 101</text>
+            </g>            <g transform="translate(145, 80)">
+              <rect x="0" y="0" width="50" height="35" rx="3" fill="none" stroke="#10b981" stroke-width="2"/>
+              <rect x="5" y="5" width="40" height="20" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1"/>
+              <line x1="20" y1="35" x2="30" y2="35" stroke="#10b981" stroke-width="2"/>
+              <text x="25" y="47" fill="#9ca3af" font-size="7" text-anchor="middle">Flat 102</text>
+            </g><line x1='50' y1='70' x2='80' y2='70' stroke='#8b5cf6' stroke-width='2'/><path d='M 125 60 L 145 40 M 125 70 L 145 95' stroke='#8b5cf6' stroke-width='1.5'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 29 - Slide 9</div>
+      <div class="slide-counter">Slide 9 of 10</div>
+    </div>
+    <h2 class="slide-title">Troubleshooting - Audio Hum & Video Noise</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul>
+          <li><strong>Audio Hum (50Hz):</strong> Caused by induction loops when signal cables run too close to 230V AC lines.</li><li><strong>Video Distortion:</strong> Signal reflections happen if junctions are poorly twisted or terminations are missing.</li><li><strong>Ground Loops:</strong> Voltage differences between panels cause audio buzzes; fixed using isolation transformers.</li>
+        </ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(20, 45)">
+              <rect x="0" y="0" width="30" height="50" rx="3" fill="none" stroke="#8b5cf6" stroke-width="2"/>
+              <circle cx="15" cy="12" r="5" fill="none" stroke="#8b5cf6" stroke-width="1.5"/>
+              <circle cx="15" cy="12" r="1.5" fill="#8b5cf6"/>
+              <rect x="7" y="30" width="16" height="8" rx="1" fill="none" stroke="#8b5cf6" stroke-width="1"/>
+              <text x="15" y="60" fill="#9ca3af" font-size="7" text-anchor="middle">Outdoor</text>
+            </g>            <g transform="translate(80, 50)">
+              <rect x="0" y="10" width="45" height="20" rx="2" fill="none" stroke="#10b981" stroke-width="2"/>
+              <line x1="10" y1="10" x2="10" y2="2" stroke="#10b981" stroke-width="1.5"/>
+              <line x1="35" y1="10" x2="35" y2="2" stroke="#10b981" stroke-width="1.5"/>
+              <circle cx="15" cy="20" r="2" fill="#10b981"/>
+              <circle cx="25" cy="20" r="2" fill="#10b981"/>
+              <circle cx="35" cy="20" r="2" fill="#10b981"/>
+              <text x="22" y="42" fill="#9ca3af" font-size="7" text-anchor="middle">Splitter</text>
+            </g>            <g transform="translate(145, 25)">
+              <rect x="0" y="0" width="50" height="35" rx="3" fill="none" stroke="#10b981" stroke-width="2"/>
+              <rect x="5" y="5" width="40" height="20" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1"/>
+              <line x1="20" y1="35" x2="30" y2="35" stroke="#10b981" stroke-width="2"/>
+              <text x="25" y="47" fill="#9ca3af" font-size="7" text-anchor="middle">Flat 101</text>
+            </g>            <g transform="translate(145, 80)">
+              <rect x="0" y="0" width="50" height="35" rx="3" fill="none" stroke="#10b981" stroke-width="2"/>
+              <rect x="5" y="5" width="40" height="20" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1"/>
+              <line x1="20" y1="35" x2="30" y2="35" stroke="#10b981" stroke-width="2"/>
+              <text x="25" y="47" fill="#9ca3af" font-size="7" text-anchor="middle">Flat 102</text>
+            </g><line x1='50' y1='70' x2='80' y2='70' stroke='#8b5cf6' stroke-width='2'/><path d='M 125 60 L 145 40 M 125 70 L 145 95' stroke='#8b5cf6' stroke-width='1.5'/></svg>
+      </div>
+    </div>
+  </div>  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 29 - Slide 10</div>
+      <div class="slide-counter">Slide 10 of 10</div>
+    </div>
+    <h2 class="slide-title">Lab Work: VDP Interfacing</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <div class="lab-block">
+          <h3>Lab Work Checklist</h3>
+          <ol>
+            <li>Configure 2-wire outdoor unit connections to the indoor monitor.</li><li>Wire an external 12V power supply to the solenoid lock loop, routed through VDP dry contacts.</li><li>Configure apartment IDs using DIP switches and test call, audio, and door lock release.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="visual-content">
+        <svg viewBox='0 0 200 150' width='100%'>            <g transform="translate(10, 10)">
+              <rect x="20" y="10" width="140" height="90" rx="6" fill="none" stroke="#10b981" stroke-width="2.5"/>
+              <path d="M 50 60 L 80 85 L 140 35" fill="none" stroke="#10b981" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="90" y="120" fill="#9ca3af" font-size="10" text-anchor="middle">Lab Verification Passed</text>
+            </g></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="nav-buttons">
+    <a class="btn" href="slides_index.html">Back to Hub</a>
+    <button class="btn" id="prevBtn" disabled>Previous</button>
+    <button class="btn" id="nextBtn">Next</button>
+  </div>
+  <button class="btn" id="fullscreenBtn">Fullscreen</button>
+</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  // ALWAYS start from Slide 0 (Slide 1)
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    prevBtn.disabled = false;
+    nextBtn.disabled = false;
+
+    if (currentSlide === 0) {
+      prevBtn.textContent = "Exit to Menu";
+    } else {
+      prevBtn.textContent = "Previous";
+    }
+
+    if (currentSlide === slides.length - 1) {
+      nextBtn.textContent = "Finish & Exit";
+    } else {
+      nextBtn.textContent = "Next";
+    }
+
+    const progress = (currentSlide / (slides.length - 1)) * 100;
+    progressBar.style.width = progress + "%";
+  }
+
+  function goToIndex() {
+    window.location.href = 'slides_index.html';
+  }
+
+  prevBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  // Laptop Keyboard Navigation inside slide deck
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (e.key === 'Escape') {
+      goToIndex();
+    }
+  });
+
+  // Touch & Swipe Handler
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      }
+    }
+  }, { passive: true });
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen().catch(err => {});
+      }
+    });
+  }
+
+  updateSlides();
+</script>
+</body>
+</html>

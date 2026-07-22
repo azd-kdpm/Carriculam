@@ -1,0 +1,767 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 6: Reading Drawings</title>
+<style>
+  :root {
+    --bg-color: #0b0f19;
+    --card-bg: rgba(20, 30, 55, 0.6);
+    --accent-color: #f59e0b;
+    --accent-glow: rgba(245, 158, 11, 0.4);
+    --text-main: #f3f4f6;
+    --text-muted: #9ca3af;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    touch-action: pan-y;
+  }
+
+  .deck {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 30px;
+    touch-action: pan-y;
+  }
+
+  .slide {
+    width: 100%;
+    max-width: 1200px;
+    height: 100%;
+    max-height: 700px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    padding: 40px;
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.4s ease;
+    touch-action: pan-y;
+  }
+
+  .slide.active {
+    display: flex;
+  }
+
+  .slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+  }
+
+  .slide-tag {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--accent-color);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 1px solid var(--accent-color);
+  }
+
+  .slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 30px;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text-main);
+    flex-grow: 1;
+    overflow: hidden;
+  }
+
+  .text-content {
+    overflow-y: auto;
+    padding-right: 10px;
+  }
+
+  .visual-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .visual-content svg {
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  ul, ol {
+    margin-left: 20px;
+    margin-bottom: 15px;
+  }
+
+  li {
+    margin-bottom: 10px;
+  }
+
+  li strong {
+    color: var(--accent-color);
+  }
+
+  .highlight-block {
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 4px solid var(--accent-color);
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+    margin: 15px 0;
+    font-style: italic;
+    font-size: 15px;
+  }
+
+  .lab-block {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-left: 4px solid #10b981;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+
+  .lab-block h3 {
+    color: #10b981;
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 15px 0;
+    font-size: 13px;
+  }
+
+  th {
+    background-color: rgba(255, 255, 255, 0.03);
+    color: var(--accent-color);
+    border: 1px solid var(--border-color);
+    padding: 6px;
+    text-align: left;
+  }
+
+  td {
+    border: 1px solid var(--border-color);
+    padding: 6px;
+  }
+
+  .controls-bar {
+    height: 60px;
+    background: rgba(15, 22, 40, 0.8);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    z-index: 100;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 15px;
+  }
+
+  .btn { -webkit-tap-highlight-color: rgba(59,130,246,0.3); touch-action: manipulation; user-select: none; 
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
+  }
+
+  .btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    background: transparent;
+  }
+
+  .slide-counter {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .progress-container {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.05);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .title-slide {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  .title-slide h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 15px;
+  }
+
+  .title-slide h2 {
+    font-size: 18px;
+    color: var(--text-muted);
+    font-weight: 500;
+    margin-bottom: 30px;
+  }
+
+  /* Force landscape rotation on mobile portrait screen sizes only (excluding tablets/fold displays) */
+  @media (orientation: portrait) and (max-width: 500px) {
+    body {
+      transform: rotate(90deg);
+      transform-origin: top left;
+      width: 100vh !important;
+      height: 100vw !important;
+      position: absolute;
+      top: 0;
+      left: 100%;
+      overflow: hidden;
+    }
+  }
+  /* GPU Acceleration for silky smooth 60 FPS Android transitions */
+  .slide {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    will-change: opacity, transform;
+  }
+
+  @media (max-width: 768px), (pointer: coarse) {
+    .slide {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: rgba(18, 26, 45, 0.98) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <!-- Slide 1 -->
+  <div class="slide active title-slide">
+    <div class="slide-tag">Module 1 - Session 6</div>
+    <h1>Reading Drawings & Schematics</h1>
+    <h2>Reading Drawings</h2>
+    <div class="instructor-tag">Low-Voltage Systems & Automation Training Series</div>
+  </div>  <!-- Slide 2 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 2</div>
+      <div class="slide-counter">Slide 2 of 14</div>
+    </div>
+    <h2 class="slide-title">Schematic Symbol Legends</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Relay Coil:</strong> Actuator triggers internal NO/NC states.</li><li><strong>Normally Open (NO):</strong> Circuit disconnected until relay turns active.</li><li><strong>Normally Closed (NC):</strong> Circuit active until relay turns active.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="30" y="25" width="30" height="15" fill="none" stroke="#f3f4f6" stroke-width="1.5"/>
+  <text x="75" y="37" fill="#9ca3af" font-family="sans-serif" font-size="8">Coil</text>
+  <line x1="30" y1="75" x2="60" y2="75" stroke="#f3f4f6" stroke-width="1.5"/>
+  <circle cx="45" cy="75" r="3" fill="#10b981"/>
+  <text x="75" y="78" fill="#9ca3af" font-family="sans-serif" font-size="8">NC Switch</text>
+  <line x1="30" y1="115" x2="45" y2="115" stroke="#f3f4f6" stroke-width="1.5"/>
+  <line x1="45" y1="115" x2="58" y2="105" stroke="#f3f4f6" stroke-width="1.5"/>
+  <text x="75" y="118" fill="#9ca3af" font-family="sans-serif" font-size="8">NO Switch</text>
+  <text x="150" y="75" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Standard Icons</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 3 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 3</div>
+      <div class="slide-counter">Slide 3 of 14</div>
+    </div>
+    <h2 class="slide-title">Single Line Diagrams (SLDs)</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Block Representation:</strong> High-level system blueprints mapping primary cables and block terminals.</li><li><strong>Field Paths:</strong> Traces routes of main lines without cluttering layout with individual conductors.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <line x1="100" y1="15" x2="100" y2="120" stroke="#f3f4f6" stroke-width="3"/>
+  <line x1="100" y1="50" x2="140" y2="50" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="100" y1="90" x2="60" y2="90" stroke="#ef4444" stroke-width="2"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Single Line Path</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 4 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 4</div>
+      <div class="slide-counter">Slide 4 of 14</div>
+    </div>
+    <h2 class="slide-title">Schematic Grid Coordinates</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Grid Coordinates:</strong> Standard sheet coordinate grids (A-H, 1-8).</li><li><strong>Cross Reference:</strong> Helps installers trace wire connections running across multiple sheets of architectural drawings.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="25" width="150" height="95" fill="none" stroke="#4b5563" stroke-width="1"/>
+  <text x="15" y="45" fill="#9ca3af" font-family="sans-serif" font-size="8">A</text>
+  <text x="15" y="85" fill="#9ca3af" font-family="sans-serif" font-size="8">B</text>
+  <text x="60" y="18" fill="#9ca3af" font-family="sans-serif" font-size="8">1</text>
+  <text x="130" y="18" fill="#9ca3af" font-family="sans-serif" font-size="8">2</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Plan Reference Grid</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 5 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 5</div>
+      <div class="slide-counter">Slide 5 of 14</div>
+    </div>
+    <h2 class="slide-title">Wiring Tagging & Ferruling Standards</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Ferrules:</strong> Metal sleeves crimped onto stripped wire ends to prevent fraying and ensure high-surface contact.</li><li><strong>Wire Tagging:</strong> Numbered plastic sleeves matching blueprint wire numbers (e.g. wire tag 102).</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="15" y="65" width="130" height="20" fill="#3b82f6"/>
+  <rect x="80" y="60" width="30" height="30" fill="#eab308" rx="2"/>
+  <text x="95" y="80" fill="#111827" font-family="monospace" font-weight="bold" font-size="12" text-anchor="middle">104</text>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Numbered Wire Sleeve</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 6 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 6</div>
+      <div class="slide-counter">Slide 6 of 14</div>
+    </div>
+    <h2 class="slide-title">What is a Relay & How It Works</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Definition:</strong> An electromagnetic switch controlled by a low-voltage electrical signal.</li><li><strong>Components:</strong> Coils, armature magnet, mechanical spring, and contact points.</li><li><strong>Working Logic:</strong> Energizing the coil creates a magnetic field that pulls the armature down, closing the Normally Open (NO) terminal and breaking the Normally Closed (NC) loop.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="35" y="55" width="35" height="45" fill="rgba(59,130,246,0.1)" stroke="#3b82f6" stroke-width="2"/>
+  <path d="M 40 60 C 50 60, 50 70, 40 70 C 50 70, 50 80, 40 80 C 50 80, 50 90, 40 90" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="70" y1="65" x2="100" y2="65" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="2 2"/>
+  <circle cx="120" cy="75" r="4" fill="#f59e0b"/>
+  <circle cx="160" cy="50" r="4" fill="#ef4444"/>
+  <circle cx="160" cy="100" r="4" fill="#10b981"/>
+  <line x1="123" y1="75" x2="157" y2="52" stroke="#f3f4f6" stroke-width="2.5"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Electromagnetic Switch Action</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 7 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 7</div>
+      <div class="slide-counter">Slide 7 of 14</div>
+    </div>
+    <h2 class="slide-title">Types of Relays</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>SPST vs SPDT:</strong> Single Pole Single Throw (simple switch) vs Single Pole Double Throw (switches COM between two paths).</li><li><strong>DPDT:</strong> Double Pole Double Throw features two isolated SPDT switches inside a single housing, triggered by one coil.</li><li><strong>Solid State Relays (SSRs):</strong> Optically coupled semiconductor switches. Silent operation, no moving parts, extreme lifecycle.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <circle cx="35" cy="65" r="3" fill="#f59e0b"/>
+  <circle cx="65" cy="50" r="3" fill="#ef4444"/>
+  <circle cx="65" cy="80" r="3" fill="#10b981"/>
+  <line x1="37" y1="65" x2="62" y2="52" stroke="#f3f4f6" stroke-width="1.5"/>
+  <text x="50" y="110" fill="#3b82f6" font-family="sans-serif" font-size="9" text-anchor="middle">SPDT Loop</text>
+  <circle cx="125" cy="50" r="3" fill="#f59e0b"/>
+  <circle cx="125" cy="80" r="3" fill="#f59e0b"/>
+  <circle cx="155" cy="40" r="3" fill="#ef4444"/>
+  <circle cx="155" cy="60" r="3" fill="#10b981"/>
+  <circle cx="155" cy="70" r="3" fill="#ef4444"/>
+  <circle cx="155" cy="90" r="3" fill="#10b981"/>
+  <line x1="127" y1="50" x2="152" y2="42" stroke="#f3f4f6" stroke-width="1.5"/>
+  <line x1="127" y1="80" x2="152" y2="72" stroke="#f3f4f6" stroke-width="1.5"/>
+  <text x="140" y="110" fill="#10b981" font-family="sans-serif" font-size="9" text-anchor="middle">DPDT Loop</text>
+  <text x="100" y="138" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Relay Configurations</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 8 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 8</div>
+      <div class="slide-counter">Slide 8 of 14</div>
+    </div>
+    <h2 class="slide-title">The 0/1 Digital Signal Concept</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Binary Logic:</strong> Circuits process states in binary where   = Low (0V) and 1 = High (5V or 12V).</li><li><strong>Logical High/Low:</strong> Access controllers read high-voltage inputs as logic state 1, ground links as logic 0.</li><li><strong>Active Low:</strong> Many trigger circuits default to 5V and activate when grounded to 0V (Active Low standard).</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <!-- Graph grids -->
+  <line x1="20" y1="20" x2="20" y2="120" stroke="#4b5563" stroke-width="1.5"/>
+  <line x1="20" y1="120" x2="190" y2="120" stroke="#4b5563" stroke-width="1.5"/>
+  <!-- Square wave (0/1) -->
+  <path d="M 20 120 L 50 120 L 50 40 L 90 40 L 90 120 L 130 120 L 130 40 L 170 40" fill="none" stroke="#10b981" stroke-width="3" stroke-linejoin="miter"/>
+  <text x="70" y="30" fill="#10b981" font-family="sans-serif" font-weight="bold" font-size="10" text-anchor="middle">1 (12V)</text>
+  <text x="110" y="135" fill="#ef4444" font-family="sans-serif" font-weight="bold" font-size="10" text-anchor="middle">0 (0V)</text>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Digital Square Wave Concept</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 9 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 9</div>
+      <div class="slide-counter">Slide 9 of 14</div>
+    </div>
+    <h2 class="slide-title">Switching Triggers: Dry vs. Wet</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Dry Contacts:</strong> Volt-free switch terminals. Isolated contact switches that do not supply voltage (e.g. relay contacts, exit buttons).</li><li><strong>Wet Contacts:</strong> Ports that actively output driving voltage (e.g. 12V output port to power lock directly).</li><li><strong>Safety:</strong> Connecting a voltage source to a dry contact zone panel input can destroy the micro-chips instantly.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <!-- Dry Contact (Switch only) -->
+  <rect x="15" y="35" width="70" height="70" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="30" y1="70" x2="70" y2="70" stroke="#ef4444" stroke-width="2"/>
+  <circle cx="50" cy="70" r="4" fill="#ef4444"/>
+  <text x="50" y="25" fill="#3b82f6" font-family="sans-serif" font-size="8" text-anchor="middle">Dry (Volt-Free)</text>
+  <!-- Wet Contact (Supply connected) -->
+  <rect x="115" y="35" width="70" height="70" fill="none" stroke="#10b981" stroke-width="2"/>
+  <line x1="130" y1="70" x2="170" y2="70" stroke="#10b981" stroke-width="2"/>
+  <circle cx="150" cy="70" r="4" fill="#10b981"/>
+  <line x1="150" y1="45" x2="150" y2="66" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="150" y="42" fill="#ef4444" font-family="sans-serif" font-size="7" text-anchor="middle">12V DC</text>
+  <text x="150" y="25" fill="#10b981" font-family="sans-serif" font-size="8" text-anchor="middle">Wet (12V Output)</text>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Triggers Types Comparison</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 10 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 10</div>
+      <div class="slide-counter">Slide 10 of 14</div>
+    </div>
+    <h2 class="slide-title">Relays & Electromagnetic Locks</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>EM Lock Wiring:</strong> Requires NC wiring loop. Activating relay breaks circuit, cutting power to release magnet.</li><li><strong>Exit Button:</strong> Connected in series to lock circuit, physically interrupting NC line during egress.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="30" y="55" width="30" height="40" fill="none" stroke="#3b82f6" stroke-width="2"/>
+  <line x1="60" y1="75" x2="90" y2="75" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="2 2"/>
+  <circle cx="110" cy="75" r="4" fill="#f59e0b"/>
+  <circle cx="150" cy="55" r="4" fill="#ef4444"/>
+  <circle cx="150" cy="95" r="4" fill="#10b981"/>
+  <line x1="112" y1="75" x2="146" y2="57" stroke="#f3f4f6" stroke-width="2"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Relay Internal Contacts</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 11 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 11</div>
+      <div class="slide-counter">Slide 11 of 14</div>
+    </div>
+    <h2 class="slide-title">Access Control Loop Blueprint</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Door Blueprint:</strong> Keypad reader, egress button, EM lock, backup PSU, and alarm terminals.</li><li><strong>Schematic Mapping:</strong> Tracing terminal block pins to make correct field inputs.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="15" y="45" width="35" height="50" rx="3" fill="none" stroke="#9ca3af" stroke-width="1.5"/>
+  <rect x="80" y="50" width="40" height="40" fill="none" stroke="#f59e0b" stroke-width="1.5"/>
+  <rect x="150" y="55" width="35" height="30" fill="none" stroke="#ef4444" stroke-width="1.5"/>
+  <path d="M 50 70 L 80 70" fill="none" stroke="#ef4444" stroke-width="1.5"/>
+  <path d="M 120 70 L 150 70" fill="none" stroke="#10b981" stroke-width="1.5"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Access Circuit Layout</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 12 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 12</div>
+      <div class="slide-counter">Slide 12 of 14</div>
+    </div>
+    <h2 class="slide-title">Fire Alarm Relay Integration</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Safety override:</strong> Fire alarm panel auxiliary dry contacts wired in series to lock power supply line.</li><li><strong>Fail-Safe State:</strong> When fire alarm triggers, circuit breaks, releasing locks automatically for egress.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="25" y="45" width="60" height="50" fill="none" stroke="#ef4444" stroke-width="2"/>
+  <text x="55" y="75" fill="#ef4444" font-family="sans-serif" font-size="9" text-anchor="middle">Fire Panel</text>
+  <line x1="85" y1="70" x2="125" y2="70" stroke="#f59e0b" stroke-width="2"/>
+  <line x1="125" y1="70" x2="140" y2="50" stroke="#ef4444" stroke-width="2"/>
+  <line x1="145" y1="70" x2="185" y2="70" stroke="#10b981" stroke-width="2"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Fire Alarm Emergency Cutoff</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 13 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 13</div>
+      <div class="slide-counter">Slide 13 of 14</div>
+    </div>
+    <h2 class="slide-title">Blueprint Troubleshooting</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <ul><li><strong>Wiring Audit:</strong> Using blueprints to verify terminal potentials using DMM probe leads.</li><li><strong>Loop Isolation:</strong> Tracing specific lines on schematics to locate broken connections or ground loops.</li></ul>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="30" y="30" width="140" height="80" fill="none" stroke="#9ca3af" stroke-width="1.5"/>
+  <path d="M 45 70 L 155 70" fill="none" stroke="#10b981" stroke-width="3"/>
+  <text x="100" y="135" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Tracing Blueprint Connections</text>
+</svg>
+      </div>
+    </div>
+  </div>  <!-- Slide 14 -->
+  <div class="slide">
+    <div class="slide-header">
+      <div class="slide-tag">Session 6 - Slide 14</div>
+      <div class="slide-counter">Slide 14 of 14</div>
+    </div>
+    <h2 class="slide-title">Practical Lab Guide</h2>
+    <div class="slide-body">
+      <div class="text-content">
+        <div class='lab-block'><h3>Lab Work: Relay Blueprint Assembly</h3><ol><li>Trace door lock schematic paths.</li><li>Wire keypad, exit push button, and EM lock through relay board.</li><li>Verify fire alarm emergency override logic.</li></ol></div>
+      </div>
+      <div class="visual-content">
+        <svg viewBox="0 0 200 150" width="100%">
+  <rect x="65" y="25" width="70" height="95" fill="none" stroke="#9ca3af" stroke-width="3"/>
+  <rect x="85" y="25" width="30" height="8" fill="#ef4444"/>
+  <rect x="40" y="65" width="15" height="25" fill="#3b82f6"/>
+  <text x="100" y="142" fill="#f3f4f6" font-family="sans-serif" font-size="11" text-anchor="middle">Completed Lock Installation</text>
+</svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="controls-bar">
+  <div class="nav-buttons">
+    <a class="btn" href="slides_index.html" style="text-decoration:none;">Back to Hub</a>
+    <button class="btn" id="prevBtn" disabled>Previous</button>
+    <button class="btn" id="nextBtn">Next</button>
+  </div>
+  <button class="btn" id="fullscreenBtn">Fullscreen</button>
+</div>
+
+<div class="progress-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progressBar = document.getElementById('progressBar');
+  const fullscreenBtn = document.getElementById('fullscreenBtn');
+  
+  // ALWAYS start from Slide 0 (Slide 1)
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    prevBtn.disabled = false;
+    nextBtn.disabled = false;
+
+    if (currentSlide === 0) {
+      prevBtn.textContent = "Exit to Menu";
+    } else {
+      prevBtn.textContent = "Previous";
+    }
+
+    if (currentSlide === slides.length - 1) {
+      nextBtn.textContent = "Finish & Exit";
+    } else {
+      nextBtn.textContent = "Next";
+    }
+
+    const progress = (currentSlide / (slides.length - 1)) * 100;
+    progressBar.style.width = progress + "%";
+  }
+
+  function goToIndex() {
+    window.location.href = 'slides_index.html';
+  }
+
+  prevBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide > 0) {
+      currentSlide--;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  nextBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (currentSlide < slides.length - 1) {
+      currentSlide++;
+      updateSlides();
+    } else {
+      goToIndex();
+    }
+  });
+
+  // Laptop Keyboard Navigation inside slide deck
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToIndex();
+      }
+    } else if (e.key === 'Escape') {
+      goToIndex();
+    }
+  });
+
+  // Touch & Swipe Handler
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToIndex();
+        }
+      }
+    }
+  }, { passive: true });
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {});
+      } else {
+        document.exitFullscreen().catch(err => {});
+      }
+    });
+  }
+
+  updateSlides();
+</script>
+</body>
+</html>
