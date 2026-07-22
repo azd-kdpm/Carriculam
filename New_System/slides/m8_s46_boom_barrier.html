@@ -1,0 +1,589 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 46: Boom Barrier Systems & Fast Gate Mechanics</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (46-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(46-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Boom Barrier Systems &amp; Fast Gate Mechanics</h1>
+        <p class="cover-subtitle">DC Brushless Motors | Speed Settings (1.5s - 6s) | Counterbalance Spring Tuning | Anti-Crush Safety Loops</p>
+        <p class="cover-series">Stage 8: Boom Barriers &amp; Vehicle Gate Systems</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (46-2) -->
+    <div class="slide">
+      <div class="pill-badge">(46-2)</div>
+      <div class="slide-header"><h1 class="slide-title">High-Speed Brushless DC Motors vs AC Induction Drives</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">24V / 36V Brushless DC (BLDC) Motors:</span> Ultra-smooth operation with 100% continuous duty cycle for toll gates and high-traffic malls.</li>
+            <li><span class="bullet-highlight">Variable Speed Control (1.5s to 6s):</span> Fast 1.5-second opening for highway toll plazas; 3-6 second opening for commercial parking lots.</li>
+            <li><span class="bullet-highlight">Zero Motor Wear &amp; Overheating:</span> BLDC gearboxes generate negligible heat compared to legacy AC induction motors.</li>
+          </ul>
+          <div class="callout-box"><span>Motor Selection: BLDC 24V motors operate continuously without thermal overload shutdowns in heavy toll plaza traffic.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">24V BLDC Motor</text>
+            <text x="105" y="140" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">100% Duty Cycle (Cool)</text>
+            
+            <rect x="220" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">AC Induction Drive</text>
+            <text x="295" y="140" text-anchor="middle" fill="#ef4444" font-size="10">Thermal Overload Risk</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (46-3) -->
+    <div class="slide">
+      <div class="pill-badge">(46-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Counterbalance Tension Spring Sizing &amp; Balancing</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Mechanical Weight Compensation:</span> Heavy-duty steel springs counteract aluminum boom arm weight to reduce motor strain.</li>
+            <li><span class="bullet-highlight">Spring Sizing Table:</span> Select spring gauge (e.g. 5.5mm vs 6.5mm) based on boom arm length (3m, 4.5m, 6m).</li>
+            <li><span class="bullet-highlight">45-Degree Balance Test:</span> Properly balanced boom arm remains stationary when manually disengaged at 45 degrees.</li>
+          </ul>
+          <div class="callout-box"><span>Installation Rule: ALWAYS perform the 45-degree balance test to prevent gearbox teeth stripping.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#f59e0b" font-size="15" font-weight="bold">45-Degree Mechanical Balance Test</text>
+            
+            <line x1="120" y1="180" x2="280" y2="120" stroke="#10b981" stroke-width="4"/>
+            <circle cx="120" cy="180" r="12" fill="#10b981"/>
+            <text x="200" y="225" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">&#10003; Arm Holds 45&deg; Angle Without Drifting</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (46-4) -->
+    <div class="slide">
+      <div class="pill-badge">(46-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Boom Arm Profiles: Straight, Articulated &amp; Fence Type</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Octagonal Aluminum Straight Arm (3m - 6m):</span> Lightweight aerodynamic profile with rubber anti-collision strip and LED light strip.</li>
+            <li><span class="bullet-highlight">90&deg; / 180&deg; Articulated Folding Arm:</span> Folds horizontally for low-ceiling underground basement parking garages.</li>
+            <li><span class="bullet-highlight">Fence Type Skirt Arm:</span> Prevents pedestrians and animals from crawling under or stepping over barrier arm.</li>
+          </ul>
+          <div class="callout-box"><span>Garages Standard: Specify 90&deg; articulated folding boom arms for underground parking ceilings under 2.4 meters.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Boom Arm Profiles</text>
+            
+            <line x1="60" y1="130" x2="340" y2="130" stroke="#38bdf8" stroke-width="3"/><text x="200" y="120" text-anchor="middle" fill="#fff" font-size="10">Straight Arm (3m-6m)</text>
+            <path d="M 60 180 L 200 180 L 200 220" fill="none" stroke="#10b981" stroke-width="3"/><text x="200" y="170" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">90&deg; Articulated Garage Arm</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (46-5) -->
+    <div class="slide">
+      <div class="pill-badge">(46-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Anti-Hit Safety: Rebound Sensors &amp; Rubber Safety Strips</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Auto-Reverse Impact Sensor:</span> Motor controller senses mechanical resistance on descent and reverses arm in 0.1s.</li>
+            <li><span class="bullet-highlight">Pneumatic / Pressure Safety Edges:</span> Soft rubber bottom strip compresses upon hitting vehicle roof, instantly signaling arm to open.</li>
+            <li><span class="bullet-highlight">Infrared Safety Photocells:</span> Transmitter/Receiver beam mounted 50cm above ground stops arm from descending while vehicle breaks beam.</li>
+          </ul>
+          <div class="callout-box"><span>Vehicle Protection: Auto-reversing impact sensors prevent vehicle roof denting during accidental barrier drops.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">Anti-Hit Safety Protection</text>
+            
+            <circle cx="100" cy="150" r="14" fill="#38bdf8"/><text x="100" y="180" text-anchor="middle" fill="#fff" font-size="10">IR Beam</text>
+            <circle cx="300" cy="150" r="14" fill="#38bdf8"/>
+            <line x1="114" y1="150" x2="286" y2="150" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4,2"/>
+            
+            <text x="200" y="225" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">&#10003; Impact Auto-Reverse in 0.1 sec</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (46-6) -->
+    <div class="slide">
+      <div class="pill-badge">(46-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Manual Release Clutch &amp; Emergency Power Fail Operation</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Rotary Key Clutch Release:</span> Disengages gearbox mechanically allowing security guard to lift arm manually during blackouts.</li>
+            <li><span class="bullet-highlight">Integrated 24V Battery Backup:</span> Internal 24V 7Ah lead-acid batteries support 300+ continuous operations during power outages.</li>
+            <li><span class="bullet-highlight">Auto-Open on Power Loss:</span> Configurable Dip-switch setting forces barrier arm to open automatically upon main power failure.</li>
+          </ul>
+          <div class="callout-box"><span>Emergency Rule: Configure auto-open on power failure for fire evacuation vehicle routes.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Rotary Key Clutch Release</text>
+            
+            <circle cx="200" cy="150" r="30" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="155" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">KEY</text>
+            <text x="200" y="225" text-anchor="middle" fill="#fff" font-size="11">Disengages Gearbox for Manual Lift</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (46-7) -->
+    <div class="slide">
+      <div class="pill-badge">(46-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Barrier Controller Motherboard &amp; Limit Switch Tuning</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Optical Hall-Effect Encoders:</span> Digital motor encoder tracks exact arm angle for smooth deceleration buffer zone.</li>
+            <li><span class="bullet-highlight">Opening / Closing Limit Adjustment:</span> Fine-tunes horizontal 0&deg; and vertical 90&deg; stop points to prevent mechanical slamming.</li>
+            <li><span class="bullet-highlight">Push-Button Terminal Inputs:</span> Dry contact inputs for Open, Close, Stop, Safety Loop, and Fire Alarm release.</li>
+          </ul>
+          <div class="callout-box"><span>Tuning Tip: Adjust Hall-effect encoder deceleration buffers to eliminate noisy arm bouncing at 90 degrees.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="320" height="220" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="80" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">Barrier Controller Motherboard</text>
+            
+            <rect x="60" y="100" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="122" text-anchor="middle" fill="#38bdf8" font-size="11">Optical Hall Encoder Deceleration Zone</text>
+            <rect x="60" y="145" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="167" text-anchor="middle" fill="#f59e0b" font-size="11">Inputs: OPEN / CLOSE / STOP / SAFETY LOOP</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (46-8) -->
+    <div class="slide">
+      <div class="pill-badge">(46-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Traffic Signal Lights &amp; LED Boom Strip Integration</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Red / Green LED Traffic Light:</span> Mounted on barrier housing; Red signals stop, Green signals safe vehicle entry.</li>
+            <li><span class="bullet-highlight">Flowing LED Boom Strip:</span> LED strip along aluminum arm illuminates Red on descent and Green on ascent for night visibility.</li>
+            <li><span class="bullet-highlight">Relay Interlocking:</span> Barrier motherboard triggers traffic light relay contacts automatically based on arm position.</li>
+          </ul>
+          <div class="callout-box"><span>Night Safety: Flowing LED boom strips make barrier arms clearly visible to drivers in dark parking lots.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">LED Traffic Light &amp; Boom Strip</text>
+            
+            <circle cx="140" cy="150" r="18" fill="#ef4444"/><text x="140" y="155" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">RED</text>
+            <circle cx="260" cy="150" r="18" fill="#22c55e"/><text x="260" y="155" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">GREEN</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (46-9) -->
+    <div class="slide">
+      <div class="pill-badge">(46-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Troubleshooting Arm Slamming, Spring Snap &amp; Motor Heat</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Arm Slamming at 0&deg; / 90&deg;:</span> Limit switch misaligned or deceleration buffer pot turned too low on motherboard.</li>
+            <li><span class="bullet-highlight">Snapping Counterbalance Springs:</span> Incorrect spring tension gauge chosen for heavy 6-meter boom arm.</li>
+            <li><span class="bullet-highlight">Barrier Stalls Halfway:</span> Disengage clutch and perform 45-degree balance test; adjust spring tensioning bolt.</li>
+          </ul>
+          <div class="callout-box"><span>Field Troubleshooting: Halfway barrier stalling is 95% caused by un-balanced spring tensioning.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">Barrier Stalls Halfway Repair</text>
+            <text x="200" y="140" fill="#fff" font-size="12" text-anchor="middle">Arm Stops at 45&deg; Position?</text>
+            <text x="200" y="175" fill="#10b981" font-size="13" font-weight="bold" text-anchor="middle">Fix: Adjust Spring Balance Bolt</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (46-10) -->
+    <div class="slide">
+      <div class="pill-badge">(46-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Boom Barrier Assembly &amp; Balancing Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Assemble 4-meter aluminum boom arm on 24V BLDC barrier housing and adjust mechanical limit switches.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Perform 45-degree spring balance test and adjust tensioning bolt for zero motor resistance.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Connect IR safety photocell, test auto-reverse impact sensor, and wire Red/Green LED traffic light.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master boom barrier mechanical assembly, spring balance tuning, and safety sensor wiring.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Boom Barrier Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">4m Arm &amp; Limit Switch Setup</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">45-Degree Spring Balance Test</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Photocell &amp; Auto-Reverse Test</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

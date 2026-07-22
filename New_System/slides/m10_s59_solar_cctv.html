@@ -1,0 +1,584 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 59: Solar CCTV Systems & Off-Grid Power Engineering</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (59-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(59-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Solar CCTV Systems &amp; Off-Grid Power Engineering</h1>
+        <p class="cover-subtitle">Solar Photovoltaic (PV) Calculation | LiFePO4 Lithium Battery Storage | MPPT Solar Charge Controllers | 4G/5G Cellular Routers</p>
+        <p class="cover-series">Stage 10: Advanced Integration, Business &amp; Capstone Projects</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (59-2) -->
+    <div class="slide">
+      <div class="pill-badge">(59-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Solar Panel Sizing: Peak Sun Hours (PSH) &amp; Daily Watt-Hour (Wh) Calculations</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Daily Load Calculation (Wh):</span> A 10W 4G IP Camera running 24 hours draws 10W x 24h = 240Wh daily energy.</li>
+            <li><span class="bullet-highlight">Peak Sun Hours (PSH = 4.5h):</span> Solar panel power output calculated as Total Load / PSH x 1.3 System Derating.</li>
+            <li><span class="bullet-highlight">Minimum Solar Panel Wattage:</span> 240Wh / 4.5h x 1.3 = 69.3W &rarr; Select 80W Monocrystalline PV Panel.</li>
+          </ul>
+          <div class="callout-box"><span>Engineering Rule: Always add a 30% system derating safety factor to account for dust, heat, and wire losses.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Solar Panel Sizing Math</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Daily Energy Load: 10W x 24h = 240Wh</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Panel Sizing: 240 / 4.5 x 1.3 &rarr; 80W PV Panel</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (59-3) -->
+    <div class="slide">
+      <div class="pill-badge">(59-3)</div>
+      <div class="slide-header"><h1 class="slide-title">LiFePO4 (Lithium Iron Phosphate) vs AGM / Gel Deep-Cycle Batteries</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">LiFePO4 Lithium Advantage:</span> 3,500+ deep discharge cycles (80% DoD) vs 500 cycles for lead-acid AGM batteries.</li>
+            <li><span class="bullet-highlight">Autonomy Days Sizing (3 Days):</span> Sized for 3 consecutive rainy/cloudy days: 240Wh x 3 days = 720Wh total storage.</li>
+            <li><span class="bullet-highlight">Amp-Hour Rating (12V):</span> 720Wh / 12.8V = 56.25Ah &rarr; Select 12.8V 60Ah LiFePO4 Battery Pack.</li>
+          </ul>
+          <div class="callout-box"><span>Battery Choice: LiFePO4 batteries last 10+ years outdoors and withstand deep 80% discharges without degradation.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">LiFePO4 Lithium</text>
+            <text x="105" y="140" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">3,500+ Deep Cycles</text>
+            
+            <rect x="220" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">Lead-Acid AGM</text>
+            <text x="295" y="140" text-anchor="middle" fill="#ef4444" font-size="10">500 Cycles Only</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (59-4) -->
+    <div class="slide">
+      <div class="pill-badge">(59-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Maximum Power Point Tracking (MPPT) vs PWM Charge Controllers</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">MPPT Controller (98% Efficiency):</span> Dynamically adjusts voltage/current to extract maximum solar wattage in low light or high heat.</li>
+            <li><span class="bullet-highlight">PWM Controller (70% Efficiency):</span> Clamps panel voltage directly to battery voltage, wasting 30% of available solar power.</li>
+            <li><span class="bullet-highlight">Load Terminal Low-Voltage Cutoff (LVD):</span> Disconnects camera load automatically if battery drops below 11.1V to prevent battery damage.</li>
+          </ul>
+          <div class="callout-box"><span>Efficiency Mandate: MPPT controllers yield 30% more energy from solar panels during overcast winter days.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">MPPT 98% Power Tracking</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#10b981" font-size="11">MPPT: 98% Solar Harvest (30% More Output)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#ef4444" font-size="11">PWM: 70% Efficiency (Wastes Solar Power)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (59-5) -->
+    <div class="slide">
+      <div class="pill-badge">(59-5)</div>
+      <div class="slide-header"><h1 class="slide-title">4G/5G Cellular Routers, Industrial SIMs &amp; Data Bandwidth Optimization</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Industrial LTE Routers (Teltonika / Sunell):</span> Dual-SIM failover routers operating on 12V DC power directly.</li>
+            <li><span class="bullet-highlight">Sub-Stream Bandwidth Saving:</span> Stream 256kbps H.265 sub-stream for live viewing; save 4K high-res video to local SD card.</li>
+            <li><span class="bullet-highlight">Monthly Data Math:</span> Motion-only cloud upload consumes &lt; 5GB/month data vs 300GB/month for 24/7 continuous streaming.</li>
+          </ul>
+          <div class="callout-box"><span>Bandwidth Rule: Transmit low-res sub-streams over 4G and record 4K video locally to keep SIM data under 5GB/month.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">4G Sub-Stream &amp; Local 4K Record</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">4G LTE: Sub-Stream 256kbps (&lt; 5GB/mo Data)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">SD Card: Continuous 4K H.265 Local Record</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (59-6) -->
+    <div class="slide">
+      <div class="pill-badge">(59-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Solar Tilt Angle &amp; Geographic Sun Azimuth Optimization</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Optimal Solar Panel Tilt Angle:</span> Set panel tilt angle equal to local geographic latitude + 15&deg; for maximum winter sun harvest.</li>
+            <li><span class="bullet-highlight">True South Orientation (Northern Hemisphere):</span> Point solar panels directly towards True South (using compass declination offset).</li>
+            <li><span class="bullet-highlight">Anti-Vandal High Pole Mounting:</span> Mount solar panel at 4m - 6m pole height to prevent shade obstruction and theft.</li>
+          </ul>
+          <div class="callout-box"><span>Orientation Rule: In the Northern Hemisphere, point panels to True South at (Latitude + 15 degrees) for winter optimization.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Latitude + 15&deg; Winter Solar Tilt</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Orientation: True South Direction</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Tilt Angle: Local Latitude + 15&deg; Slope</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (59-7) -->
+    <div class="slide">
+      <div class="pill-badge">(59-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Weatherproof IP67 Enclosures, Thermal Management &amp; Lightning Protection</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">IP67 NEMA 4X Enclosure:</span> Gasket-sealed aluminum/polycarbonate outdoor cabinet housing battery and MPPT controller.</li>
+            <li><span class="bullet-highlight">Thermostatic Cooling Fan / Heatsink:</span> Vents enclosure if internal temperature exceeds 45&deg;C; insulates battery in winter.</li>
+            <li><span class="bullet-highlight">DC Surge Protection Device (SPD):</span> 10kA DC SPD protects MPPT controller and camera inputs against lightning surges.</li>
+          </ul>
+          <div class="callout-box"><span>Protection Rule: Ground the solar pole frame with a copper earthing rod (&lt; 5 ohms) to divert lightning strikes.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">IP67 Enclosure &amp; 10kA DC Surge</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#10b981" font-size="11">IP67 Aluminum Gasket Cabinet Protection</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">10kA DC Surge Protector &amp; Ground Rod</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (59-8) -->
+    <div class="slide">
+      <div class="pill-badge">(59-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Low-Power PIR Wake-Up Cameras vs Continuous Recording</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Ultra-Low Power Standby (15mW):</span> Camera stays in deep sleep; PIR sensor wakes camera in 0.2s upon detecting human motion.</li>
+            <li><span class="bullet-highlight">Continuous Commercial Recording (3W - 8W):</span> Mandatory for perimeter security; requires 100W+ solar panel and 100Ah battery.</li>
+            <li><span class="bullet-highlight">Radar + PIR Dual Detection:</span> 24GHz mmWave radar combined with PIR eliminates false wakes from blowing tree branches.</li>
+          </ul>
+          <div class="callout-box"><span>Power Modes: PIR wake-up cameras use 95% less solar power than continuous recording cameras.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">15mW PIR Sleep vs 5W Continuous</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#10b981" font-size="11">PIR Deep Sleep Mode: 15mW Draw</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#ef4444" font-size="11">Continuous Commercial Mode: 5W Draw</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (59-9) -->
+    <div class="slide">
+      <div class="pill-badge">(59-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Troubleshooting Battery Depletion, MPPT Errors &amp; 4G Signal Drops</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Battery Dead After 2 Days:</span> Solar panel shaded by tree branches or panel tilt angle incorrect; prune trees and check Voc.</li>
+            <li><span class="bullet-highlight">MPPT Error Code (Overvoltage):</span> PV panel series voltage exceeds controller max VOC limit; rewire panels in parallel.</li>
+            <li><span class="bullet-highlight">4G Offline in Remote Locations:</span> Low RSRP signal (&lt; -110dBm); install high-gain 9dBi directional Yagi LTE antenna on pole.</li>
+          </ul>
+          <div class="callout-box"><span>Field Fix: If 4G signal is weak (-110dBm), add a 9dBi directional Yagi LTE antenna aimed at the nearest cell tower.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">4G Weak Signal LTE Repair</text>
+            <text x="200" y="140" fill="#fff" font-size="12" text-anchor="middle">4G Offline (RSRP &lt; -110dBm)?</text>
+            <text x="200" y="175" fill="#10b981" font-size="13" font-weight="bold" text-anchor="middle">Fix: Install 9dBi Directional Yagi LTE Antenna</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (59-10) -->
+    <div class="slide">
+      <div class="pill-badge">(59-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Off-Grid Solar CCTV Commissioning Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Calculate daily Wh load for 4G IP Camera, size 80W Monocrystalline PV Panel, 20A MPPT Controller, and 60Ah LiFePO4 Battery.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Wire PV panel, MPPT controller, battery, DC surge protector, and 12V 4G Industrial Router in IP67 enclosure.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Mount assembly on pole, orient panel to True South (Latitude + 15&deg;), configure 4G sub-stream video, and test PIR wake-up.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master off-grid solar load math, MPPT battery wiring, 4G bandwidth tuning, and outdoor pole installation.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Solar CCTV Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Solar PV &amp; LiFePO4 Load Math</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">MPPT Enclosure &amp; 4G Router Wiring</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Pole Mounting &amp; True South Tilt</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BotGI ELV Learning Portal & App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Authentication Portal View -->
+  <div id="authView" class="auth-container">
+    <div class="auth-card">
+      <h1 class="brand-title">BotGI ELV Portal</h1>
+      <p class="brand-subtitle">Industrial Security & Automation Training Series</p>
+      
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label" for="username">Student / Instructor ID</label>
+          <input type="text" id="username" class="form-input" placeholder="e.g. STU-2026-08" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+        </div>
+        
+        <button type="submit" class="btn-primary">Access Training Portal</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Student & Instructor Dashboard View -->
+  <div id="dashboardView" class="portal-layout" style="display: none;">
+    <aside class="sidebar">
+      <h2 style="font-size: 18px; margin-bottom: 20px; color: #fff;">ELV Learning Hub</h2>
+      <nav id="stageNav"></nav>
+      <button onclick="handleLogout()" class="btn-primary" style="margin-top: auto; background: rgba(239,68,68,0.2); border: 1px solid #ef4444; color: #ef4444;">Log Out</button>
+    </aside>
+    
+    <main class="main-content">
+      <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <div>
+          <span class="stage-badge" id="activeStageBadge">Stage 1: Electrical Fundamentals</span>
+          <h1 id="stageTitle" style="font-size: 26px; color: #fff;">Session Course Index</h1>
+        </div>
+      </header>
+      
+      <div id="sessionGrid" class="session-grid"></div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

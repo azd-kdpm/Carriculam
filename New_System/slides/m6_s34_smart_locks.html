@@ -1,0 +1,602 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 35: Smart Door Locks & Digital Access</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (35-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(35-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Smart Door Locks &amp; Digital Access</h1>
+        <p class="cover-subtitle">Biometric Fingerprint | PIN Code &amp; RFID | Bluetooth &amp; Zigbee Mesh | Mechanical Mortise Assemblies</p>
+        <p class="cover-series">Stage 6: Building Communication Systems</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (35-2) -->
+    <div class="slide">
+      <div class="pill-badge">(35-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Smart Lock Anatomy: Escutcheons, Motors &amp; Mortise</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Outer / Inner Escutcheon:</span> Alloy faceplates housing fingerprint scanner, touchpad, battery bay, and thumb-turn.</li>
+            <li><span class="bullet-highlight">Motorized Gear Clutch:</span> Micro-motor engages internal drive clutch upon valid authentication to retract latches.</li>
+            <li><span class="bullet-highlight">European / American Mortise:</span> Multi-bolt steel latch mechanism (latch bolt, deadbolt, and anti-friction latch).</li>
+          </ul>
+          <div class="callout-box"><span>Hardware Fact: The motorized clutch engages the handle mechanism only when valid credentials are authenticated.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="90" height="210" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="85" y="80" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Outer Panel</text>
+            <circle cx="85" cy="110" r="14" fill="#0f172a" stroke="#38bdf8"/>
+            <rect x="55" y="140" width="60" height="40" rx="4" fill="#0f172a"/>
+            
+            <rect x="165" y="60" width="70" height="190" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="85" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Mortise</text>
+            <rect x="235" y="100" width="30" height="20" rx="2" fill="#10b981"/>
+            <rect x="235" y="140" width="40" height="25" rx="2" fill="#f59e0b"/>
+            
+            <rect x="270" y="50" width="90" height="210" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="315" y="80" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Inner Panel</text>
+            <rect x="285" y="100" width="60" height="40" rx="4" fill="#0f172a"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (35-3) -->
+    <div class="slide">
+      <div class="pill-badge">(35-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Authentication Methods: Biometric, RFID, PIN &amp; Key</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Capacitive Semiconductor Fingerprint:</span> Live 3D skin capacitance sensor prevents fake gel/paper fingerprint spoofing.</li>
+            <li><span class="bullet-highlight">Scramble PIN Anti-Peeping:</span> Users type random digits before or after real PIN (e.g. xx1234xx) to prevent shoulder surfing.</li>
+            <li><span class="bullet-highlight">Emergency Mechanical Key Override:</span> Concealed C-grade mechanical key cylinder for emergency manual opening during battery death.</li>
+          </ul>
+          <div class="callout-box"><span>Security Rule: Scramble PIN functionality protects master passcodes from being guessed by onlookers.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Multi-Factor Authentication Matrix</text>
+            
+            <rect x="60" y="120" width="130" height="45" rx="6" fill="#1e293b"/><text x="125" y="147" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">3D Fingerprint</text>
+            <rect x="210" y="120" width="130" height="45" rx="6" fill="#1e293b"/><text x="275" y="147" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Scramble PIN</text>
+            
+            <rect x="60" y="180" width="130" height="45" rx="6" fill="#1e293b"/><text x="125" y="207" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Mifare RFID</text>
+            <rect x="210" y="180" width="130" height="45" rx="6" fill="#1e293b"/><text x="275" y="207" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">Mechanical Key</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (35-4) -->
+    <div class="slide">
+      <div class="pill-badge">(35-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Bluetooth (BLE) &amp; Zigbee / Z-Wave Smart Home Hubs</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Bluetooth Low Energy (BLE):</span> Allows smartphone app proximity unlocking and temporary digital eKey sharing.</li>
+            <li><span class="bullet-highlight">Zigbee / Z-Wave Wireless Mesh:</span> Connects lock to smart home hub for remote status monitoring and gateway integration.</li>
+            <li><span class="bullet-highlight">Ultra-Low Power Draw:</span> BLE/Zigbee protocols allow 4x AA alkaline batteries to last 12 to 18 months under normal use.</li>
+          </ul>
+          <div class="callout-box"><span>Protocol Tip: Zigbee smart locks connect to home automation gateways for remote status checking.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <circle cx="200" cy="150" r="40" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="155" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Smart Lock</text>
+            
+            <circle cx="80" cy="80" r="30" fill="#0f172a" stroke="#10b981"/>
+            <text x="80" y="85" text-anchor="middle" fill="#10b981" font-size="10">Phone BLE</text>
+            
+            <circle cx="320" cy="80" r="30" fill="#0f172a" stroke="#f59e0b"/>
+            <text x="320" y="85" text-anchor="middle" fill="#f59e0b" font-size="10">Zigbee Hub</text>
+            
+            <line x1="110" y1="95" x2="165" y2="130" stroke="#10b981" stroke-width="2"/>
+            <line x1="290" y1="95" x2="235" y2="130" stroke="#f59e0b" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (35-5) -->
+    <div class="slide">
+      <div class="pill-badge">(35-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Temporary OTP (One-Time Password) &amp; Guest eKeys</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Offline Algorithm OTP:</span> Generates valid 6-digit OTP codes for cleaners/airbnb guests without lock Wi-Fi connection.</li>
+            <li><span class="bullet-highlight">Time-Bounded eKeys:</span> Send digital Bluetooth eKeys to visitor smartphones valid only between set dates/hours.</li>
+            <li><span class="bullet-highlight">Audit Trail Logs:</span> Stores up to 1,000 localized unlocking logs with exact timestamps and user IDs.</li>
+          </ul>
+          <div class="callout-box"><span>Property Management: Offline OTP generation allows remote Airbnb check-in without lock Internet access.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#f59e0b" font-size="15" font-weight="bold">Offline OTP Generation Algorithm</text>
+            
+            <rect x="70" y="125" width="260" height="40" rx="6" fill="#0f172a"/><text x="200" y="150" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold" font-family="monospace">OTP: 8 4 9 2 0 1 (Valid 2 Hrs)</text>
+            <text x="200" y="200" text-anchor="middle" fill="#10b981" font-size="12">&#10003; Zero Wi-Fi Required at Lock Side</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (35-6) -->
+    <div class="slide">
+      <div class="pill-badge">(35-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Emergency Battery Jump-Start &amp; Low Power Alerts</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Low Battery Audio Warning:</span> Lock emits distinctive warning chime when battery drops below 20% capacity (&lt; 4.8V).</li>
+            <li><span class="bullet-highlight">USB-C / 9V Jump-Start Port:</span> External Micro-USB or 9V battery contacts allow powering dead lock to enter PIN code.</li>
+            <li><span class="bullet-highlight">Alkaline vs Lithium Warning:</span> ALWAYS use standard AA Alkaline batteries; rechargeable NiMH batteries suffer rapid voltage drop.</li>
+          </ul>
+          <div class="callout-box"><span>Maintenance Rule: NEVER use rechargeable NiMH batteries in smart locks due to non-linear voltage discharge curves.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="140" height="180" rx="8" fill="#1e293b" stroke="#ef4444"/>
+            <text x="110" y="95" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">Dead Battery (&lt;4.0V)</text>
+            
+            <path d="M 180 150 L 220 150" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="220" y="60" width="140" height="180" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="290" y="95" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">USB-C Power Bank</text>
+            <text x="290" y="145" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">5V Jump-Start [OK]</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (35-7) -->
+    <div class="slide">
+      <div class="pill-badge">(35-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Fire Rating &amp; Anti-Panic Panic Egress</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">UL 3-Hour Fire Rating:</span> Intumescent seals and solid steel mortise withstand 3-hour fire door test without melting.</li>
+            <li><span class="bullet-highlight">Anti-Panic Egress (One-Touch Open):</span> Pressing inside door handle automatically retracts both deadbolt and latch bolt instantly.</li>
+            <li><span class="bullet-highlight">Child Safety Lock Switch:</span> Internal lock-out switch disables inside handle to prevent toddlers from opening doors.</li>
+          </ul>
+          <div class="callout-box"><span>Fire Safety: Anti-panic egress ensures occupants can exit by simply pressing the inside handle during emergencies.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">Anti-Panic One-Touch Egress</text>
+            
+            <path d="M 120 150 Q 200 210 280 150" fill="none" stroke="#10b981" stroke-width="4"/>
+            <text x="200" y="180" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Inside Handle Press &rarr; Retracts All Bolts</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (35-8) -->
+    <div class="slide">
+      <div class="pill-badge">(35-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Door Alignment, Backset &amp; Handing Adjustments</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Backset Measurement (60mm / 70mm):</span> Distance from door edge to center of handle spindle hole.</li>
+            <li><span class="bullet-highlight">Left / Right Handing Reversal:</span> Reversible lever handles allow switching between Left-Inward and Right-Outward doors.</li>
+            <li><span class="bullet-highlight">Door Thickness Range (40mm - 90mm):</span> Select correct spindle and bolt lengths based on door thickness.</li>
+          </ul>
+          <div class="callout-box"><span>Installation Tip: Measure door backset (60mm vs 70mm) before drilling mortise cutouts in wooden doors.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Backset &amp; Handing Measurement</text>
+            
+            <line x1="70" y1="150" x2="200" y2="150" stroke="#f59e0b" stroke-width="3"/>
+            <text x="135" y="140" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold">Backset (60mm / 70mm)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (35-9) -->
+    <div class="slide">
+      <div class="pill-badge">(35-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Troubleshooting Smart Lock Battery &amp; Alignment Faults</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Motor Stalling / Battery Drain:</span> Misaligned strike plate causes latch bolt binding, forcing motor to strain and drain batteries in 2 weeks.</li>
+            <li><span class="bullet-highlight">Fingerprint Sensor Unresponsive:</span> Clean dirty optical sensor with microfiber cloth or re-enroll dry/worn fingertips.</li>
+            <li><span class="bullet-highlight">Zigbee Disconnection:</span> Install Zigbee mesh repeater plug within 5 meters of smart lock to eliminate signal drops.</li>
+          </ul>
+          <div class="callout-box"><span>Troubleshooting Fix: File strike plate cutouts if latch binds - latch friction is the #1 cause of rapid battery drain.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">Latch Friction &amp; Battery Drain</text>
+            <text x="200" y="140" fill="#fff" font-size="12" text-anchor="middle">Latch Binding on Strike Plate?</text>
+            <text x="200" y="175" fill="#10b981" font-size="13" font-weight="bold" text-anchor="middle">Fix: File Strike Plate Cutout</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (35-10) -->
+    <div class="slide">
+      <div class="pill-badge">(35-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Smart Lock Installation &amp; Setup Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Install smart mortise lock on demo wooden door, adjusting handle handing and spindle length.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Enroll Administrator Fingerprint, Scramble PIN code, and RFID keyfob into lock memory.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Pair lock with Zigbee smart home hub, test temporary OTP code generation, and test emergency USB jump-start.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master mechanical smart lock installation, biometric enrollment, and Zigbee gateway pairing.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Smart Lock Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Mortise Door Installation</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Biometric &amp; PIN Enrollment</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Zigbee Hub &amp; USB Jump-Start</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

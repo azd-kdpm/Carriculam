@@ -1,0 +1,498 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 16: PoE & PoE Switches</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  /* Ultra-Narrow Glowing Bottom Seek Bar */
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+        <div class="slide active slide-cover">
+      <div class="pill-badge">(16-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">PoE & PoE Switches</h1>
+        <p class="cover-subtitle">IEEE 802.3af/at/bt | Power Budgeting | Cat6 Pinouts | Ultra-Long PoE</p>
+        <p class="cover-series">Stage 3: Networking Fundamentals & Infrastructure</p>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(16-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Power over Ethernet (PoE) Principles</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Combined Power & Data:</span> Transmits 48V DC power and Ethernet data over a single Cat5e/Cat6 cable up to 100 meters.</li>
+            <li><span class="bullet-highlight">Eliminates AC Outlets:</span> Eliminates the need to install 230V AC power outlets at high camera mounting locations.</li>
+            <li><span class="bullet-highlight">PSE vs PD:</span> Switch is the Power Sourcing Equipment (PSE); Camera is the Powered Device (PD).</li>
+          </ul>
+          <div class="callout-box"><span>Key Term: PSE = Power Sourcing Equipment (Switch); PD = Powered Device (Camera).</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="80" width="100" height="120" rx="8" fill="#1e293b" stroke="#38bdf8"/><text x="90" y="145" text-anchor="middle" fill="#38bdf8" font-size="13">PoE Switch (PSE)</text><line x1="140" y1="140" x2="260" y2="140" stroke="#10b981" stroke-width="5"/><text x="200" y="125" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">48V DC + Data</text><rect x="260" y="80" width="100" height="120" rx="8" fill="#1e293b" stroke="#10b981"/><text x="310" y="145" text-anchor="middle" fill="#10b981" font-size="13">IP Cam (PD)</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(16-3)</div>
+      <div class="slide-header"><h1 class="slide-title">IEEE PoE Standards (802.3af / at / bt)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">802.3af (Standard PoE):</span> Delivers up to 15.4W at port (12.95W at camera); suitable for standard fixed dome cameras.</li>
+            <li><span class="bullet-highlight">802.3at (PoE+):</span> Delivers up to 30W at port (25.5W at camera); required for IR bullet and varifocal cameras.</li>
+            <li><span class="bullet-highlight">802.3bt (Hi-PoE / Ultra PoE):</span> Delivers 60W to 90W at port; required for outdoor PTZ speed domes with internal heaters.</li>
+          </ul>
+          <div class="callout-box"><span>Selection Guide: Standard Dome = 15.4W (af) | IR Bullet = 30W (at) | Outdoor PTZ = 60W-90W (bt).</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="70" width="320" height="40" fill="#334155" stroke="#38bdf8"/><text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="12">802.3af: 15.4W (Fixed Dome)</text><rect x="40" y="120" width="320" height="40" fill="#334155" stroke="#10b981" stroke-width="2"/><text x="200" y="145" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">802.3at: 30W PoE+ (IR Bullet)</text><rect x="40" y="170" width="320" height="40" fill="#334155" stroke="#f59e0b"/><text x="200" y="195" text-anchor="middle" fill="#f59e0b" font-size="12">802.3bt: 60W-90W Hi-PoE (PTZ Speed Dome)</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(16-4)</div>
+      <div class="slide-header"><h1 class="slide-title">PoE Wiring Modes (Mode A vs Mode B)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Mode A (Endspan):</span> Transmits DC power over data pairs (Pins 1,2 and Pins 3,6) using phantom power.</li>
+            <li><span class="bullet-highlight">Mode B (Midspan):</span> Transmits DC power over spare unused pairs (Pins 4,5 positive and Pins 7,8 negative).</li>
+            <li><span class="bullet-highlight">4-Pair PoE (802.3bt):</span> Delivers high current by transmitting DC power across ALL 4 pairs (1,2,3,6 + 4,5,7,8).</li>
+          </ul>
+          <div class="callout-box"><span>Wiring Rule: Always crimp Cat6 cables to T568B standard to ensure full PoE compatibility.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="70" width="150" height="160" rx="8" fill="#1e293b" stroke="#38bdf8"/><text x="115" y="110" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">Mode A (Endspan)</text><text x="115" y="150" text-anchor="middle" fill="#fff" font-size="11">Data Pairs 1,2 + 3,6</text><rect x="210" y="70" width="150" height="160" rx="8" fill="#1e293b" stroke="#10b981"/><text x="285" y="110" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Mode B (Midspan)</text><text x="285" y="150" text-anchor="middle" fill="#fff" font-size="11">Spare Pairs 4,5 + 7,8</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(16-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Switch Total PoE Power Budget Calculations</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Total Power Budget:</span> Maximum combined wattage a PoE switch can supply across all ports simultaneously (e.g. 250W).</li>
+            <li><span class="bullet-highlight">Over-Subscription Danger:</span> Connecting sixteen 25W PoE+ cameras (400W total) to a 250W switch causes port shutdowns.</li>
+            <li><span class="bullet-highlight">Power Budget Math:</span> Sum of all camera peak wattages (including night IR) must NOT exceed 80% of switch total PoE budget.</li>
+          </ul>
+          <div class="callout-box"><span>Sizing Formula: Total Connected Camera Wattage / 0.8 = Minimum Switch PoE Power Budget.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="50" y="70" width="300" height="160" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/><text x="200" y="105" text-anchor="middle" fill="#f59e0b" font-size="16" font-weight="bold">PoE Budget Sizing</text><text x="200" y="145" text-anchor="middle" fill="#fff" font-size="14">Load: 16 Ports Ã— 12W = 192W</text><text x="200" y="185" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Required Switch Budget: 250W</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(16-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Extended Distance PoE (250m CCTV Mode)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Standard 100m Limit:</span> IEEE Ethernet rules restrict Cat6 cable runs to a maximum of 100 meters (328 ft).</li>
+            <li><span class="bullet-highlight">Extended / CCTV Mode Switch:</span> Drops port speed from 100Mbps to 10Mbps, extending PoE distance to 250 meters.</li>
+            <li><span class="bullet-highlight">10Mbps Bandwidth Capacity:</span> 10Mbps is plenty of bandwidth for a single 4MP/8MP IP camera stream (~4-6Mbps).</li>
+          </ul>
+          <div class="callout-box"><span>Distance Extension: Enable 'CCTV / Extended Mode' on switch ports for long cable runs up to 250 meters.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="80" width="140" height="140" rx="8" fill="#1e293b" stroke="#ef4444"/><text x="110" y="130" text-anchor="middle" fill="#ef4444" font-size="14" font-weight="bold">100m Standard</text><text x="110" y="170" text-anchor="middle" fill="#fff" font-size="12">100Mbps Speed</text><rect x="220" y="80" width="140" height="140" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="290" y="130" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">250m CCTV Mode</text><text x="290" y="170" text-anchor="middle" fill="#fff" font-size="12">10Mbps Extended</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(16-7)</div>
+      <div class="slide-header"><h1 class="slide-title">PoE Extenders & Midspan Injectors</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Single-Port PoE Injector:</span> Adds PoE power to a non-PoE network switch port for a single IP camera.</li>
+            <li><span class="bullet-highlight">Inline PoE Extender:</span> Powered by incoming PoE; daisy-chains Cat6 distance another 100 meters without AC power.</li>
+            <li><span class="bullet-highlight">Outdoor Enclosures:</span> Use IP67 waterproof rated PoE extenders for outdoor pole and perimeter runs.</li>
+          </ul>
+          <div class="callout-box"><span>Field Solution: Use inline PoE extenders to reach cameras up to 300m without requiring local 230V AC power.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="30" y="100" width="70" height="60" rx="4" fill="#334155"/><text x="65" y="135" text-anchor="middle" fill="#fff" font-size="10">Non-PoE</text><rect x="120" y="100" width="70" height="60" rx="4" fill="#10b981"/><text x="155" y="135" text-anchor="middle" fill="#fff" font-size="10">Injector</text><rect x="210" y="100" width="70" height="60" rx="4" fill="#38bdf8"/><text x="245" y="135" text-anchor="middle" fill="#fff" font-size="10">Extender</text><rect x="300" y="100" width="70" height="60" rx="4" fill="#f59e0b"/><text x="335" y="135" text-anchor="middle" fill="#fff" font-size="10">Camera</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(16-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Managed PoE Port Monitoring & Remote Reboot</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Real-Time Wattage Monitoring:</span> View exact real-time power consumption (Watts) per port on the switch web GUI.</li>
+            <li><span class="bullet-highlight">PoE Watchdog (PD Alive):</span> Switch automatically pings cameras; if a camera freezes, the switch power-cycles the port.</li>
+            <li><span class="bullet-highlight">Remote Hard Reboot:</span> Power cycle a frozen camera remotely from your office without sending a technician to site.</li>
+          </ul>
+          <div class="callout-box"><span>Technician Saver: Enabling 'PoE Watchdog' automatically reboots frozen cameras without site visits.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="60" width="320" height="180" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">PoE Watchdog (PD Alive) Active</text><text x="200" y="145" text-anchor="middle" fill="#fff" font-size="13">Camera Timeout &rarr; Automatic PoE Port Power Cycle</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(16-9)</div>
+      <div class="slide-header"><h1 class="slide-title">PoE Surge Protection & Lightning Grounding</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Outdoor Surge Risk:</span> Outdoor Cat6 cable runs act as antennas for lightning electrostatic surge induction.</li>
+            <li><span class="bullet-highlight">Inline Gigabit PoE Surge Arrestors:</span> Installed at both building entrance and camera end; grounded to Earth busbar.</li>
+            <li><span class="bullet-highlight">Shielded FTP Cable:</span> Use Shielded Foil Twisted Pair (FTP) Cat6 cable with metallic RJ45 drain wire plugs.</li>
+          </ul>
+          <div class="callout-box"><span>Protection Rule: Ground outdoor PoE surge protectors to main Earth busbar using 4sqmm ground wire.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="90" width="90" height="80" rx="6" fill="#1e293b" stroke="#38bdf8"/><text x="85" y="135" text-anchor="middle" fill="#38bdf8" font-size="12">Outdoor Cam</text><rect x="160" y="90" width="80" height="80" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="2"/><text x="200" y="135" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">PoE SPD</text><line x1="200" y1="170" x2="200" y2="240" stroke="#10b981" stroke-width="4"/><text x="200" y="260" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Earth Ground Wire</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(16-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical PoE Power Budgeting & Switch Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Calculate total PoE power budget for 8 fixed domes (8W each) and 4 PTZ speed domes (30W each).</li>
+            <li><span class="bullet-highlight">Task 2:</span> Enable Extended CCTV Mode (250m) on Port 1 and verify video feed over a 200m Cat6 cable drum.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Configure PoE Watchdog auto-reboot on Port 2 and test remote PoE port power cycling via Web GUI.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Successfully complete PoE power budget math, 250m extended link test, and PoE Watchdog reboot.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="50" width="320" height="220" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="200" y="85" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">PoE Switch Lab</text><g transform="translate(65, 120)"><circle cx="12" cy="12" r="10" fill="#10b981"/><path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/><text x="32" y="16" fill="#fff" font-size="14" font-weight="600">PoE Power Budget Calculation</text></g><g transform="translate(65, 170)"><circle cx="12" cy="12" r="10" fill="#10b981"/><path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/><text x="32" y="16" fill="#fff" font-size="14" font-weight="600">250m Extended PoE & Watchdog Test</text></g></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

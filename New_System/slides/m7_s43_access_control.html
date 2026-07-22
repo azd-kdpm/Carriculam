@@ -1,0 +1,594 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 43: Access Control Controllers & Wiegand/OSDP Protocols</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (43-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(43-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Access Control Controllers &amp; Wiegand/OSDP Protocols</h1>
+        <p class="cover-subtitle">1-Door, 2-Door &amp; 4-Door IP Controllers | Wiegand 26/34 Bit | OSDP v2 Secure Channel | Maglock Relay Wiring</p>
+        <p class="cover-series">Stage 7: Access Control, Biometrics &amp; Attendance</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (43-2) -->
+    <div class="slide">
+      <div class="pill-badge">(43-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Multi-Door IP Controller Board Architecture</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">1-Door, 2-Door &amp; 4-Door Boards:</span> On-board ARM microprocessor processing local access decisions offline.</li>
+            <li><span class="bullet-highlight">Dedicated Inputs / Outputs:</span> Separate terminal blocks for Readers (Wiegand/RS485), Lock Relays, REX Buttons, and Door Sensors.</li>
+            <li><span class="bullet-highlight">Non-Volatile Event Memory:</span> Stores up to 100,000 user credentials and 200,000 offline event logs during network failure.</li>
+          </ul>
+          <div class="callout-box"><span>Architecture Fact: Access controllers make local authentication decisions in &lt; 0.1 seconds using local RAM memory.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="320" height="220" rx="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="80" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="bold">4-Door IP Controller Board</text>
+            
+            <rect x="60" y="100" width="130" height="40" rx="4" fill="#1e293b"/><text x="125" y="125" text-anchor="middle" fill="#10b981" font-size="10">Reader Ports (1-4)</text>
+            <rect x="210" y="100" width="130" height="40" rx="4" fill="#1e293b"/><text x="275" y="125" text-anchor="middle" fill="#f59e0b" font-size="10">Lock Relays (1-4)</text>
+            
+            <rect x="60" y="155" width="130" height="40" rx="4" fill="#1e293b"/><text x="125" y="180" text-anchor="middle" fill="#38bdf8" font-size="10">REX Inputs</text>
+            <rect x="210" y="155" width="130" height="40" rx="4" fill="#1e293b"/><text x="275" y="180" text-anchor="middle" fill="#ef4444" font-size="10">DPS Door Contacts</text>
+
+            <rect x="100" y="210" width="200" height="40" rx="6" fill="#1e293b" stroke="#10b981"/>
+            <text x="200" y="235" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">ARM CPU + 200K Offline Log Memory</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (43-3) -->
+    <div class="slide">
+      <div class="pill-badge">(43-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Legacy Wiegand 26/34 Protocol vs Modern OSDP v2</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Legacy Wiegand 26/34 Bit:</span> 1-way unencrypted pulse protocol over Data0/Data1 lines; vulnerable to wiretapping attacks.</li>
+            <li><span class="bullet-highlight">OSDP v2 (Open Supervised Device Protocol):</span> Bi-directional RS485 protocol with AES-128 Secure Channel encryption.</li>
+            <li><span class="bullet-highlight">Supervised Line Monitoring:</span> OSDP continuously polls reader health; immediately alerts if reader cable is cut or tampered.</li>
+          </ul>
+          <div class="callout-box"><span>Security Standard: Specify OSDP v2 with AES-128 encryption to eliminate Wiegand wiretapping vulnerabilities.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">Legacy Wiegand 26</text>
+            <text x="105" y="140" text-anchor="middle" fill="#fff" font-size="10">1-Way Unencrypted</text>
+            
+            <rect x="220" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">OSDP v2 AES-128</text>
+            <text x="295" y="140" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">Encrypted Bi-Directional</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (43-4) -->
+    <div class="slide">
+      <div class="pill-badge">(43-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Electric Strike &amp; Magnetic Lock Power &amp; Relay Wiring</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Fail-Secure (Electric Strike):</span> Power applied to UNLOCK (NO contact); stays locked during power blackout for physical security.</li>
+            <li><span class="bullet-highlight">Fail-Safe (Magnetic Lock):</span> Power applied to LOCK (NC contact); unlocks automatically during power failure for fire escape.</li>
+            <li><span class="bullet-highlight">1N4007 Protection Diode / MOV:</span> Suppresses inductive back-EMF voltage spikes when lock coil de-energizes.</li>
+          </ul>
+          <div class="callout-box"><span>Wiring Rule: ALWAYS install a 1N4007 diode (DC) or MOV (AC) across lock terminals to protect controller relays.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="140" height="180" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="110" y="90" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Fail-Safe Maglock</text>
+            <text x="110" y="140" text-anchor="middle" fill="#fff" font-size="10">NC Relay + 1N4007</text>
+            
+            <rect x="220" y="60" width="140" height="180" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="290" y="90" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Fail-Secure Strike</text>
+            <text x="290" y="140" text-anchor="middle" fill="#fff" font-size="10">NO Relay + 1N4007</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (43-5) -->
+    <div class="slide">
+      <div class="pill-badge">(43-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Request-to-Exit (REX) Buttons &amp; Motion Sensors</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Momentary REX Push Button:</span> Installed inside room to break power to maglock or signal controller to release door.</li>
+            <li><span class="bullet-highlight">Passive Infrared (PIR) REX Sensor:</span> Mounted above door inside to automatically release lock when a person approaches.</li>
+            <li><span class="bullet-highlight">Hardwired Emergency Break-Glass:</span> Green emergency break-glass unit wired directly in series with maglock power line for mechanical bypass.</li>
+          </ul>
+          <div class="callout-box"><span>Safety Mandatory: Emergency green break-glass units MUST cut maglock power directly, independent of software.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#22c55e" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#22c55e" font-size="15" font-weight="bold">Emergency Break-Glass Circuit</text>
+            
+            <rect x="70" y="130" width="260" height="40" rx="6" fill="#1e293b" stroke="#22c55e"/><text x="200" y="155" text-anchor="middle" fill="#22c55e" font-size="12" font-weight="bold">GREEN BREAK-GLASS &rarr; CUTS 12V LOCK POWER DIRECTLY</text>
+            <text x="200" y="210" text-anchor="middle" fill="#fff" font-size="11">&#10003; Software-Independent Hardware Egress</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (43-6) -->
+    <div class="slide">
+      <div class="pill-badge">(43-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Door Position Switches (DPS) &amp; Anti-Tailgating Rules</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Magnetic Door Contact (DPS):</span> Detects whether door is physically Open or Closed using NC reed switch.</li>
+            <li><span class="bullet-highlight">Door Forced Open (DFO) Alarm:</span> Triggers audible alarm and camera recording if door is opened without valid card tap.</li>
+            <li><span class="bullet-highlight">Door Held Open (DHO) Alarm:</span> Sounds buzzer if door remains propped open longer than 30 seconds.</li>
+          </ul>
+          <div class="callout-box"><span>Security Feature: Magnetic door contacts generate instant alerts for forced or propped-open doors.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">DPS Door Contact Alarming</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">Door Forced Open (DFO) &rarr; Siren + CCTV Trip</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#f59e0b" font-size="11">Door Held Open (DHO) &gt; 30 sec &rarr; Buzzer</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (43-7) -->
+    <div class="slide">
+      <div class="pill-badge">(43-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Anti-Passback (APB) Rules &amp; Interlock Airlocks</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Hard Anti-Passback:</span> Prevents user from passing card back to a friend; requires valid IN tap before allowing another IN tap.</li>
+            <li><span class="bullet-highlight">Soft Anti-Passback:</span> Allows entry on duplicate card tap but logs violation warning on security guard console.</li>
+            <li><span class="bullet-highlight">2-Door Interlock (Mantrap / Airlock):</span> Door B cannot be opened until Door A is completely closed and locked (used in banks/cleanrooms).</li>
+          </ul>
+          <div class="callout-box"><span>High Security: 2-door mantrap interlocks ensure outer street doors close fully before inner vault doors unlock.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="140" height="180" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="110" y="90" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Door A (Outer)</text>
+            
+            <rect x="220" y="60" width="140" height="180" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="290" y="90" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Door B (Vault)</text>
+            
+            <text x="200" y="270" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">2-Door Mantrap: B Unlocks ONLY when A Closed</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (43-8) -->
+    <div class="slide">
+      <div class="pill-badge">(43-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Fire Alarm Panel Interface &amp; Central Emergency Release</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Dedicated FACP Fire Relay Input:</span> Connects dry contact from Fire Alarm Panel directly to access control power supply.</li>
+            <li><span class="bullet-highlight">Hardware Power Cutout:</span> FACP trip instantly removes 12V DC power from ALL maglocks across the building.</li>
+            <li><span class="bullet-highlight">NFPA 101 Life Safety Code:</span> Guarantees free egress during fires even if access control software or CPU freezes.</li>
+          </ul>
+          <div class="callout-box"><span>Life Safety Code: FACP fire trip MUST physically drop 12V power to all maglocks at the power supply level.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">FACP Fire Lock Power Cutout</text>
+            
+            <rect x="60" y="130" width="280" height="40" rx="6" fill="#1e293b" stroke="#ef4444"/><text x="200" y="155" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">FIRE TRIP &rarr; INSTANT 12V MAGLOCK POWER DROP</text>
+            <text x="200" y="210" text-anchor="middle" fill="#10b981" font-size="12">&#10003; NFPA 101 Life Safety Compliant</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (43-9) -->
+    <div class="slide">
+      <div class="pill-badge">(43-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Troubleshooting Wiegand Data0/Data1 Swaps &amp; Voltage Drops</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Reader Beeps but No Card Log:</span> Data0 (Green) and Data1 (White) wires reversed at terminal block.</li>
+            <li><span class="bullet-highlight">Reader Reset / Low LED Dimming:</span> Thins 12V power wires causing voltage drop &lt; 10.8V under load; install local 12V PSU.</li>
+            <li><span class="bullet-highlight">Ground Loop Noise:</span> Ensure reader ground (GND) and controller ground are tied together to common reference voltage.</li>
+          </ul>
+          <div class="callout-box"><span>Troubleshooting Fix: Swapping Data0 (Green) and Data1 (White) wires resolves 90% of "reader beeps but no card read" issues.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">Wiegand Wire Swap Repair</text>
+            <text x="200" y="140" fill="#fff" font-size="12" text-anchor="middle">Reader Beeps but Card Not Logged?</text>
+            <text x="200" y="175" fill="#10b981" font-size="13" font-weight="bold" text-anchor="middle">Fix: Swap Data0 (Green) &amp; Data1 (White)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (43-10) -->
+    <div class="slide">
+      <div class="pill-badge">(43-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical 2-Door Controller &amp; Maglock Wiring Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Wire 2-Door IP Controller with OSDP Reader, 12V Fail-Safe Maglock (NC), 1N4007 Diode, and REX Button.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Configure Anti-Passback rule between Door 1 (ENTRY) and Door 2 (EXIT) in access control software.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Simulate Fire Alarm input trip and verify maglock power cuts instantly and Door Forced Open alarm triggers.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master IP controller wiring, OSDP reader configuration, Anti-Passback rules, and fire release testing.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Access Control Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">OSDP Reader &amp; Maglock Wiring</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Hard Anti-Passback Setup</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Fire Alarm Lock Power Cut Test</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

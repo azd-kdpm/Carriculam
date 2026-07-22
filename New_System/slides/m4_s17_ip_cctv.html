@@ -1,0 +1,645 @@
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 17: IP CCTV & Digital Video Streaming</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (17-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(17-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">IP CCTV & Digital Video Streaming</h1>
+        <p class="cover-subtitle">RTSP Protocol | Main Stream vs Sub-Stream | Unicast vs Multicast | Frame Rates & Resolutions</p>
+        <p class="cover-series">Stage 4: IP Camera Systems & VMS</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (17-2) -->
+    <div class="slide">
+      <div class="pill-badge">(17-2)</div>
+      <div class="slide-header"><h1 class="slide-title">IP Camera Hardware Processing Pipeline</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Optical Lens & CMOS Sensor:</span> Captures light photons and converts them into raw digital pixel signals.</li>
+            <li><span class="bullet-highlight">Image Signal Processor (ISP):</span> Performs exposure adjustment, wide dynamic range (WDR) processing, and noise reduction.</li>
+            <li><span class="bullet-highlight">SoC Video Compression Encoder:</span> Compresses raw video into H.264/H.265 bitstreams in real time.</li>
+            <li><span class="bullet-highlight">Gigabit Ethernet Output Port:</span> Packages compressed video frames into IP network packets (RTSP / ONVIF).</li>
+          </ul>
+          <div class="callout-box"><span>Hardware Concept: Unlike analog cameras, IP cameras encode and compress video internally inside the camera body.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="20" y="110" width="65" height="100" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="52" y="165" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Lens & Sensor</text>
+            
+            <line x1="85" y1="160" x2="115" y2="160" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="115" y="110" width="65" height="100" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="147" y="165" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">ISP Engine</text>
+            
+            <line x1="180" y1="160" x2="210" y2="160" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="210" y="110" width="75" height="100" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+            <text x="247" y="155" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">SoC Encoder</text>
+            <text x="247" y="175" text-anchor="middle" fill="#94a3b8" font-size="10">H.265 Codec</text>
+            
+            <line x1="285" y1="160" x2="315" y2="160" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="315" y="110" width="65" height="100" rx="6" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+            <text x="347" y="155" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="bold">RJ45 Port</text>
+            <text x="347" y="175" text-anchor="middle" fill="#94a3b8" font-size="10">IP Stream</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (17-3) -->
+    <div class="slide">
+      <div class="pill-badge">(17-3)</div>
+      <div class="slide-header"><h1 class="slide-title">RTSP Protocol & Stream URL Structures</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Real-Time Streaming Protocol:</span> Industry-standard Layer 7 network protocol (Port 554) for controlling media stream delivery.</li>
+            <li><span class="bullet-highlight">RTSP Syntax Structure:</span> rtsp://[username]:[password]@[IP_Address]:[Port]/[stream_path]</li>
+            <li><span class="bullet-highlight">Hikvision RTSP Example:</span> rtsp://admin:pass123@192.168.1.100:554/h264/ch1/main/av_stream</li>
+            <li><span class="bullet-highlight">Dahua RTSP Example:</span> rtsp://admin:pass123@192.168.1.100:554/cam/realmonitor?channel=1&amp;subtype=0</li>
+          </ul>
+          <div class="callout-box"><span>Integration Tip: Use RTSP stream URLs to pull direct live camera feeds into third-party VMS software or VLC media player.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="340" height="200" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">RTSP URL Syntax Structure</text>
+            
+            <rect x="45" y="125" width="60" height="40" rx="4" fill="#1e293b" stroke="#60a5fa"/>
+            <text x="75" y="150" text-anchor="middle" fill="#60a5fa" font-size="11" font-weight="bold">rtsp://</text>
+            
+            <rect x="110" y="125" width="90" height="40" rx="4" fill="#1e293b" stroke="#10b981"/>
+            <text x="155" y="150" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">admin:pass@</text>
+            
+            <rect x="205" y="125" width="100" height="40" rx="4" fill="#1e293b" stroke="#f59e0b"/>
+            <text x="255" y="150" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">192.168.1.100</text>
+            
+            <rect x="310" y="125" width="45" height="40" rx="4" fill="#1e293b" stroke="#ef4444"/>
+            <text x="332" y="150" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">:554</text>
+            
+            <rect x="45" y="180" width="310" height="40" rx="4" fill="#1e293b" stroke="#38bdf8"/>
+            <text x="200" y="205" text-anchor="middle" fill="#38bdf8" font-size="12" font-family="monospace">/h264/ch1/main/av_stream</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (17-4) -->
+    <div class="slide">
+      <div class="pill-badge">(17-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Dual-Stream Encoding (Main Stream vs Sub-Stream)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Main Stream (High Resolution):</span> Full 4K/4MP resolution recorded directly onto NVR hard drives for forensic detail.</li>
+            <li><span class="bullet-highlight">Sub-Stream (Low Resolution):</span> Lower D1/CIF resolution (e.g. 640x360) sent to smartphone apps and multi-screen video walls.</li>
+            <li><span class="bullet-highlight">Third Stream (Triple Streaming):</span> Optional third stream dedicated to AI video analytics or remote web monitoring.</li>
+          </ul>
+          <div class="callout-box"><span>Bandwidth Optimizer: Use Sub-Stream for 16-channel split screens to prevent PC graphics processor overload.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="120" width="80" height="80" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="70" y="165" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Camera SoC</text>
+            
+            <path d="M 110 140 L 220 90" stroke="#10b981" stroke-width="3" fill="none"/>
+            <rect x="220" y="60" width="150" height="60" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="295" y="88" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Main Stream (4K / 8Mbps)</text>
+            <text x="295" y="108" text-anchor="middle" fill="#94a3b8" font-size="11">NVR Hard Drive Recording</text>
+            
+            <path d="M 110 180 L 220 230" stroke="#f59e0b" stroke-width="3" fill="none"/>
+            <rect x="220" y="200" width="150" height="60" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+            <text x="295" y="228" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="bold">Sub-Stream (D1 / 512K)</text>
+            <text x="295" y="248" text-anchor="middle" fill="#94a3b8" font-size="11">Mobile App &amp; Split Screen</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (17-5) -->
+    <div class="slide">
+      <div class="pill-badge">(17-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Unicast vs Multicast Video Streaming</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Unicast Streaming (One-to-One):</span> Dedicated video stream transmitted to each individual client; 5 users = 5x bandwidth load.</li>
+            <li><span class="bullet-highlight">Multicast Streaming (One-to-Many):</span> Single stream transmitted to a multicast IP address (224.0.0.0/4); network switches replicate packets to viewers.</li>
+            <li><span class="bullet-highlight">IGMP Snooping Required:</span> Managed switches require IGMP Snooping enabled to prevent multicast flooding on non-viewing ports.</li>
+          </ul>
+          <div class="callout-box"><span>Enterprise Tip: Enable Multicast on large sites where more than 5 security guards view the same camera stream simultaneously.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="200" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#ef4444" font-size="14" font-weight="bold">Unicast (One-to-One)</text>
+            <text x="105" y="140" text-anchor="middle" fill="#fff" font-size="12">5 Viewing Guards =</text>
+            <text x="105" y="165" text-anchor="middle" fill="#ef4444" font-size="16" font-weight="bold">5x Bandwidth Load!</text>
+            
+            <rect x="220" y="60" width="150" height="200" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">Multicast (IGMP)</text>
+            <text x="295" y="140" text-anchor="middle" fill="#fff" font-size="12">Single IGMP Stream =</text>
+            <text x="295" y="165" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">1x Bandwidth Load!</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (17-6) -->
+    <div class="slide">
+      <div class="pill-badge">(17-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Frame Rate Sizing (FPS vs Motion Smoothness)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">15 FPS (Surveillance Standard):</span> Provides smooth fluid motion for general building hallways, offices, and parking lots.</li>
+            <li><span class="bullet-highlight">25/30 FPS (Full Real-Time):</span> Required for casino gaming tables, license plate capture, and high-speed cash counting.</li>
+            <li><span class="bullet-highlight">Storage Impact:</span> Dropping frame rate from 30 FPS to 15 FPS reduces storage capacity requirements by almost 45%.</li>
+          </ul>
+          <div class="callout-box"><span>Sizing Rule: 15 FPS is the ideal industry sweet spot balancing smooth motion playback with storage savings.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="50" width="340" height="55" rx="6" fill="#1e293b" stroke="#38bdf8"/>
+            <text x="50" y="82" fill="#38bdf8" font-size="13" font-weight="bold">30 FPS</text>
+            <text x="180" y="82" fill="#fff" font-size="12">Full Real-Time (High Storage)</text>
+            
+            <rect x="30" y="130" width="340" height="55" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2.5"/>
+            <text x="50" y="162" fill="#10b981" font-size="14" font-weight="bold">15 FPS</text>
+            <text x="180" y="162" fill="#10b981" font-size="13" font-weight="bold">CCTV Standard (45% Storage Savings)</text>
+            
+            <rect x="30" y="210" width="340" height="55" rx="6" fill="#1e293b" stroke="#94a3b8"/>
+            <text x="50" y="242" fill="#94a3b8" font-size="13" font-weight="bold">5 FPS</text>
+            <text x="180" y="242" fill="#fff" font-size="12">Choppy Archive (Low Storage)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (17-7) -->
+    <div class="slide">
+      <div class="pill-badge">(17-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Resolution Grid &amp; Pixel Density (1080p, 4MP, 4K)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">2MP / 1080p (1920x1080):</span> Standard entry-level resolution yielding 2.07 million total pixels per frame.</li>
+            <li><span class="bullet-highlight">4MP / 2K (2560x1440):</span> Double the pixel count of 1080p (3.68 million pixels); ideal for wide outdoor areas.</li>
+            <li><span class="bullet-highlight">8MP / 4K Ultra HD (3840x2160):</span> 8.29 million total pixels; allows digital zooming into facial features across large plazas.</li>
+          </ul>
+          <div class="callout-box"><span>Pixel Density Rule: Higher resolution allows digital zooming without losing forensic clarity.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="50" width="340" height="220" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="350" y="80" text-anchor="end" fill="#38bdf8" font-size="13" font-weight="bold">8MP 4K (3840x2160)</text>
+            
+            <rect x="30" y="110" width="240" height="160" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="255" y="135" text-anchor="end" fill="#10b981" font-size="12" font-weight="bold">4MP 2K (2560x1440)</text>
+            
+            <rect x="30" y="170" width="150" height="100" rx="4" fill="#334155" stroke="#f59e0b"/>
+            <text x="105" y="225" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold">2MP 1080p</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (17-8) -->
+    <div class="slide">
+      <div class="pill-badge">(17-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Variable Bitrate (VBR) vs Constant Bitrate (CBR)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Variable Bitrate (VBR):</span> Dynamic bitrate adjusts automatically to scene activity; saves bandwidth during static nights.</li>
+            <li><span class="bullet-highlight">Constant Bitrate (CBR):</span> Locks bitrate to a fixed target (e.g. 4Mbps); guarantees predictable storage sizing regardless of motion.</li>
+            <li><span class="bullet-highlight">VBR Cap (VBR with Max Limit):</span> Prevents bitrate spikes during high-motion events while retaining static scene savings.</li>
+          </ul>
+          <div class="callout-box"><span>CCTV Standard: Use VBR with a Maximum Bitrate Cap for optimal storage efficiency and quality protection.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="50" width="340" height="100" rx="8" fill="#1e293b" stroke="#ef4444"/>
+            <text x="50" y="80" fill="#ef4444" font-size="13" font-weight="bold">CBR (Constant Bitrate)</text>
+            <line x1="50" y1="110" x2="350" y2="110" stroke="#ef4444" stroke-width="3"/>
+            <text x="200" y="135" text-anchor="middle" fill="#94a3b8" font-size="11">Flat 4Mbps (Wasteful at Night)</text>
+            
+            <rect x="30" y="170" width="340" height="100" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="50" y="200" fill="#10b981" font-size="13" font-weight="bold">VBR (Variable Bitrate)</text>
+            <path d="M 50 240 Q 120 200 180 240 T 350 210" fill="none" stroke="#10b981" stroke-width="3"/>
+            <text x="200" y="255" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Dynamic Wave (500Kbps Night â†’ 4Mbps Motion)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (17-9) -->
+    <div class="slide">
+      <div class="pill-badge">(17-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Edge Storage Failover &amp; ANR (Auto Network Replenishment)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">On-Camera MicroSD Card:</span> Records video locally on camera internal SD card if network switch or NVR connection fails.</li>
+            <li><span class="bullet-highlight">Auto Network Replenishment (ANR):</span> Upon network restoration, NVR automatically detects gap and pulls missing video off SD card.</li>
+            <li><span class="bullet-highlight">Zero Video Loss:</span> Guarantees 100% continuous recording coverage during network outages or switch reboots.</li>
+          </ul>
+          <div class="callout-box"><span>Reliability Standard: Install High-Endurance MicroSD cards in all critical IP cameras for ANR failover protection.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="70" width="100" height="160" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="80" y="110" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">IP Camera</text>
+            <rect x="45" y="140" width="70" height="60" rx="4" fill="#0f172a" stroke="#f59e0b"/>
+            <text x="80" y="175" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">MicroSD</text>
+            
+            <path d="M 130 150 L 250 150" stroke="#ef4444" stroke-width="3" stroke-dasharray="6,4"/>
+            <text x="190" y="140" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">Network Cut!</text>
+            <path d="M 130 170 L 250 170" stroke="#10b981" stroke-width="3"/>
+            <text x="190" y="195" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">ANR Auto-Sync</text>
+            
+            <rect x="250" y="70" width="120" height="160" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="310" y="110" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">NVR HDD</text>
+            <text x="310" y="160" text-anchor="middle" fill="#fff" font-size="11">Zero Video Loss</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (17-10) -->
+    <div class="slide">
+      <div class="pill-badge">(17-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical RTSP Stream Testing &amp; Dual-Stream Sizing Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Test live camera RTSP URL stream in VLC media player using RTSP port 554 authentication.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Configure Main Stream (4K @ 15fps VBR) and Sub-Stream (D1 @ 15fps VBR) in camera web GUI.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Simulate network cable disconnect and verify MicroSD card ANR failover recording recovery.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Successfully pull RTSP stream into VLC, configure dual streams, and verify ANR auto-recovery.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">RTSP &amp; Stream Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">VLC RTSP Stream Pull (Port 554)</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Main Stream vs Sub-Stream Sizing</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">ANR Network Cut &amp; SD Failover Test</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

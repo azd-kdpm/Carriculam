@@ -1,0 +1,589 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 54: Home Assistant Local Automation Server</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (54-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(54-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Home Assistant Local Automation Server</h1>
+        <p class="cover-subtitle">HA OS Raspberry Pi / Mini PC | Zigbee2MQTT | YAML Automation Engine | Custom Lovelace Dashboards</p>
+        <p class="cover-series">Stage 9: Smart Home Automation, IoT &amp; KNX</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (54-2) -->
+    <div class="slide">
+      <div class="pill-badge">(54-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Hardware Deployment: Raspberry Pi 4 vs x86-64 Mini PC</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Raspberry Pi 4 / 5 (4GB RAM + NVMe SSD):</span> Low power 5W server, ideal for entry-level home setups; avoid micro-SD cards to prevent database corruption.</li>
+            <li><span class="bullet-highlight">x86-64 Mini PC (Intel N100 / NUC):</span> High-performance server for large installations running local AI face recognition (Frigate NVR) and 500+ entities.</li>
+            <li><span class="bullet-highlight">Home Assistant Operating System (HA OS):</span> Turnkey bare-metal Linux OS providing automated Supervisor add-on backups.</li>
+          </ul>
+          <div class="callout-box"><span>Hardware Tip: ALWAYS use an M.2 NVMe SSD instead of micro-SD cards to prevent database corruption from constant log writes.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Raspberry Pi 4 (5W)</text>
+            <text x="105" y="140" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">M.2 SSD (No SD Card)</text>
+            
+            <rect x="220" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Intel N100 Mini PC</text>
+            <text x="295" y="140" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold">500+ Entities + AI Vision</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (54-3) -->
+    <div class="slide">
+      <div class="pill-badge">(54-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Zigbee2MQTT (Z2M) vs ZHA (Zigbee Home Automation)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Zigbee2MQTT (Z2M Add-On):</span> Decoupled MQTT architecture supporting 3,500+ Zigbee devices with deep cluster OTA firmware updates.</li>
+            <li><span class="bullet-highlight">Zigbee Home Automation (ZHA Native):</span> Native HA integration; faster setup for beginners but lacks advanced device tuning.</li>
+            <li><span class="bullet-highlight">Mosquitto MQTT Broker:</span> Central message broker passing Zigbee sensor events to Home Assistant core at 1ms speed.</li>
+          </ul>
+          <div class="callout-box"><span>Pro Choice: Zigbee2MQTT offers superior device compatibility, OTA updates, and network map visualizations.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Zigbee2MQTT + Mosquitto Architecture</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">CC2652P USB Dongle &rarr; Zigbee2MQTT (Z2M)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Mosquitto Broker (1ms) &rarr; HA Core Entities</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (54-4) -->
+    <div class="slide">
+      <div class="pill-badge">(54-4)</div>
+      <div class="slide-header"><h1 class="slide-title">YAML Automation Engine: Triggers, Conditions &amp; Actions</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Trigger (When Event Occurs):</span> Motion detected by PIR sensor or solar power drops below 500W.</li>
+            <li><span class="bullet-highlight">Condition (Only If True):</span> Sun is below horizon AND master bedroom TV is OFF.</li>
+            <li><span class="bullet-highlight">Action (Do This Task):</span> Turn ON hallway spotlights to 30% warm white brightness (2700K).</li>
+          </ul>
+          <div class="callout-box"><span>YAML Structure: Automation logic follows a strict 3-part syntax: Trigger (When) &rarr; Condition (If) &rarr; Action (Do).</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="320" height="220" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="80" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="bold">YAML Automation Logic</text>
+            
+            <rect x="60" y="100" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="122" text-anchor="middle" fill="#10b981" font-size="11">TRIGGER: Motion Sensor Detected</text>
+            <rect x="60" y="145" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="167" text-anchor="middle" fill="#f59e0b" font-size="11">CONDITION: Sun Below Horizon</text>
+            <rect x="60" y="190" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="212" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">ACTION: Turn ON Hallway Lights (30%)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (54-5) -->
+    <div class="slide">
+      <div class="pill-badge">(54-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Custom Lovelace Dashboards &amp; Kiosk Touchscreen Wallmounts</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Lovelace Modular Cards:</span> Custom Mushroom cards, Gauge cards, Floorplan SVGs, and live CCTV video feeds.</li>
+            <li><span class="bullet-highlight">Fully Kiosk Browser App:</span> Locks wall-mounted Android tablet into full-screen dashboard with motion-activated wake.</li>
+            <li><span class="bullet-highlight">Multi-User Dashboard Views:</span> Custom simplified views for kids/guests and full admin views for system control.</li>
+          </ul>
+          <div class="callout-box"><span>Wall Tablet Setup: Fully Kiosk Browser uses the tablet front camera to wake the screen when a person approaches.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Lovelace Kiosk Touchscreen Dashboard</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Fully Kiosk App &rarr; Motion Camera Screen Wake</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Custom Floorplan &amp; Mushroom Cards</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (54-6) -->
+    <div class="slide">
+      <div class="pill-badge">(54-6)</div>
+      <div class="slide-header"><h1 class="slide-title">ESPHome: Custom IoT Hardware Sensors &amp; Relays</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Zero-Code Firmware Compiler:</span> Writes simple YAML config to compile custom firmware for ESP8266/ESP32 microcontrollers.</li>
+            <li><span class="bullet-highlight">Native HA API Integration:</span> Connects directly to Home Assistant native API without needing MQTT broker setup.</li>
+            <li><span class="bullet-highlight">Custom DIY Sensor Arrays:</span> Connects BME280 (Temp/Humidity/Pressure), LD2410 (mmWave Presence), and Relays to  ESP32 board.</li>
+          </ul>
+          <div class="callout-box"><span>DIY Advantage: ESPHome allows building custom  mmWave human presence sensors natively integrated into HA.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">ESP32 + ESPHome Integration</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#10b981" font-size="11">ESP32 + LD2410 mmWave Presence Sensor</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Direct Native HA API (No MQTT)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (54-7) -->
+    <div class="slide">
+      <div class="pill-badge">(54-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Node-RED Visual Automation Flowchart Engine</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Flow-Based Visual Programming:</span> Connects nodes graphically for complex multi-variable automation flows.</li>
+            <li><span class="bullet-highlight">Context &amp; Global State Storage:</span> Remembers previous states, counter loops, and mathematical averages over time.</li>
+            <li><span class="bullet-highlight">HA WebSocket Node-RED Bridge:</span> Instantly receives every Home Assistant state change node event.</li>
+          </ul>
+          <div class="callout-box"><span>Visual Automation: Node-RED simplifies complex logic (e.g. multi-step theater lighting routines) into drag-and-drop nodes.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Node-RED Visual Flowchart</text>
+            
+            <circle cx="90" cy="150" r="20" fill="#1e293b" stroke="#38bdf8"/><text x="90" y="154" text-anchor="middle" fill="#38bdf8" font-size="9">State</text>
+            <rect x="150" y="135" width="100" height="30" rx="4" fill="#1e293b" stroke="#f59e0b"/><text x="200" y="154" text-anchor="middle" fill="#f59e0b" font-size="9">Switch Node</text>
+            <circle cx="310" cy="150" r="20" fill="#1e293b" stroke="#10b981"/><text x="310" y="154" text-anchor="middle" fill="#10b981" font-size="9">Action</text>
+
+            <line x1="110" y1="150" x2="150" y2="150" stroke="#38bdf8" stroke-width="2"/>
+            <line x1="250" y1="150" x2="290" y2="150" stroke="#10b981" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (54-8) -->
+    <div class="slide">
+      <div class="pill-badge">(54-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Remote Access: Nabu Casa Cloud vs WireGuard VPN &amp; Cloudflare</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Nabu Casa Cloud (.50/mo):</span> 1-click encrypted remote access URL supporting Alexa/Google voice integration natively.</li>
+            <li><span class="bullet-highlight">WireGuard / Tailscale VPN (Free):</span> Creates encrypted private tunnel from smartphone to home server without opening router ports.</li>
+            <li><span class="bullet-highlight">Cloudflare Tunnel + SSL:</span> Free secure HTTPS reverse proxy with DDNS and Web Application Firewall (WAF) protection.</li>
+          </ul>
+          <div class="callout-box"><span>Security Rule: NEVER open raw port 8123 on your home router; use Nabu Casa, Cloudflare Tunnels, or Tailscale VPN.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Encrypted Remote Access Architecture</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#10b981" font-size="11">Cloudflare Tunnel / WireGuard VPN</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">Zero Open Port 8123 Vulnerability</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (54-9) -->
+    <div class="slide">
+      <div class="pill-badge">(54-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Troubleshooting Database Growth &amp; Recorder Optimization</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Database Inflation (home-assistant_v2.db):</span> Noisy power meter entities writing state changes every 0.1s bloats DB to 50GB.</li>
+            <li><span class="bullet-highlight">Recorder Filter Exclusion:</span> Exclude noisy entities (power, RSSI, time) in configuration.yaml under recorder: exclude.</li>
+            <li><span class="bullet-highlight">Purge Auto-Keep Days:</span> Set purge_keep_days: 7 to keep database size compact under 2GB.</li>
+          </ul>
+          <div class="callout-box"><span>Database Fix: Exclude rapidly updating energy entities from the recorder to keep Home Assistant fast and responsive.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">Recorder DB Optimization</text>
+            <text x="200" y="140" fill="#fff" font-size="12" text-anchor="middle">Database Bloated &gt; 50GB?</text>
+            <text x="200" y="175" fill="#10b981" font-size="13" font-weight="bold" text-anchor="middle">Fix: Exclude Power Entities &amp; Purge 7 Days</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (54-10) -->
+    <div class="slide">
+      <div class="pill-badge">(54-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Home Assistant OS &amp; Zigbee2MQTT Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Flash HA OS on SSD, complete initial onboarding, and install Mosquitto MQTT &amp; Zigbee2MQTT Add-ons.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Build YAML automation for mmWave presence sensor controlling room lights with sunset condition filter.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Design custom Lovelace Kiosk Dashboard with Mushroom cards and configure Tailscale VPN for remote access.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master HA OS installation, Zigbee2MQTT pairing, YAML automation syntax, and custom Lovelace dashboard design.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Home Assistant Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">HA OS &amp; Zigbee2MQTT Add-on</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">YAML Presence Automation</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Lovelace Kiosk &amp; VPN Test</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

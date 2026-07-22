@@ -1,0 +1,584 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 65: Placement Training, Career Prep & Final Certification</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (65-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(65-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Placement Training, Career Prep &amp; Final Certification</h1>
+        <p class="cover-subtitle">Technical Resume Writing | Mock Technical Interview Preparation | Career Progression Pathways | Master ELV Engineer Certification</p>
+        <p class="cover-series">Stage 10: Advanced Integration, Business &amp; Capstone Projects</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (65-2) -->
+    <div class="slide">
+      <div class="pill-badge">(65-2)</div>
+      <div class="slide-header"><h1 class="slide-title">High-Impact Technical Resume Writing for ELV Engineers</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Quantifiable Achievement Statements:</span> "Commissioned 48-channel IP CCTV and KNX lighting system for 50,000 sq ft facility with zero downtime."</li>
+            <li><span class="bullet-highlight">Technical Keyword Optimization (ATS Friendly):</span> Highlight core skills: Cat6/Fiber Splicing, KNX ETS6, Home Assistant YAML, Hikvision/Dahua NVR, OSDP Access Control.</li>
+            <li><span class="bullet-highlight">Portfolio Link Inclusion:</span> Attach clickable links to your digital portfolio showing as-built CAD drawings and rack dressing photos.</li>
+          </ul>
+          <div class="callout-box"><span>Resume Rule: Quantify your technical accomplishments with specific project sizes, camera counts, and system protocols.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="320" height="220" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="80" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">ATS-Optimized Technical Resume</text>
+            
+            <rect x="60" y="100" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="122" text-anchor="middle" fill="#38bdf8" font-size="11">Quantified Technical Achievements</text>
+            <rect x="60" y="145" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="167" text-anchor="middle" fill="#10b981" font-size="11">Keywords: KNX, ETS6, Fiber, RAID, OSDP</text>
+            <rect x="60" y="190" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="212" text-anchor="middle" fill="#fff" font-size="11">Digital As-Built Photo &amp; CAD Portfolio Link</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (65-3) -->
+    <div class="slide">
+      <div class="pill-badge">(65-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Technical Mock Interview Preparation &amp; Scenario Questions</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Scenario Question 1 (CCTV):</span> "How do you troubleshoot a 4K IP camera dropping offline only at night?" (Answer: PoE switch power budget overload from IR LEDs).</li>
+            <li><span class="bullet-highlight">Scenario Question 2 (Networking):</span> "How do you isolate a broadcast storm on a smart building LAN?" (Answer: Configure 802.1Q VLANs and IGMP Snooping).</li>
+            <li><span class="bullet-highlight">Scenario Question 3 (KNX):</span> "Why would a KNX bus experience continuous telegram collision storms?" (Answer: Closed ring wiring loop or duplicate Physical Address).</li>
+          </ul>
+          <div class="callout-box"><span>Interview Mastery: Answer technical interview questions using empirical diagnostic steps and exact protocol standards.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Empirical Scenario Interview Strategy</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#10b981" font-size="11">Symptom &rarr; Empirical Log Audit &rarr; Root Cause</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">&#10003; Standard Protocol Solutions (VLAN/KNX)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (65-4) -->
+    <div class="slide">
+      <div class="pill-badge">(65-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Career Progression Pathways: Field Tech to Project Manager &amp; Entrepreneur</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Junior Field Technician ( - ):</span> Cable pulling, RJ45 crimping, camera mounting, and basic NVR setup.</li>
+            <li><span class="bullet-highlight">Senior Commissioning Specialist ( - ):</span> ETS6 KNX programming, Home Assistant server setups, RAID configuration, and network routing.</li>
+            <li><span class="bullet-highlight">ELV Project Manager / Business Owner (+):</span> Managing enterprise tenders, leading installation crews, and operating your own system integration company.</li>
+          </ul>
+          <div class="callout-box"><span>Career Vision: Mastering technical commissioning opens pathways to + Project Manager and System Integrator roles.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <polygon points="200,50 320,250 80,250" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="120" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">System Integrator (+)</text>
+            <text x="200" y="160" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Commissioning Specialist ()</text>
+            <text x="200" y="210" text-anchor="middle" fill="#fff" font-size="11">Field Technician ()</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (65-5) -->
+    <div class="slide">
+      <div class="pill-badge">(65-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Manufacturer Certifications (Hikvision, Dahua, KNX, Home Assistant)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">KNX Partner Certification:</span> Official international accreditation for KNX building automation engineers.</li>
+            <li><span class="bullet-highlight">Hikvision / Dahua Certified Security Associate (HCSA / DCSA):</span> Industry-recognized CCTV and access control certification.</li>
+            <li><span class="bullet-highlight">Continuous Professional Development:</span> Keeping up-to-date with emerging Matter/Thread standards and AI vision analytics.</li>
+          </ul>
+          <div class="callout-box"><span>Certification Edge: Industry-recognized manufacturer credentials give you priority hiring status for enterprise projects.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Manufacturer Certification Matrix</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">KNX Partner + HCSA + DCSA Certified</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">&#10003; Priority Hiring for Enterprise Tenders</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (65-6) -->
+    <div class="slide">
+      <div class="pill-badge">(65-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Job Search Strategies, LinkedIn Networking &amp; Direct Employer Outreach</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Optimizing LinkedIn Headline:</span> "Master ELV &amp; Smart Home Engineer | KNX ETS6 | IP CCTV | System Integration Specialist".</li>
+            <li><span class="bullet-highlight">Direct Outreach to Project Managers:</span> Connecting directly with MEP consultants and general contractors on LinkedIn.</li>
+            <li><span class="bullet-highlight">Sub-Contracting Opportunities:</span> Pitching sub-contracting installation services to established security integration firms.</li>
+          </ul>
+          <div class="callout-box"><span>Networking Rule: Reach out directly to MEP project managers and security directors instead of applying blindly to job portals.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Direct MEP Employer Outreach</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">LinkedIn Outreach to MEP Consultants</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">&#10003; Sub-Contracting Systems Integrator Deals</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (65-7) -->
+    <div class="slide">
+      <div class="pill-badge">(65-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Enterprise Business Setup: Licensing, Insurance &amp; Vendor Alliances</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Low-Voltage Electrical License:</span> Registering your business with local electrical and security licensing authorities.</li>
+            <li><span class="bullet-highlight">General Liability Insurance ( - ):</span> Mandatory protection against accidental site damage during installation.</li>
+            <li><span class="bullet-highlight">Distributor Credit Lines:</span> Establishing 30-day payment terms with authorized hardware distributors (ADI, Anixter).</li>
+          </ul>
+          <div class="callout-box"><span>Business Setup: 30-day distributor credit lines allow you to fund large client projects without draining cash reserves.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Enterprise Integrator Business Setup</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">LV Electrical License +  Liability Insurance</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">&#10003; 30-Day Distributor Trade Credit Lines</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (65-8) -->
+    <div class="slide">
+      <div class="pill-badge">(65-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Comprehensive 65-Session Curriculum Review &amp; Knowledge Audit</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Stage 1-3 (Electrical &amp; Networking):</span> AC/DC math, multimeters, IP subnetting, VLANs, PoE, and fiber optics.</li>
+            <li><span class="bullet-highlight">Stage 4-8 (Security &amp; Gate Automation):</span> IP CCTV, AI Analytics, VDP, Smart Locks, Biometrics, Attendance, Boom Barriers, and Parking RFID.</li>
+            <li><span class="bullet-highlight">Stage 9-10 (Smart Home, KNX &amp; Business):</span> Wi-Fi, Zigbee, Z-Wave, Matter/Thread, Voice AI, Home Assistant OS, KNX TP, BOQ, and Project Management.</li>
+          </ul>
+          <div class="callout-box"><span>Complete Mastery: You have mastered all 65 sessions across 10 stages of low-voltage and smart building engineering!</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="320" height="220" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="80" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="bold">Complete 10-Stage Mastery</text>
+            
+            <rect x="60" y="100" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="122" text-anchor="middle" fill="#10b981" font-size="11">Stages 1-3: Electrical, IP &amp; Fiber Optics</text>
+            <rect x="60" y="145" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="167" text-anchor="middle" fill="#10b981" font-size="11">Stages 4-8: CCTV, Biometrics &amp; Gate Systems</text>
+            <rect x="60" y="190" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="212" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Stages 9-10: Smart Home, KNX &amp; Business</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (65-9) -->
+    <div class="slide">
+      <div class="pill-badge">(65-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Troubleshooting Career Roadblocks &amp; Continuous Growth Strategy</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">No Callbacks After Sending Resumes:</span> Update resume with quantitative project numbers and add link to video portfolio.</li>
+            <li><span class="bullet-highlight">Impasse During Client Salary Negotiation:</span> Counter with performance-based bonuses tied to project completion speed and profitability.</li>
+            <li><span class="bullet-highlight">Staying Ahead of Technology Shifts:</span> Continually experiment with open-source Home Assistant, local AI LLMs, and new KNX ETS updates.</li>
+          </ul>
+          <div class="callout-box"><span>Growth Mindset: Continuously learn emerging smart building technologies to remain in the top 1% of global engineers.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Continuous Learning &amp; Top 1% Growth</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Home Assistant + Local AI + KNX Updates</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">&#10003; Lifetime Technical Industry Leadership</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (65-10) -->
+    <div class="slide">
+      <div class="pill-badge">(65-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Grand Final Certification &amp; Graduation Ceremony</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Graduation Milestone Achieved:</span> You are officially certified as a Master Systems Integrator &amp; ELV Engineer!</li>
+            <li><span class="bullet-highlight">Complete 65-Session Mastery:</span> 100% of all presentation decks, custom vector SVGs, practical lab exercises, and capstone projects completed with distinction.</li>
+            <li><span class="bullet-highlight">Go Forth &amp; Build:</span> You have the technical skills, engineering confidence, and business knowledge to lead the smart building industry!</li>
+          </ul>
+          <div class="callout-box"><span>CONGRATULATIONS! You have successfully graduated from the Complete 65-Session Low-Voltage & Smart Building Master Class!</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Master ELV Systems Integrator</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Electrical, IP, Fiber &amp; CCTV Master</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Biometrics, Gates &amp; Access Master</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Home Assistant, KNX &amp; Business Master</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

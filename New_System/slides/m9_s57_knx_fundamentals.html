@@ -1,0 +1,587 @@
+﻿﻿﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 57: KNX Protocol Fundamentals & Green Bus Wiring</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (57-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(57-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">KNX Protocol Fundamentals &amp; Green Bus Wiring</h1>
+        <p class="cover-subtitle">KNX TP Green Bus Cable (2x2x0.8mm) | 30V DC Bus Power | ETS6 Software | DIN-Rail Actuators</p>
+        <p class="cover-series">Stage 9: Smart Home Automation, IoT &amp; KNX</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (57-2) -->
+    <div class="slide">
+      <div class="pill-badge">(57-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Decentralized Architecture: Zero Central Single Point of Failure</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Decentralized Intelligence:</span> Every KNX device contains its own microprocessor and flash memory; no central processor server required.</li>
+            <li><span class="bullet-highlight">High Commercial Reliability:</span> If one light switch fails, all other 200 switches and actuators on the bus continue operating independently.</li>
+            <li><span class="bullet-highlight">IEC 14543 International Standard:</span> Global open protocol backed by 500+ manufacturers (ABB, Schneider, Gira, Hager).</li>
+          </ul>
+          <div class="callout-box"><span>Decentralized Power: KNX systems have no central CPUâ€”every switch communicates directly with actuators across the bus.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">Central Server</text>
+            <text x="105" y="140" text-anchor="middle" fill="#fff" font-size="10">Single Failure Point</text>
+            
+            <rect x="220" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">KNX Bus</text>
+            <text x="295" y="140" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">Decentralized Freedom</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (57-3) -->
+    <div class="slide">
+      <div class="pill-badge">(57-3)</div>
+      <div class="slide-header"><h1 class="slide-title">KNX Twisted Pair (TP-1) Green Cable Topology &amp; Power</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Standard Green Bus Cable (2x2x0.8mm):</span> Shielded twisted-pair cable (Red/Black data pair + White/Yellow spare pair).</li>
+            <li><span class="bullet-highlight">30V DC Bus Voltage (9600 bps):</span> Transmits 30V DC auxiliary power and CSMA/CA data signals simultaneously on the Red (+)/Black (-) pair.</li>
+            <li><span class="bullet-highlight">Choke Coil Filtering:</span> Integrated choke coil in KNX power supply prevents AC data pulses from shorting into DC power rails.</li>
+          </ul>
+          <div class="callout-box"><span>Wiring Rule: Red (+) and Black (-) wires carry 30V DC power and data; White and Yellow wires are reserved for auxiliary power.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Green KNX Cable &amp; 30V DC Choke</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#ef4444" font-size="11">Red (+) &amp; Black (-) &rarr; 30V DC Power + Data</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Integrated Choke Coil Data Filter</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (57-4) -->
+    <div class="slide">
+      <div class="pill-badge">(57-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Flexible Bus Topologies: Tree, Line &amp; Star (No Loops!)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Free Wiring Topologies Allowed:</span> Daisy-chain Line, Tree branch, and Star topologies can be mixed freely across a floor.</li>
+            <li><span class="bullet-highlight">STRICT NO CLOSED LOOP RULE:</span> Closing a wiring loop creates data reflection collision storms that crash the KNX bus.</li>
+            <li><span class="bullet-highlight">Distance Limits:</span> Max 350m from power supply to device; max 700m between 2 devices; max 1,000m total cable length per line.</li>
+          </ul>
+          <div class="callout-box"><span>CRITICAL WARNING: NEVER connect KNX bus cable in a closed ring loop! Closed loops crash bus communication.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">Topologies: Tree/Star YES | Ring NO</text>
+            
+            <text x="200" y="145" fill="#10b981" font-size="12" font-weight="bold" text-anchor="middle">&#10003; Line, Tree &amp; Star Topologies OK</text>
+            <text x="200" y="185" fill="#ef4444" font-size="13" font-weight="bold" text-anchor="middle">&#10007; NEVER CLOSE WIRING RING LOOPS</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (57-5) -->
+    <div class="slide">
+      <div class="pill-badge">(57-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Individual Addresses (PhA) vs Group Addresses (GA)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Individual Physical Address (e.g. 1.1.25):</span> Uniquely identifies physical device location (Area.Line.Device) during ETS programming.</li>
+            <li><span class="bullet-highlight">Group Address (e.g. 1/2/15):</span> Logical communication channel connecting sensor outputs to actuator input objects (Main/Middle/Sub).</li>
+            <li><span class="bullet-highlight">Many-to-Many Binding:</span> Multiple switch buttons can send telegrams to the exact same Group Address simultaneously.</li>
+          </ul>
+          <div class="callout-box"><span>ETS Standard: Physical Address (1.1.5) is for hardware identification; Group Address (1/2/5) is for functional switching logic.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="140" height="180" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="110" y="90" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Physical Address</text>
+            <text x="110" y="140" text-anchor="middle" fill="#fff" font-size="11">1.1.25 (Hardware ID)</text>
+            
+            <rect x="220" y="60" width="140" height="180" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="290" y="90" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Group Address</text>
+            <text x="290" y="140" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">1/2/15 (Switch Logic)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (57-6) -->
+    <div class="slide">
+      <div class="pill-badge">(57-6)</div>
+      <div class="slide-header"><h1 class="slide-title">DIN-Rail Centralized Electrical Panel Actuators</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Switching Relay Actuators (16A C-Load):</span> High inrush current relays handling heavy LED driver capacitive loads without contact welding.</li>
+            <li><span class="bullet-highlight">Universal Dimming Actuators:</span> Auto-detects inductive vs capacitive loads for smooth 230V LED trailing-edge dimming.</li>
+            <li><span class="bullet-highlight">Blind / Shutter Actuators:</span> Electrically interlocked motor outputs with mechanical travel time tracking.</li>
+          </ul>
+          <div class="callout-box"><span>Panel Engineering: C-Load 16A relays prevent contact welding from high LED driver inrush currents.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="320" height="220" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="80" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">KNX DIN-Rail Panel Actuators</text>
+            
+            <rect x="60" y="100" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="122" text-anchor="middle" fill="#38bdf8" font-size="11">16A C-Load Relay (Anti-Contact Welding)</text>
+            <rect x="60" y="145" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="167" text-anchor="middle" fill="#10b981" font-size="11">Universal Trailing-Edge LED Dimmer</text>
+            <rect x="60" y="190" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="212" text-anchor="middle" fill="#f59e0b" font-size="11">Shutter / Blind Motor Interlocked Actuator</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (57-7) -->
+    <div class="slide">
+      <div class="pill-badge">(57-7)</div>
+      <div class="slide-header"><h1 class="slide-title">ETS6 (Engineering Tool Software) Programming Workflow</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Single Tool Standard:</span> ETS6 is the universal manufacturer-independent software used to design, program, and commission KNX.</li>
+            <li><span class="bullet-highlight">Importing Manufacturer knxprod Files:</span> Downloads official device database parameters directly from manufacturers.</li>
+            <li><span class="bullet-highlight">Pressing Physical Programming Button:</span> Assigns Physical Address by pressing tiny red LED button on physical device during download.</li>
+          </ul>
+          <div class="callout-box"><span>ETS Workflow: Press the physical red programming button on the KNX module to download its Physical Address.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">ETS6 Software Commissioning</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Import knxprod &rarr; Bind Group Address (1/1/1)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">Press Physical Red LED Programming Button</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (57-8) -->
+    <div class="slide">
+      <div class="pill-badge">(57-8)</div>
+      <div class="slide-header"><h1 class="slide-title">KNX IP Routers &amp; Secure Tunneling (KNX Data Security)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">KNX IP Router Backbone:</span> Replaces slow TP backbone lines with 100Mbps Ethernet IP multicast backbone.</li>
+            <li><span class="bullet-highlight">KNX IP Secure (AES-128):</span> Encrypts IP tunneling telegrams to prevent unauthorized LAN hackers from manipulating building lights.</li>
+            <li><span class="bullet-highlight">KNX Data Security:</span> Encrypts telegrams directly at sensor level for ultra-secure military and bank installations.</li>
+          </ul>
+          <div class="callout-box"><span>Cybersecurity Standard: KNX IP Secure enforces AES-128 encryption across the Ethernet backbone.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">KNX IP Secure AES-128 Backbone</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">100Mbps Ethernet Multicast Backbone</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">&#10003; AES-128 Encrypted IP Tunneling</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (57-9) -->
+    <div class="slide">
+      <div class="pill-badge">(57-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Troubleshooting Bus Voltage Drops, Duplicate Addresses &amp; Collision Storms</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Bus Voltage &lt; 21V DC:</span> Too many devices on single line or power supply overloaded; add second KNX power supply + line coupler.</li>
+            <li><span class="bullet-highlight">Red Programming LED Flashing:</span> Duplicate Physical Address assigned to 2 physical modules; re-assign via ETS6.</li>
+            <li><span class="bullet-highlight">Group Monitor Collision Storm:</span> Un-terminated bus reflection or closed wire loop causing endless telegram re-transmissions.</li>
+          </ul>
+          <div class="callout-box"><span>Field Diagnostics: Use the ETS6 Group Monitor tool to trace bus telegram traffic and identify duplicate addresses.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">ETS6 Group Monitor Diagnostic</text>
+            <text x="200" y="140" fill="#fff" font-size="12" text-anchor="middle">Bus Collisions or LED Flashing Red?</text>
+            <text x="200" y="175" fill="#10b981" font-size="13" font-weight="bold" text-anchor="middle">Fix: Trace Telegrams &amp; Fix Duplicate PhA</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (57-10) -->
+    <div class="slide">
+      <div class="pill-badge">(57-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical KNX Green Bus Wiring &amp; ETS6 Commissioning Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Wire KNX 30V DC Power Supply, Green TP Bus Cable, 4-Fold Glass Push-Button Sensor, and 4-Channel Relay Actuator.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Create new project in ETS6, import knxprod databases, assign Physical Addresses (1.1.1, 1.1.2), and program Group Address 1/1/1.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Download parameters to physical KNX devices and verify instant switching &amp; status LED feedback in ETS Group Monitor.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master KNX green bus wiring, ETS6 project creation, Physical/Group Address binding, and bus monitoring.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">KNX Bus Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">30V DC Power &amp; Green Cable Wiring</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">ETS6 Group Address (1/1/1) Binding</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">ETS Group Monitor Telemetry Test</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

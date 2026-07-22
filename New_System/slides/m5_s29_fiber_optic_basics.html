@@ -1,0 +1,608 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 30: Fiber Optic Systems, Splicing & Link Budgets</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (30-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(30-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Fiber Optic Systems, Splicing &amp; Link Budgets</h1>
+        <p class="cover-subtitle">Single-Mode vs Multi-Mode | Fusion Splicing | OTDR Trace Analysis | Optical Loss Math</p>
+        <p class="cover-series">Stage 5: Network &amp; Camera Troubleshooting</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (30-2) -->
+    <div class="slide">
+      <div class="pill-badge">(30-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Fiber Physics: Total Internal Reflection</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Glass Core (n1) vs Cladding (n2):</span> Light signals bounce continuously inside the glass core by total internal reflection.</li>
+            <li><span class="bullet-highlight">125&mu;m Standard Cladding:</span> Both Single-Mode and Multi-Mode fibers feature identical 125-micron outer cladding diameters.</li>
+            <li><span class="bullet-highlight">Immunity to EMI:</span> Glass fibers are 100% immune to electromagnetic interference, lightning strikes, and high-voltage power lines.</li>
+          </ul>
+          <div class="callout-box"><span>Physics Fact: Total internal reflection allows light signals to travel tens of kilometers without electrical noise.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="80" width="320" height="160" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <rect x="40" y="120" width="320" height="80" fill="#0f172a" stroke="#10b981"/>
+            <path d="M 40 160 L 100 125 L 180 195 L 260 125 L 340 195 L 360 160" fill="none" stroke="#f59e0b" stroke-width="3"/>
+            <text x="200" y="105" text-anchor="middle" fill="#38bdf8" font-size="12">Glass Cladding (125&mu;m)</text>
+            <text x="200" y="165" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">Core Light Reflection</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (30-3) -->
+    <div class="slide">
+      <div class="pill-badge">(30-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Single-Mode (OS2) vs Multi-Mode (OM3/OM4) Fibers</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Single-Mode OS2 (Yellow Jacket):</span> 9&mu;m ultra-thin core; uses 1310nm/1550nm lasers for distances up to 40+ kilometers.</li>
+            <li><span class="bullet-highlight">Multi-Mode OM3/OM4 (Aqua Jacket):</span> 50&mu;m wider core; uses 850nm VCSEL LEDs for short distances up to 300-500 meters.</li>
+            <li><span class="bullet-highlight">Modal Dispersion Limit:</span> Multi-Mode light bounces along multiple paths, limiting high-speed distance compared to Single-Mode.</li>
+          </ul>
+          <div class="callout-box"><span>Installation Choice: Use Single-Mode OS2 fiber for campus backbones; use Multi-Mode OM4 for internal data centers.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#eab308" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#eab308" font-size="13" font-weight="bold">Single-Mode OS2</text>
+            <text x="105" y="140" text-anchor="middle" fill="#fff" font-size="11">9&mu;m Core Laser</text>
+            <text x="105" y="165" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">40km+ Range</text>
+            
+            <rect x="220" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#06b6d4" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#06b6d4" font-size="13" font-weight="bold">Multi-Mode OM3/4</text>
+            <text x="295" y="140" text-anchor="middle" fill="#fff" font-size="11">50&mu;m Core LED</text>
+            <text x="295" y="165" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">300m - 500m Range</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (30-4) -->
+    <div class="slide">
+      <div class="pill-badge">(30-4)</div>
+      <div class="slide-header"><h1 class="slide-title">SFP / SFP+ Media Transceivers &amp; Wavelengths</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">SFP (1 Gbps) vs SFP+ (10 Gbps):</span> Hot-swappable optical transceiver modules plugged into switch SFP slots.</li>
+            <li><span class="bullet-highlight">Dual LC Fiber Connectors:</span> Separate Tx (Transmit) and Rx (Receive) LC fiber strands.</li>
+            <li><span class="bullet-highlight">BiDi Single-Strand SFP:</span> Uses Wavelength Division Multiplexing (1310nm Tx / 1550nm Rx) over 1 single fiber strand.</li>
+          </ul>
+          <div class="callout-box"><span>Transceiver Rule: Always pair 1310nm SFP modules with Single-Mode OS2 fiber and LC-LC patch cords.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="80" width="320" height="150" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="115" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">SFP Transceiver Module</text>
+            
+            <rect x="80" y="140" width="100" height="60" rx="6" fill="#0f172a" stroke="#38bdf8"/>
+            <text x="130" y="175" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Tx: 1310nm</text>
+            
+            <rect x="220" y="140" width="100" height="60" rx="6" fill="#0f172a" stroke="#f59e0b"/>
+            <text x="270" y="175" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold">Rx: 1550nm</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (30-5) -->
+    <div class="slide">
+      <div class="pill-badge">(30-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Fusion Splicing vs Mechanical Splicing</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Precision Electric Arc Fusion:</span> High-voltage electric arc melts glass core ends together with &lt; 0.02dB loss per splice.</li>
+            <li><span class="bullet-highlight">Precision Cleaving:</span> High-precision diamond wheel cleaver cuts fiber face at exact 90&deg; angle before splicing.</li>
+            <li><span class="bullet-highlight">Mechanical Splice High Loss:</span> Index-matching gel joints suffer high loss (0.3dB - 0.7dB) and degrade over time.</li>
+          </ul>
+          <div class="callout-box"><span>Quality Standard: ALWAYS use Fusion Splicing for enterprise CCTV fiber backbones to guarantee &lt; 0.05dB loss.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2.5"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Fusion Splicer Electric Arc</text>
+            
+            <line x1="80" y1="160" x2="180" y2="160" stroke="#38bdf8" stroke-width="4"/>
+            <line x1="220" y1="160" x2="320" y2="160" stroke="#38bdf8" stroke-width="4"/>
+            
+            <circle cx="200" cy="130" r="8" fill="#f59e0b"/>
+            <circle cx="200" cy="190" r="8" fill="#f59e0b"/>
+            <line x1="200" y1="130" x2="200" y2="190" stroke="#ef4444" stroke-width="3" stroke-dasharray="4,2"/>
+            
+            <text x="200" y="225" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Electric Arc Fusion (&lt; 0.02dB Loss)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (30-6) -->
+    <div class="slide">
+      <div class="pill-badge">(30-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Fiber Connectors: LC, SC, ST &amp; Polish Types (UPC vs APC)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Connector Types:</span> Small-Form LC (Push-Pull), Standard SC (Square Snap), and ST (Bayonet Twist).</li>
+            <li><span class="bullet-highlight">UPC Blue Polish (Ultra Physical Contact):</span> Flat polished end-face; reflection loss -50dB (Standard Data Networks).</li>
+            <li><span class="bullet-highlight">APC Green Polish (Angled Physical Contact):</span> 8&deg; angled end-face; reflects backscatter into cladding (-60dB loss) for video/RF.</li>
+          </ul>
+          <div class="callout-box"><span>Connector Rule: NEVER plug Green APC connectors into Blue UPC ports - physical angle mismatch destroys glass faces!</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#2563eb" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#60a5fa" font-size="13" font-weight="bold">UPC Blue Polish</text>
+            <text x="105" y="140" text-anchor="middle" fill="#fff" font-size="11">Flat 0&deg; End-Face</text>
+            <text x="105" y="165" text-anchor="middle" fill="#60a5fa" font-size="12">-50dB Reflection</text>
+            
+            <rect x="220" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#16a34a" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#4ade80" font-size="13" font-weight="bold">APC Green Polish</text>
+            <text x="295" y="140" text-anchor="middle" fill="#fff" font-size="11">Angled 8&deg; End-Face</text>
+            <text x="295" y="165" text-anchor="middle" fill="#4ade80" font-size="12">-60dB Backscatter</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (30-7) -->
+    <div class="slide">
+      <div class="pill-badge">(30-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Optical Link Budget Calculations (dB &amp; dBm Math)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Transceiver Power Budget:</span> SFP Tx Output (-9 dBm) minus Receiver Sensitivity (-20 dBm) = 11 dB Max Available Margin.</li>
+            <li><span class="bullet-highlight">Loss Factor Formula:</span> Cable Attenuation (0.35dB/km) + Splice Loss (0.05dB x 4) + Connector Loss (0.3dB x 2).</li>
+            <li><span class="bullet-highlight">Safety Margin:</span> Always retain at least 3 dB safety headroom margin for fiber aging and future repairs.</li>
+          </ul>
+          <div class="callout-box"><span>Calculation Example: 10km Fiber Run = 3.5dB Cable + 0.2dB Splices + 0.6dB Connectors = 4.3dB Total Loss (Passes 11dB Budget!).</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">10km Link Budget Calculation</text>
+            
+            <rect x="60" y="120" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="140" text-anchor="middle" fill="#fff" font-size="12">Transceiver Margin: 11 dB Max</text>
+            <rect x="60" y="155" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="175" text-anchor="middle" fill="#f59e0b" font-size="12">Total Fiber Loss: 4.3 dB</text>
+            <rect x="60" y="190" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="210" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">[PASS] 6.7 dB Safety Headroom</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (30-8) -->
+    <div class="slide">
+      <div class="pill-badge">(30-8)</div>
+      <div class="slide-header"><h1 class="slide-title">OTDR (Optical Time Domain Reflectometer) Trace Testing</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Radar Light Reflection:</span> Sends high-speed laser pulses down fiber and measures backscattered light over distance.</li>
+            <li><span class="bullet-highlight">Fault Location Pinpointing:</span> Locates exact distance (e.g. 2,415 meters) to cable break, sharp bend, or bad splice.</li>
+            <li><span class="bullet-highlight">OTDR Event Graph:</span> Fusion splices show step-down drops; connectors show sharp reflective peaks.</li>
+          </ul>
+          <div class="callout-box"><span>Diagnostics Standard: Use OTDR testing to produce graphical proof of link distance and splice quality.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="340" height="190" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="90" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="bold">OTDR Fault Trace Screen</text>
+            
+            <path d="M 50 120 L 150 140 L 150 155 L 260 175 L 260 230" fill="none" stroke="#10b981" stroke-width="3"/>
+            <text x="150" y="130" fill="#f59e0b" font-size="10">Splice (-0.04dB)</text>
+            <text x="260" y="165" fill="#ef4444" font-size="10" font-weight="bold">Cable Break (2,415m)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (30-9) -->
+    <div class="slide">
+      <div class="pill-badge">(30-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Optical Power Meter (OPM) &amp; Visual Fault Locator (VFL)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Visual Fault Locator (VFL Pen):</span> 650nm bright red laser pen reveals micro-bends and fiber breaks glowing through jacket.</li>
+            <li><span class="bullet-highlight">Optical Power Meter (OPM):</span> Measures actual optical signal strength in dBm at 850nm, 1310nm, or 1550nm.</li>
+            <li><span class="bullet-highlight">Cleanliness Inspection:</span> 85% of fiber failures are caused by microscopic dust on connector end-faces (clean with isopropyl alcohol).</li>
+          </ul>
+          <div class="callout-box"><span>Field Tool: Use VFL red laser pen for fast visual check of fiber patch cords and splice trays.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="70" width="140" height="160" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="110" y="105" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">VFL Red Laser</text>
+            <text x="110" y="150" text-anchor="middle" fill="#fff" font-size="11">650nm Red Pen</text>
+            <text x="110" y="175" text-anchor="middle" fill="#ef4444" font-size="11">Glowing Break</text>
+            
+            <rect x="220" y="70" width="140" height="160" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="290" y="105" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">OPM Meter</text>
+            <text x="290" y="150" text-anchor="middle" fill="#fff" font-size="11">1310nm / 1550nm</text>
+            <text x="290" y="175" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">-14.2 dBm</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (30-10) -->
+    <div class="slide">
+      <div class="pill-badge">(30-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Fiber Splicing &amp; OTDR Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Strip, clean with isopropyl alcohol, and precision-cleave Single-Mode OS2 fiber strand.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Perform fusion splice on automatic alignment splicer and verify splice loss &lt; 0.03dB.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Connect OPM power meter and OTDR to measure total link attenuation and locate simulated cable bend fault.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master precision cleaving, fusion splicing, and OTDR fault distance tracing.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Fiber Splicing Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Fiber Strip &amp; Precision Cleave</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Fusion Splice (&lt; 0.03dB Loss)</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">OTDR Fault Distance Test</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

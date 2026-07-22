@@ -1,0 +1,613 @@
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 28: Network Troubleshooting & Diagnostics</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (28-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(28-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Network Troubleshooting &amp; Diagnostics</h1>
+        <p class="cover-subtitle">Ping &amp; ICMP Latency | Traceroute Hops | Wireshark Packet Sniffing | ARP &amp; IP Conflicts</p>
+        <p class="cover-series">Stage 5: Network &amp; Camera Troubleshooting</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (28-2) -->
+    <div class="slide">
+      <div class="pill-badge">(28-2)</div>
+      <div class="slide-header"><h1 class="slide-title">The Diagnostic Methodology (Layer-by-Layer OSI Flow)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Bottom-Up Approach:</span> Start at Layer 1 (Physical Cable) before inspecting Layer 3 (IP Routing).</li>
+            <li><span class="bullet-highlight">Layer 1 Physical Check:</span> Verify Ethernet link LED lights, RJ45 crimp pins, and PoE power status.</li>
+            <li><span class="bullet-highlight">Layer 2 / 3 Verification:</span> Check MAC address tables on managed switches and IP gateway ping reachability.</li>
+          </ul>
+          <div class="callout-box"><span>Golden Rule: 80% of network failures are caused by Layer 1 physical cable damage or bad RJ45 crimps.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="50" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="90" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">Layer 1: Cable / RJ45 / PoE Check</text>
+            
+            <line x1="200" y1="110" x2="200" y2="135" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="40" y="135" width="320" height="50" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="165" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Layer 2: Switch MAC Table / VLAN</text>
+
+            <line x1="200" y1="185" x2="200" y2="210" stroke="#10b981" stroke-width="3"/>
+
+            <rect x="40" y="210" width="320" height="50" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+            <text x="200" y="240" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="bold">Layer 3: IP Ping &amp; Gateway Route</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (28-3) -->
+    <div class="slide">
+      <div class="pill-badge">(28-3)</div>
+      <div class="slide-header"><h1 class="slide-title">ICMP Ping Diagnostics &amp; Packet Loss Analysis</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Continuous Ping (ping -t):</span> Tests continuous network connectivity and flags intermittent frame drops.</li>
+            <li><span class="bullet-highlight">Buffer Size Testing (ping -l 1472):</span> Sends maximum non-fragmented MTU payload to detect MTU size mismatches.</li>
+            <li><span class="bullet-highlight">Latency Jitter Thresholds:</span> Latency spikes &gt; 50ms cause RTSP video artifacting and frame freezing.</li>
+          </ul>
+          <div class="callout-box"><span>CLI Tip: Use "ping 192.168.1.100 -t -l 1472" to test full-size MTU packet delivery to IP cameras.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="340" height="190" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="50" y="90" fill="#38bdf8" font-size="12" font-family="monospace">C:\&gt; ping 192.168.1.100 -t -l 1472</text>
+            <text x="50" y="120" fill="#10b981" font-size="11" font-family="monospace">Reply from 192.168.1.100: bytes=1472 time=1ms</text>
+            <text x="50" y="145" fill="#10b981" font-size="11" font-family="monospace">Reply from 192.168.1.100: bytes=1472 time=1ms</text>
+            <text x="50" y="170" fill="#ef4444" font-size="11" font-family="monospace">Request timed out. [PACKET LOSS!]</text>
+            <text x="50" y="195" fill="#10b981" font-size="11" font-family="monospace">Reply from 192.168.1.100: bytes=1472 time=2ms</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (28-4) -->
+    <div class="slide">
+      <div class="pill-badge">(28-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Traceroute &amp; Path Latency Isolation</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Hop-by-Hop Tracing (tracert):</span> Displays every router hop along the network path to destination IP.</li>
+            <li><span class="bullet-highlight">TTL Exceeded Feedback:</span> Uses ICMP TTL expiration to pinpoint exact router or firewall blocking video traffic.</li>
+            <li><span class="bullet-highlight">Bottleneck Identification:</span> Identifies overloaded wireless microwave links or congested switch uplinks instantly.</li>
+          </ul>
+          <div class="callout-box"><span>CLI Tip: Use "tracert" when cameras fail to stream across multi-subnet corporate WAN routers.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="70" width="90" height="60" rx="6" fill="#1e293b" stroke="#38bdf8"/>
+            <text x="85" y="105" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Hop 1: 1ms</text>
+            
+            <line x1="130" y1="100" x2="160" y2="100" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="160" y="70" width="90" height="60" rx="6" fill="#1e293b" stroke="#38bdf8"/>
+            <text x="205" y="105" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Hop 2: 2ms</text>
+            
+            <line x1="250" y1="100" x2="280" y2="100" stroke="#ef4444" stroke-width="3"/>
+
+            <rect x="280" y="70" width="90" height="60" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="325" y="105" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">Hop 3: TIMEOUT</text>
+
+            <text x="200" y="200" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">Firewall Blocking Route at Hop 3!</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (28-5) -->
+    <div class="slide">
+      <div class="pill-badge">(28-5)</div>
+      <div class="slide-header"><h1 class="slide-title">IP Address Conflicts &amp; ARP Table Inspection</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Duplicate IP Conflict:</span> Occurs when two devices are assigned the same static IP, causing flickering video streams.</li>
+            <li><span class="bullet-highlight">ARP Table Inspection (arp -a):</span> Displays IP-to-MAC address mappings cached on the computer or NVR.</li>
+            <li><span class="bullet-highlight">Flapping MAC Symptoms:</span> If ARP entry MAC address changes rapidly between two MACs, an IP conflict exists.</li>
+          </ul>
+          <div class="callout-box"><span>Troubleshooting Fix: Run "arp -a" to detect duplicate IP conflicts when an NVR camera stream repeatedly drops.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="340" height="190" rx="10" fill="#0f172a" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="90" text-anchor="middle" fill="#ef4444" font-size="14" font-weight="bold">ARP Table Conflict Screen</text>
+            
+            <rect x="50" y="115" width="300" height="40" rx="4" fill="#1e293b"/>
+            <text x="60" y="140" fill="#38bdf8" font-size="11" font-family="monospace">192.168.1.100 â†’ 00:1A:2B:3C:4D:5E (Cam)</text>
+            
+            <rect x="50" y="165" width="300" height="40" rx="4" fill="#1e293b" stroke="#ef4444"/>
+            <text x="60" y="190" fill="#ef4444" font-size="11" font-family="monospace">192.168.1.100 â†’ 74:DA:38:11:22:33 [CONFLICT!]</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (28-6) -->
+    <div class="slide">
+      <div class="pill-badge">(28-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Subnet Mask Mismatches &amp; Default Gateway Faults</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Subnet Boundary Errors:</span> Camera configured with /24 (255.255.255.0) cannot talk to VMS on /23 (255.255.254.0).</li>
+            <li><span class="bullet-highlight">Missing Gateway Address:</span> Camera missing Default Gateway IP cannot transmit video to remote mobile apps over Internet.</li>
+            <li><span class="bullet-highlight">Broadcast Domain Isolation:</span> Mismatched subnets prevent WS-Discovery multicast search from locating cameras.</li>
+          </ul>
+          <div class="callout-box"><span>Network Rule: Verify IP address, Subnet Mask, and Gateway are in identical network ranges.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="70" width="140" height="150" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="110" y="105" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">Camera IP</text>
+            <text x="110" y="145" text-anchor="middle" fill="#fff" font-size="11">192.168.1.50 /24</text>
+            
+            <rect x="220" y="70" width="140" height="150" rx="8" fill="#1e293b" stroke="#38bdf8"/>
+            <text x="290" y="105" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">VMS Server</text>
+            <text x="290" y="145" text-anchor="middle" fill="#fff" font-size="11">192.168.2.100 /24</text>
+            
+            <text x="200" y="250" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">Subnet Mismatch (No Router Path!)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (28-7) -->
+    <div class="slide">
+      <div class="pill-badge">(28-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Wireshark Packet Capture &amp; RTSP Protocol Analysis</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Network Packet Sniffing:</span> Captures real-time Ethernet frames passing through network switch mirror ports.</li>
+            <li><span class="bullet-highlight">RTSP Stream Inspection:</span> Filters by "rtsp" or "rtp" to verify OPTIONS, DESCRIBE, SETUP, and PLAY RTSP handshakes.</li>
+            <li><span class="bullet-highlight">Authentication Failures:</span> Inspects 401 Unauthorized response headers to detect invalid ONVIF credentials.</li>
+          </ul>
+          <div class="callout-box"><span>Sniffer Tip: Use Wireshark filter "rtsp || onvif" to diagnose camera streaming connection failures.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="340" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="90" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">Wireshark Packet Capture</text>
+            
+            <rect x="50" y="115" width="300" height="35" rx="4" fill="#1e293b"/><text x="60" y="137" fill="#10b981" font-size="11" font-family="monospace">RTSP/1.0 200 OK (DESCRIBE Handshake)</text>
+            <rect x="50" y="160" width="300" height="35" rx="4" fill="#1e293b"/><text x="60" y="182" fill="#ef4444" font-size="11" font-family="monospace">RTSP/1.0 401 Unauthorized [AUTH FAIL!]</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (28-8) -->
+    <div class="slide">
+      <div class="pill-badge">(28-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Switch Port Mirroring (SPAN Port Configuration)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">SPAN (Switched Port Analyzer):</span> Copies all ingress/egress traffic from target camera port to diagnostic monitoring port.</li>
+            <li><span class="bullet-highlight">Non-Intrusive Sniffing:</span> Allows engineers to inspect live camera traffic without disconnecting active cables.</li>
+            <li><span class="bullet-highlight">Managed Switch Setup:</span> Configured via switch CLI (monitor session 1 source interface gi1/0/5).</li>
+          </ul>
+          <div class="callout-box"><span>Diagnostics Rule: Configure SPAN port mirroring on managed switches to capture full-speed camera traffic.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="70" width="100" height="80" rx="6" fill="#1e293b" stroke="#38bdf8"/>
+            <text x="90" y="115" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Camera Port 5</text>
+            
+            <path d="M 140 110 L 260 110" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="260" y="70" width="100" height="80" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="310" y="115" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Mirror Port 24</text>
+            <text x="310" y="135" text-anchor="middle" fill="#fff" font-size="10">(Wireshark PC)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (28-9) -->
+    <div class="slide">
+      <div class="pill-badge">(28-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Port Scanner Tools (Angry IP Scanner &amp; Nmap)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">IP Network Sweeps:</span> Angry IP Scanner rapidly scans IP ranges (e.g. 192.168.1.1-254) to discover active devices.</li>
+            <li><span class="bullet-highlight">Open Port Auditing:</span> Scans key surveillance ports (Port 80 HTTP, 554 RTSP, 8000 SDK, 3702 WS-Discovery).</li>
+            <li><span class="bullet-highlight">Firewall Block Verification:</span> Identifies if router ACLs or Windows Firewall are blocking Port 554 RTSP video traffic.</li>
+          </ul>
+          <div class="callout-box"><span>Tool Tip: Use Nmap "nmap -p 80,554,8000 192.168.1.100" to verify open CCTV ports.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Nmap Open Port Results</text>
+            
+            <text x="60" y="135" fill="#10b981" font-size="12" font-family="monospace">Port 80 HTTP: OPEN [&#10003;“]</text>
+            <text x="60" y="165" fill="#10b981" font-size="12" font-family="monospace">Port 554 RTSP: OPEN [&#10003;“]</text>
+            <text x="60" y="195" fill="#10b981" font-size="12" font-family="monospace">Port 8000 SDK: OPEN [&#10003;“]</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (28-10) -->
+    <div class="slide">
+      <div class="pill-badge">(28-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Network Diagnostics &amp; Wireshark Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Run continuous MTU size ping test (ping -l 1472) to test packet fragmentation on switch link.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Inspect ARP table (arp -a) to identify duplicate IP address conflict between test devices.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Configure SPAN port mirror on managed switch and capture RTSP 200 OK handshake in Wireshark.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master ping MTU testing, ARP conflict resolution, and Wireshark RTSP packet capture.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Network Diagnostics Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Ping MTU 1472 Payload Test</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">ARP Duplicate IP Conflict Test</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Wireshark SPAN Port RTSP Capture</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

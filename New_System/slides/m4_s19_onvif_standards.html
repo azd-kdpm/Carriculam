@@ -1,0 +1,626 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 20: ONVIF Standards & Interoperability</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (20-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(20-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">ONVIF Standards &amp; Interoperability</h1>
+        <p class="cover-subtitle">ONVIF Profiles S, G, T, M | Cross-Brand Integration | Device Discovery Protocols</p>
+        <p class="cover-series">Stage 4: IP Camera Systems &amp; VMS</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (20-2) -->
+    <div class="slide">
+      <div class="pill-badge">(20-2)</div>
+      <div class="slide-header"><h1 class="slide-title">What is ONVIF? (Open Network Video Interface Forum)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Open Global Standard:</span> Universal non-profit industry forum standardizing IP physical security device communication.</li>
+            <li><span class="bullet-highlight">Multi-Vendor Compatibility:</span> Allows Hikvision, Dahua, Axis, Hanwha, and Bosch cameras to stream seamlessly to any NVR/VMS.</li>
+            <li><span class="bullet-highlight">Vendor Lock-In Prevention:</span> Protects end-users from being trapped in proprietary single-brand hardware ecosystems.</li>
+          </ul>
+          <div class="callout-box"><span>Industry Rule: ALWAYS specify ONVIF-conformant IP cameras to guarantee future multi-brand system integration.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="340" height="200" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">ONVIF Interoperability Shield</text>
+            
+            <rect x="50" y="130" width="90" height="45" rx="6" fill="#1e293b" stroke="#38bdf8"/>
+            <text x="95" y="157" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Hikvision / Dahua</text>
+            
+            <line x1="140" y1="152" x2="260" y2="152" stroke="#10b981" stroke-width="3"/>
+            <text x="200" y="142" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">ONVIF Standard</text>
+            
+            <rect x="260" y="130" width="90" height="45" rx="6" fill="#1e293b" stroke="#f59e0b"/>
+            <text x="305" y="157" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">Milestone VMS</text>
+            
+            <text x="200" y="225" text-anchor="middle" fill="#fff" font-size="12">Prevents Single-Vendor Lock-In</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (20-3) -->
+    <div class="slide">
+      <div class="pill-badge">(20-3)</div>
+      <div class="slide-header"><h1 class="slide-title">ONVIF Profile S (Basic IP Video &amp; Audio Streaming)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Profile S Core Features:</span> Standardizes H.264/H.265 video streaming, bi-directional audio, and PTZ pan/tilt/zoom controls.</li>
+            <li><span class="bullet-highlight">Relay Outputs:</span> Controls digital alarm relay outputs (e.g. strobe lights or door unlocks) over ONVIF Profile S commands.</li>
+            <li><span class="bullet-highlight">Baseline Compatibility:</span> The baseline ONVIF profile supported by virtually 100% of modern IP security cameras.</li>
+          </ul>
+          <div class="callout-box"><span>Baseline Profile: Profile S is the mandatory minimum profile for standard IP camera video streaming.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="90" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">ONVIF Profile S Baseline</text>
+            
+            <rect x="60" y="110" width="280" height="30" rx="4" fill="#0f172a"/><text x="200" y="130" text-anchor="middle" fill="#10b981" font-size="12">&#10003;“ H.264 / H.265 Video Streaming</text>
+            <rect x="60" y="145" width="280" height="30" rx="4" fill="#0f172a"/><text x="200" y="165" text-anchor="middle" fill="#10b981" font-size="12">&#10003;“ Bi-Directional Audio Stream</text>
+            <rect x="60" y="180" width="280" height="30" rx="4" fill="#0f172a"/><text x="200" y="200" text-anchor="middle" fill="#10b981" font-size="12">&#10003;“ PTZ Controls &amp; Relay Outputs</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (20-4) -->
+    <div class="slide">
+      <div class="pill-badge">(20-4)</div>
+      <div class="slide-header"><h1 class="slide-title">ONVIF Profile G (Edge SD Card Recording &amp; Retrieval)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Edge Recording Control:</span> Configures and manages local MicroSD card recording schedules on the camera itself.</li>
+            <li><span class="bullet-highlight">Remote Video Retrieval:</span> Allows VMS software to search, request, and pull recorded video clips directly from camera SD cards.</li>
+            <li><span class="bullet-highlight">ANR Synchronization:</span> Underpins Auto Network Replenishment (ANR) video sync after network outages.</li>
+          </ul>
+          <div class="callout-box"><span>Edge Standard: Require ONVIF Profile G when using camera MicroSD cards for edge failover recording.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="70" width="140" height="160" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+            <text x="110" y="105" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="bold">Camera SD Card</text>
+            <text x="110" y="150" text-anchor="middle" fill="#fff" font-size="11">Profile G Storage</text>
+            
+            <path d="M 180 150 L 260 150" stroke="#10b981" stroke-width="3"/>
+            <text x="220" y="140" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">Pull Sync</text>
+            
+            <rect x="260" y="70" width="100" height="160" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="310" y="105" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">VMS Server</text>
+            <text x="310" y="150" text-anchor="middle" fill="#fff" font-size="11">ANR Video Sync</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (20-5) -->
+    <div class="slide">
+      <div class="pill-badge">(20-5)</div>
+      <div class="slide-header"><h1 class="slide-title">ONVIF Profile T (Advanced H.265 Compression &amp; Analytics)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">H.265 Smart Codecs:</span> Adds native support for H.265 video encoding and smart dynamic compression profiles.</li>
+            <li><span class="bullet-highlight">HTTPS Secure Streaming:</span> Mandates HTTPS TLS encryption for secure video stream transmission over untrusted networks.</li>
+            <li><span class="bullet-highlight">Basic Motion Analytics:</span> Standardizes motion detection event notifications and tampering alert payloads to VMS.</li>
+          </ul>
+          <div class="callout-box"><span>Modern Standard: Profile T replaces Profile S for 4K cameras requiring H.265 compression and HTTPS security.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="90" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">ONVIF Profile T Enhancements</text>
+            
+            <rect x="60" y="110" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="132" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">H.265 High Efficiency Codecs</text>
+            <rect x="60" y="150" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="172" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">ðŸ”’ HTTPS / TLS Stream Encryption</text>
+            <rect x="60" y="190" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="212" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold">Motion Analytics &amp; Tamper Events</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (20-6) -->
+    <div class="slide">
+      <div class="pill-badge">(20-6)</div>
+      <div class="slide-header"><h1 class="slide-title">ONVIF Profile M (AI Analytics &amp; Metadata Interoperability)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">AI Metadata Stream:</span> Standardizes AI analytical metadata payloads (human attributes, vehicle license plates, face bounding boxes).</li>
+            <li><span class="bullet-highlight">Cross-Brand AI Integration:</span> Transmits Dahua/Hikvision AI camera analytics to Milestone/Genetec VMS servers without custom APIs.</li>
+            <li><span class="bullet-highlight">Rule Configuration:</span> Allows VMS platforms to configure line crossing and intrusion analytics rules directly on the camera.</li>
+          </ul>
+          <div class="callout-box"><span>AI Standard: Specify ONVIF Profile M for projects using AI video analytics and metadata search.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="70" width="120" height="150" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="100" y="105" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">AI Camera</text>
+            
+            <path d="M 160 145 L 240 145" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="175" y="115" width="50" height="25" rx="4" fill="#0f172a" stroke="#10b981"/>
+            <text x="200" y="132" text-anchor="middle" fill="#10b981" font-size="9" font-weight="bold">JSON AI</text>
+            
+            <rect x="240" y="70" width="120" height="150" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="300" y="105" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">VMS Server</text>
+            <text x="300" y="145" text-anchor="middle" fill="#fff" font-size="10">Plate Metadata</text>
+            <text x="300" y="165" text-anchor="middle" fill="#fff" font-size="10">Human Attributes</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (20-7) -->
+    <div class="slide">
+      <div class="pill-badge">(20-7)</div>
+      <div class="slide-header"><h1 class="slide-title">WS-Discovery Protocol &amp; Automatic Camera Search</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Web Services Discovery:</span> Multicast UDP protocol (Port 3702) that automatically discovers unconfigured cameras on the local network.</li>
+            <li><span class="bullet-highlight">Multicast Probe Flow:</span> VMS broadcasts Probe message to 239.255.255.250:3702; cameras respond with device Probe Match XML.</li>
+            <li><span class="bullet-highlight">Zero-Conf Setup:</span> Allows installers to add 50 new cameras to an NVR in seconds without typing individual IP addresses.</li>
+          </ul>
+          <div class="callout-box"><span>Network Tip: Enable Multicast UDP Port 3702 on managed switches to allow WS-Discovery camera auto-detection.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="340" height="190" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="90" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">WS-Discovery Multicast Search</text>
+            
+            <text x="200" y="125" text-anchor="middle" fill="#fff" font-size="12">VMS Broadcasts Multicast UDP Probe</text>
+            <text x="200" y="145" text-anchor="middle" fill="#38bdf8" font-size="12" font-family="monospace">239.255.255.250:3702</text>
+            
+            <line x1="60" y1="165" x2="340" y2="165" stroke="#10b981" stroke-width="3"/>
+            <text x="200" y="195" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Cameras Respond with Probe Match XML IP</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (20-8) -->
+    <div class="slide">
+      <div class="pill-badge">(20-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Multi-Vendor Integration Troubleshooting (Hikvision / Dahua)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Dedicated ONVIF User:</span> Hikvision cameras require creating a dedicated ONVIF user account in camera security settings.</li>
+            <li><span class="bullet-highlight">Time Synchronization:</span> Camera NTP clock and NVR time MUST be synchronized within 5 seconds; time drift breaks ONVIF auth tokens.</li>
+            <li><span class="bullet-highlight">Digest Authentication:</span> Ensure ONVIF Digest / WS-Security authentication matches between camera and recorder.</li>
+          </ul>
+          <div class="callout-box"><span>Troubleshooting Fix: 90% of ONVIF connection failures are caused by incorrect camera NTP time drift or missing ONVIF user accounts.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="320" height="220" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="85" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">ONVIF Troubleshooting Checklist</text>
+            
+            <g transform="translate(65, 115)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="13" font-weight="600">Dedicated ONVIF User Created</text>
+            </g>
+            
+            <g transform="translate(65, 160)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="13" font-weight="600">NTP Time Synced (&lt; 5s Drift)</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="13" font-weight="600">Digest Authentication Enabled</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (20-9) -->
+    <div class="slide">
+      <div class="pill-badge">(20-9)</div>
+      <div class="slide-header"><h1 class="slide-title">ONVIF Device Test Tool &amp; Conformance Verification</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Official Test Tool:</span> Automated test software issued by ONVIF to verify strict protocol specification compliance.</li>
+            <li><span class="bullet-highlight">Declaration of Conformance (DoC):</span> Official vendor document proving a camera model passed official ONVIF test suites.</li>
+            <li><span class="bullet-highlight">Pre-Deployment Testing:</span> Test camera RTSP stream, PTZ latency, and alarm inputs before shipping cameras to site.</li>
+          </ul>
+          <div class="callout-box"><span>Verification Tip: Check the official ONVIF.org conformant product database before purchasing unknown brand cameras.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">ONVIF Test Tool GUI</text>
+            
+            <rect x="60" y="120" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="140" text-anchor="middle" fill="#10b981" font-size="12">Profile S Test: PASS [&#10003;“]</text>
+            <rect x="60" y="160" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="180" text-anchor="middle" fill="#10b981" font-size="12">Profile T H.265 Test: PASS [&#10003;“]</text>
+            <rect x="60" y="200" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="220" text-anchor="middle" fill="#10b981" font-size="12">Profile M AI Metadata Test: PASS [&#10003;“]</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (20-10) -->
+    <div class="slide">
+      <div class="pill-badge">(20-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical ONVIF Discovery &amp; Multi-Brand Addition Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Run WS-Discovery scan to auto-detect 3 multi-vendor IP cameras on test switch network.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Enable ONVIF user authentication and sync NTP clock time on a Hikvision camera to connect to Dahua NVR.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Pull H.265 Profile T video stream and test PTZ pan/tilt controls over ONVIF protocol.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Successfully perform WS-Discovery scan, configure ONVIF user auth, and pull H.265 Profile T streams.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">ONVIF Integration Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">WS-Discovery Multicast Scan</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">ONVIF Auth &amp; NTP Time Sync</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">H.265 Profile T Stream &amp; PTZ Test</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

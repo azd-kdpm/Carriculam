@@ -1,0 +1,647 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 19: RAID & Enterprise Storage Design</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (19-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(19-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">RAID &amp; Enterprise Storage Design</h1>
+        <p class="cover-subtitle">RAID 0/1/5/6/10 Arrays | Hot-Spare Drives | SAN &amp; NAS Fiber Channels | Storage Math</p>
+        <p class="cover-series">Stage 4: IP Camera Systems &amp; VMS</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (19-2) -->
+    <div class="slide">
+      <div class="pill-badge">(19-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Hardware RAID Controllers vs Software RAID</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Dedicated RAID ASIC Processor:</span> Offloads parity calculations from host CPU to dedicated hardware controller.</li>
+            <li><span class="bullet-highlight">Battery Backup Unit (BBU / Flash Cache):</span> Protects unwritten write-back cache memory during sudden building power outages.</li>
+            <li><span class="bullet-highlight">Software RAID Limitations:</span> Software RAID (Windows Dynamic Disks) consumes server CPU and risks array corruption during OS crashes.</li>
+          </ul>
+          <div class="callout-box"><span>Hardware Rule: ALWAYS install a dedicated hardware RAID controller with Battery Backup (BBU) for surveillance servers.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="340" height="200" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Hardware RAID Controller Architecture</text>
+            
+            <rect x="50" y="120" width="120" height="60" rx="6" fill="#1e293b" stroke="#38bdf8"/>
+            <text x="110" y="155" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">RAID ASIC Processor</text>
+            
+            <rect x="230" y="120" width="120" height="60" rx="6" fill="#1e293b" stroke="#f59e0b"/>
+            <text x="290" y="145" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">Cache Memory</text>
+            <text x="290" y="165" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">+ BBU Battery</text>
+            
+            <line x1="170" y1="150" x2="230" y2="150" stroke="#10b981" stroke-width="3"/>
+            <line x1="200" y1="180" x2="200" y2="230" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="80" y="225" width="240" height="25" rx="4" fill="#1e293b" stroke="#64748b"/>
+            <text x="200" y="242" text-anchor="middle" fill="#fff" font-size="11">SAS/SATA Hot-Swap HDD Backplane</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (19-3) -->
+    <div class="slide">
+      <div class="pill-badge">(19-3)</div>
+      <div class="slide-header"><h1 class="slide-title">RAID 5 Parity Striping (Single Drive Fault Tolerance)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Block-Level Parity Striping:</span> Data blocks and parity checksums are distributed across a minimum of 3 physical drives.</li>
+            <li><span class="bullet-highlight">Single Drive Failure Tolerance:</span> Array continues operating seamlessly if any 1 single hard drive fails completely.</li>
+            <li><span class="bullet-highlight">Usable Storage Math:</span> Usable Capacity = (N - 1) Ã— Drive Size (1 drive capacity dedicated to parity protection).</li>
+          </ul>
+          <div class="callout-box"><span>Sizing Formula: A 4-drive 10TB RAID 5 array yields (4-1) Ã— 10TB = 30TB usable storage.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="70" width="90" height="180" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="85" y="95" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">HDD 1</text>
+            <rect x="50" y="110" width="70" height="30" fill="#0f172a"/><text x="85" y="130" text-anchor="middle" fill="#fff" font-size="10">Data A1</text>
+            <rect x="50" y="150" width="70" height="30" fill="#0f172a"/><text x="85" y="170" text-anchor="middle" fill="#fff" font-size="10">Data B1</text>
+            <rect x="50" y="190" width="70" height="30" fill="#10b981"/><text x="85" y="210" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">Parity P3</text>
+            
+            <rect x="155" y="70" width="90" height="180" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">HDD 2</text>
+            <rect x="165" y="110" width="70" height="30" fill="#0f172a"/><text x="200" y="130" text-anchor="middle" fill="#fff" font-size="10">Data A2</text>
+            <rect x="165" y="150" width="70" height="30" fill="#10b981"/><text x="200" y="170" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">Parity P2</text>
+            <rect x="165" y="190" width="70" height="30" fill="#0f172a"/><text x="200" y="210" text-anchor="middle" fill="#fff" font-size="10">Data C1</text>
+
+            <rect x="270" y="70" width="90" height="180" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="315" y="95" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">HDD 3</text>
+            <rect x="280" y="110" width="70" height="30" fill="#10b981"/><text x="315" y="130" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">Parity P1</text>
+            <rect x="280" y="150" width="70" height="30" fill="#0f172a"/><text x="315" y="170" text-anchor="middle" fill="#fff" font-size="10">Data B2</text>
+            <rect x="280" y="190" width="70" height="30" fill="#0f172a"/><text x="315" y="210" text-anchor="middle" fill="#fff" font-size="10">Data C2</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (19-4) -->
+    <div class="slide">
+      <div class="pill-badge">(19-4)</div>
+      <div class="slide-header"><h1 class="slide-title">RAID 6 Dual-Parity (Two Drive Failure Protection)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Dual Reed-Solomon Parity:</span> Writes two independent parity blocks (P + Q) across a minimum of 4 physical drives.</li>
+            <li><span class="bullet-highlight">Dual Drive Failure Tolerance:</span> Array survives 2 simultaneous drive failures without losing a single frame of video evidence.</li>
+            <li><span class="bullet-highlight">Usable Storage Math:</span> Usable Capacity = (N - 2) Ã— Drive Size (2 drives capacity dedicated to dual parity).</li>
+          </ul>
+          <div class="callout-box"><span>Enterprise Standard: Use RAID 6 for storage arrays exceeding 8 drives to protect against dual-drive failure during rebuilds.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="340" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">RAID 6 Dual Parity (P + Q)</text>
+            
+            <rect x="50" y="120" width="140" height="50" rx="6" fill="#1e293b" stroke="#10b981"/>
+            <text x="120" y="150" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Parity Block P</text>
+            
+            <rect x="210" y="120" width="140" height="50" rx="6" fill="#1e293b" stroke="#38bdf8"/>
+            <text x="280" y="150" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Parity Block Q</text>
+            
+            <text x="200" y="210" text-anchor="middle" fill="#fff" font-size="13">Survives <tspan fill="#10b981" font-weight="bold">2 Simultaneous Drive Failures</tspan></text>
+            <text x="200" y="235" text-anchor="middle" fill="#94a3b8" font-size="11">Usable Capacity = (N - 2) Ã— Drive Size</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (19-5) -->
+    <div class="slide">
+      <div class="pill-badge">(19-5)</div>
+      <div class="slide-header"><h1 class="slide-title">RAID 10 Striped Mirroring (Maximum Performance)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Striped Mirror Pairs (RAID 1 + RAID 0):</span> Combines high-speed data striping with 100% drive mirroring across 4+ drives.</li>
+            <li><span class="bullet-highlight">Maximum Read/Write Speed:</span> Highest IOPS write performance for heavy 64-channel 4K video recording workloads.</li>
+            <li><span class="bullet-highlight">50% Storage Overhead:</span> Exactly half of total raw storage is consumed by 1:1 drive mirroring.</li>
+          </ul>
+          <div class="callout-box"><span>Performance Choice: Deploy RAID 10 for high-security VMS servers requiring maximum write IOPS and fast rebuild times.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="120" y="50" width="160" height="40" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">RAID 0 Striping</text>
+            
+            <line x1="200" y1="90" x2="110" y2="140" stroke="#10b981" stroke-width="3"/>
+            <line x1="200" y1="90" x2="290" y2="140" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="40" y="140" width="140" height="110" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="110" y="170" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">RAID 1 Mirror Pair A</text>
+            <text x="110" y="205" text-anchor="middle" fill="#fff" font-size="11">HDD 1 == HDD 2</text>
+            
+            <rect x="220" y="140" width="140" height="110" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="290" y="170" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">RAID 1 Mirror Pair B</text>
+            <text x="290" y="205" text-anchor="middle" fill="#fff" font-size="11">HDD 3 == HDD 4</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (19-6) -->
+    <div class="slide">
+      <div class="pill-badge">(19-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Hot-Spare Standby Drives &amp; Auto-Rebuilding</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Global Hot-Spare:</span> Powered-on unassigned drive waiting in standby inside server chassis bay.</li>
+            <li><span class="bullet-highlight">Automatic Fault Detection:</span> Upon drive failure, RAID controller instantly powers up Hot-Spare and initiates auto-rebuild.</li>
+            <li><span class="bullet-highlight">Zero Technician Delay:</span> Eliminates manual drive replacement delay, reducing vulnerable array window from days to hours.</li>
+          </ul>
+          <div class="callout-box"><span>Reliability Standard: ALWAYS configure at least 1 Global Hot-Spare drive in every NVR storage enclosure.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="80" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="105" y="95" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">HDD 2 (FAILED)</text>
+            
+            <path d="M 180 100 L 220 100" stroke="#ef4444" stroke-width="3" stroke-dasharray="4,4"/>
+            <path d="M 200 140 L 200 190" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="110" y="190" width="180" height="80" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="2.5"/>
+            <text x="200" y="225" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Global Hot-Spare Drive</text>
+            <text x="200" y="248" text-anchor="middle" fill="#38bdf8" font-size="11">Auto-Activates &amp; Rebuilds Data</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (19-7) -->
+    <div class="slide">
+      <div class="pill-badge">(19-7)</div>
+      <div class="slide-header"><h1 class="slide-title">SAN (Storage Area Network) vs NAS (Network Attached Storage)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">SAN Storage (Block-Level / iSCSI &amp; Fiber):</span> Formats storage targets as raw block drives over dedicated 10GbE / Fiber Channel links.</li>
+            <li><span class="bullet-highlight">NAS Storage (File-Level / NFS &amp; SMB):</span> Shares network file folders across standard office Ethernet networks.</li>
+            <li><span class="bullet-highlight">VMS Compatibility:</span> Enterprise VMS applications require block-level SAN iSCSI targets for high-speed multi-stream video writing.</li>
+          </ul>
+          <div class="callout-box"><span>VMS Storage Rule: Use block-level iSCSI SAN expansion units for enterprise camera storage expansion.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="200" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">SAN (Block-Level)</text>
+            <text x="105" y="140" text-anchor="middle" fill="#fff" font-size="11">10GbE iSCSI / Fiber</text>
+            <text x="105" y="165" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Raw Block Volume</text>
+            <text x="105" y="220" text-anchor="middle" fill="#10b981" font-size="10">&#10003;“ Enterprise VMS Required</text>
+            
+            <rect x="220" y="60" width="150" height="200" rx="8" fill="#1e293b" stroke="#f59e0b"/>
+            <text x="295" y="90" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="bold">NAS (File-Level)</text>
+            <text x="295" y="140" text-anchor="middle" fill="#fff" font-size="11">NFS / SMB Folders</text>
+            <text x="295" y="165" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold">Shared File Directory</text>
+            <text x="295" y="220" text-anchor="middle" fill="#94a3b8" font-size="10">(Small Office Files)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (19-8) -->
+    <div class="slide">
+      <div class="pill-badge">(19-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Mean Time Between Failures (MTBF) &amp; Rebuild Stress</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Surveillance Enterprise MTBF:</span> Enterprise drives feature 2.5 million hours MTBF rating rated for 24/7 continuous operation.</li>
+            <li><span class="bullet-highlight">Unrecoverable Read Error (URE):</span> High-capacity drives (18TB+) risk URE read errors during multi-day RAID 5 rebuilds.</li>
+            <li><span class="bullet-highlight">Rebuild Stress Protection:</span> Using RAID 6 prevents array collapse if a second drive develops bad sectors during rebuild.</li>
+          </ul>
+          <div class="callout-box"><span>Drive Selection: NEVER use desktop drives in NVR storage arrays; use enterprise surveillance drives (WD Purple Pro / SkyHawk AI).</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="200" rx="10" fill="#0f172a" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">URE Read Error Risk During Rebuild</text>
+            
+            <path d="M 60 220 Q 200 210 340 120" stroke="#ef4444" stroke-width="3" fill="none"/>
+            <text x="250" y="140" fill="#ef4444" font-size="11" font-weight="bold">RAID 5 High URE Risk</text>
+            
+            <line x1="60" y1="220" x2="340" y2="220" stroke="#10b981" stroke-width="3"/>
+            <text x="200" y="245" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">RAID 6 Protected Dual-Parity Line</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (19-9) -->
+    <div class="slide">
+      <div class="pill-badge">(19-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Hot-Swappable Enclosure Bays &amp; Status Indicators</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Hot-Swappable Drive Trays:</span> Replace failed hard drives while NVR server remains running without powering down.</li>
+            <li><span class="bullet-highlight">LED Status Codes:</span> Solid Green = Normal Array; Flashing Amber = Active Rebuilding; Solid Red = Drive Failure.</li>
+            <li><span class="bullet-highlight">Enclosure Management:</span> Backplane SAS expanders report fan speeds, temperature sensors, and drive slot status via IPMI.</li>
+          </ul>
+          <div class="callout-box"><span>Maintenance Safety: Always check drive tray slot numbers before pulling a failed drive to prevent pulling the wrong healthy drive.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="320" height="220" rx="10" fill="#1e293b" stroke="#60a5fa" stroke-width="2"/>
+            <text x="200" y="80" text-anchor="middle" fill="#60a5fa" font-size="15" font-weight="bold">Server Front Chassis Drive LED Status</text>
+            
+            <rect x="60" y="100" width="60" height="140" rx="4" fill="#0f172a" stroke="#10b981"/>
+            <circle cx="90" cy="120" r="6" fill="#10b981"/>
+            <text x="90" y="170" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">Normal</text>
+            
+            <rect x="135" y="100" width="60" height="140" rx="4" fill="#0f172a" stroke="#ef4444"/>
+            <circle cx="165" cy="120" r="6" fill="#ef4444"/>
+            <text x="165" y="170" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="bold">FAILED</text>
+            
+            <rect x="210" y="100" width="60" height="140" rx="4" fill="#0f172a" stroke="#f59e0b"/>
+            <circle cx="240" cy="120" r="6" fill="#f59e0b"/>
+            <text x="240" y="170" text-anchor="middle" fill="#f59e0b" font-size="9" font-weight="bold">Rebuilding</text>
+            
+            <rect x="285" y="100" width="60" height="140" rx="4" fill="#0f172a" stroke="#38bdf8"/>
+            <circle cx="315" cy="120" r="6" fill="#38bdf8"/>
+            <text x="315" y="170" text-anchor="middle" fill="#38bdf8" font-size="9" font-weight="bold">Hot-Spare</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (19-10) -->
+    <div class="slide">
+      <div class="pill-badge">(19-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical RAID 5 Configuration &amp; Rebuild Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Calculate usable RAID 5 and RAID 6 storage capacity for a 16-bay server populated with 12TB drives.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Configure 4-drive RAID 5 array with 1 Global Hot-Spare drive in server RAID Web Console.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Simulate HDD failure by pulling Drive 2 tray and observe automatic Hot-Spare activation and rebuild progress.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master RAID capacity formulas, RAID 5 initialization, and live drive failure auto-rebuild simulation.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">RAID Storage Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">RAID 5 &amp; 6 Capacity Math</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Hardware RAID 5 &amp; Hot-Spare Setup</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Live Drive Pull &amp; Auto-Rebuild Test</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

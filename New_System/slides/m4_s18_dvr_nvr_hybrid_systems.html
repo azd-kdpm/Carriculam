@@ -1,0 +1,633 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 18: DVR, NVR & Hybrid Systems</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (18-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(18-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">DVR, NVR &amp; Hybrid Systems</h1>
+        <p class="cover-subtitle">Standalone NVR Architecture | Direct PoE vs External Switch Topology | Incoming Bandwidth | Hybrid Recorders</p>
+        <p class="cover-series">Stage 4: IP Camera Systems &amp; VMS</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (18-2) -->
+    <div class="slide">
+      <div class="pill-badge">(18-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Standalone NVR Hardware &amp; Embedded OS</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Embedded Linux OS:</span> Compact flash OS kernel ensuring 24/7 immunity from Windows desktop crashes and virus infections.</li>
+            <li><span class="bullet-highlight">Hardware Acceleration:</span> Dedicated SoC decode chip handling multi-channel 4K video decompression simultaneously.</li>
+            <li><span class="bullet-highlight">SATA Drive Controller:</span> Multi-bay internal SATA interfaces supporting up to 8x enterprise surveillance hard drives.</li>
+          </ul>
+          <div class="callout-box"><span>Hardware Fact: Embedded Linux NVRs boot up in seconds and run continuously for years without OS patching.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="80" width="150" height="70" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="105" y="115" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Embedded Linux OS</text>
+            <text x="105" y="135" text-anchor="middle" fill="#94a3b8" font-size="11">Flash Kernel (Crash-Proof)</text>
+            
+            <rect x="220" y="80" width="150" height="70" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="295" y="115" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">SoC Decode Chip</text>
+            <text x="295" y="135" text-anchor="middle" fill="#94a3b8" font-size="11">4K Decompression Engine</text>
+            
+            <path d="M 180 115 L 220 115" stroke="#10b981" stroke-width="3"/>
+            <path d="M 295 150 L 295 190" stroke="#f59e0b" stroke-width="3"/>
+            
+            <rect x="120" y="190" width="250" height="80" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+            <text x="245" y="225" text-anchor="middle" fill="#f59e0b" font-size="14" font-weight="bold">SATA Storage Array (8-Bay)</text>
+            <text x="245" y="250" text-anchor="middle" fill="#fff" font-size="12">+ HDMI 4K Video Wall Output</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (18-3) -->
+    <div class="slide">
+      <div class="pill-badge">(18-3)</div>
+      <div class="slide-header"><h1 class="slide-title">NVR Topologies (Direct PoE Ports vs External Switch)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Built-in PoE NVR Ports:</span> Plug-and-play internal switch assigning isolated private IPs (e.g. 172.16.254.x) directly to camera channels.</li>
+            <li><span class="bullet-highlight">External Switch Topology:</span> NVR connects to external managed core switch via dual Gigabit LAN NIC ports; required for large 32+ camera sites.</li>
+            <li><span class="bullet-highlight">NIC Load Balancing:</span> Dual NIC ports split camera ingress traffic (LAN1) from client viewing traffic (LAN2).</li>
+          </ul>
+          <div class="callout-box"><span>Topology Rule: Use built-in PoE NVRs for 4-16 camera jobs; use external switch topology for 32+ camera enterprise sites.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="200" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Direct PoE NVR</text>
+            <text x="105" y="140" text-anchor="middle" fill="#fff" font-size="11">Plug-and-Play Ports</text>
+            <text x="105" y="165" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Isolated 172.16.x.x</text>
+            <text x="105" y="220" text-anchor="middle" fill="#94a3b8" font-size="10">(4 - 16 Cameras)</text>
+            
+            <rect x="220" y="60" width="150" height="200" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">External Switch</text>
+            <text x="295" y="140" text-anchor="middle" fill="#fff" font-size="11">Dual Gigabit NICs</text>
+            <text x="295" y="165" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">LAN1 + LAN2 Split</text>
+            <text x="295" y="220" text-anchor="middle" fill="#94a3b8" font-size="10">(32+ Enterprise)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (18-4) -->
+    <div class="slide">
+      <div class="pill-badge">(18-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Incoming Bandwidth Capacity (Bitrate Ceiling Math)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Max Incoming Bitrate:</span> Hard ceiling on total combined bandwidth an NVR processor can write to disk (e.g. 160Mbps or 320Mbps).</li>
+            <li><span class="bullet-highlight">Over-Subscription Danger:</span> Connecting sixteen 4K cameras at 12Mbps each (192Mbps total) to a 160Mbps NVR causes dropped video frames.</li>
+            <li><span class="bullet-highlight">Outgoing Bitrate Budget:</span> Separate bandwidth pool reserved for local video walls and mobile app viewing clients.</li>
+          </ul>
+          <div class="callout-box"><span>Sizing Math: Sum of all Camera Main Streams + Sub-Streams MUST be less than NVR Max Incoming Bitrate.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="200" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#f59e0b" font-size="16" font-weight="bold">NVR Bandwidth Sizing Math</text>
+            
+            <rect x="60" y="120" width="280" height="50" rx="6" fill="#1e293b" stroke="#10b981"/>
+            <text x="200" y="150" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">16 Cameras Ã— 8Mbps = 128Mbps</text>
+            
+            <text x="200" y="200" text-anchor="middle" fill="#fff" font-size="14">NVR Max Limit: <tspan fill="#10b981" font-weight="bold">160Mbps</tspan></text>
+            <text x="200" y="230" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">&#10003;“ SAFE: 128Mbps &lt; 160Mbps Ceiling</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (18-5) -->
+    <div class="slide">
+      <div class="pill-badge">(18-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Hybrid Recorders (Analog BNC + IP Camera Channels)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Penta-brid Coax Capture:</span> Physical BNC ports accept analog CVBS, HD-TVI, HD-CVI, and AHD cameras automatically.</li>
+            <li><span class="bullet-highlight">IP Channel Expansion:</span> Software toggle converts analog BNC channels into IP camera network channels over Cat6.</li>
+            <li><span class="bullet-highlight">Migration Bridge:</span> Allows customers to preserve legacy coax cameras while adding new 4K IP cameras to the same box.</li>
+          </ul>
+          <div class="callout-box"><span>Migration Advantage: Hybrid recorders allow phased upgrade paths from legacy analog coax to IP network video.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="70" width="340" height="180" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="100" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Hybrid Back Panel I/O</text>
+            
+            <rect x="50" y="125" width="130" height="90" rx="6" fill="#0f172a" stroke="#f59e0b"/>
+            <text x="115" y="160" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold">8x BNC Ports</text>
+            <text x="115" y="185" text-anchor="middle" fill="#94a3b8" font-size="10">(Legacy Coax)</text>
+            
+            <rect x="220" y="125" width="130" height="90" rx="6" fill="#0f172a" stroke="#10b981"/>
+            <text x="285" y="160" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Gigabit RJ45</text>
+            <text x="285" y="185" text-anchor="middle" fill="#94a3b8" font-size="10">(New IP Cameras)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (18-6) -->
+    <div class="slide">
+      <div class="pill-badge">(18-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Enterprise PC Server VMS Systems</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Software VMS Architecture:</span> Enterprise VMS platforms (Milestone XProtect, Genetec Security Center) running on Windows Server hardware.</li>
+            <li><span class="bullet-highlight">Massive Channel Scale:</span> Manages thousands of cameras across multi-building campuses from a single management server.</li>
+            <li><span class="bullet-highlight">Active Directory Integration:</span> Integrates security guard login permissions with Windows Active Directory domain policies.</li>
+          </ul>
+          <div class="callout-box"><span>Enterprise Choice: Deploy PC Server VMS for projects requiring more than 64 cameras or multi-site management.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="130" y="50" width="140" height="60" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="85" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">VMS Management Server</text>
+            
+            <line x1="200" y1="110" x2="100" y2="170" stroke="#10b981" stroke-width="3"/>
+            <line x1="200" y1="110" x2="300" y2="170" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="30" y="170" width="140" height="60" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="100" y="205" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Recording Server 1</text>
+            
+            <rect x="230" y="170" width="140" height="60" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="300" y="205" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Recording Server 2</text>
+            
+            <rect x="100" y="250" width="200" height="45" rx="6" fill="#0f172a" stroke="#f59e0b"/>
+            <text x="200" y="278" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold">iSCSI SAN Storage Array</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (18-7) -->
+    <div class="slide">
+      <div class="pill-badge">(18-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Multi-Monitor Video Wall Matrix Outputs</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Independent HDMI Outputs:</span> HDMI 1 outputs 4K Main Monitor screen; HDMI 2 outputs secondary Spot Monitor sequence.</li>
+            <li><span class="bullet-highlight">Hardware Matrix Decoder:</span> Decodes multi-channel video streams to dedicated 4x4 or 8x8 monitor display walls.</li>
+            <li><span class="bullet-highlight">Alarm Pop-Up Matrix:</span> Automatically switches full-screen video onto central wall monitor when perimeter motion is breached.</li>
+          </ul>
+          <div class="callout-box"><span>Control Room Tip: Use spot monitor HDMI outputs to automatically pop up alarm camera views during security events.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="150" height="110" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="115" y="120" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">HDMI 1: 4K Grid</text>
+            
+            <rect x="210" y="60" width="150" height="110" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="285" y="115" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">HDMI 2: Spot Pop-Up</text>
+            <text x="285" y="138" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">(Alarm Trigger)</text>
+            
+            <rect x="100" y="200" width="200" height="60" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="235" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">Hardware Decoder Matrix</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (18-8) -->
+    <div class="slide">
+      <div class="pill-badge">(18-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Synchronous Multi-Channel Playback &amp; Watermark</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Synchronized Playback:</span> Plays back 16 camera channels simultaneously synced to the exact same millisecond timestamp.</li>
+            <li><span class="bullet-highlight">Digital Watermarking:</span> Embeds cryptographic digital signature hash into exported MP4/AVI files for court evidence admissibility.</li>
+            <li><span class="bullet-highlight">Smart Search Filter:</span> Fast-forwards through static footage and pauses automatically when motion is detected in target box.</li>
+          </ul>
+          <div class="callout-box"><span>Legal Evidence Rule: ALWAYS export video with digital watermarking enabled to prove evidence has not been tampered with.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="150" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <rect x="50" y="70" width="140" height="60" fill="#0f172a" stroke="#64748b"/>
+            <text x="120" y="105" text-anchor="middle" fill="#fff" font-size="11">Cam 1</text>
+            <rect x="210" y="70" width="140" height="60" fill="#0f172a" stroke="#64748b"/>
+            <text x="280" y="105" text-anchor="middle" fill="#fff" font-size="11">Cam 2</text>
+            
+            <line x1="60" y1="180" x2="340" y2="180" stroke="#10b981" stroke-width="4"/>
+            <circle cx="200" cy="180" r="8" fill="#38bdf8"/>
+            
+            <rect x="100" y="230" width="200" height="40" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="255" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">ðŸ”’ Cryptographic Watermark Verified</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (18-9) -->
+    <div class="slide">
+      <div class="pill-badge">(18-9)</div>
+      <div class="slide-header"><h1 class="slide-title">NVR Failover Redundancy (N+1 Hot-Spare Cluster)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Hot-Spare Monitoring:</span> Standby NVR continuously monitors health heartbeats of primary active NVRs over network.</li>
+            <li><span class="bullet-highlight">Automatic Failover Takeover:</span> If Primary NVR 1 hardware fails, Hot-Spare NVR automatically takes over recording within 30 seconds.</li>
+            <li><span class="bullet-highlight">Auto Failback Sync:</span> When Primary NVR 1 is repaired, Hot-Spare returns camera feeds and syncs back recorded video gap.</li>
+          </ul>
+          <div class="callout-box"><span>High-Availability Standard: Deploy N+1 Hot-Spare NVR clusters in airport, bank, and hospital projects.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="80" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="105" y="95" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">Primary NVR 1 (FAILED)</text>
+            
+            <rect x="220" y="60" width="150" height="80" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="295" y="95" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Primary NVR 2 (Active)</text>
+            
+            <path d="M 105 140 L 200 200" stroke="#ef4444" stroke-width="3" stroke-dasharray="4,4"/>
+            
+            <rect x="110" y="200" width="180" height="80" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="2.5"/>
+            <text x="200" y="235" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Hot-Spare NVR (TAKEOVER)</text>
+            <text x="200" y="258" text-anchor="middle" fill="#38bdf8" font-size="11">Auto-Takes Over Cameras</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (18-10) -->
+    <div class="slide">
+      <div class="pill-badge">(18-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical NVR Bandwidth Sizing &amp; Camera Addition Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Calculate total incoming bitrate for 12 cameras at 6Mbps each and verify NVR incoming bandwidth ceiling.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Add IP camera to NVR via direct PoE port (plug-and-play) vs external switch manual IP addition.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Perform 4-channel synchronous playback search and export watermarked MP4 evidence clip to USB drive.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master NVR incoming bandwidth math, manual IP camera addition, and watermarked video export.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">NVR Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Incoming Bitrate Sizing Math</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Direct PoE vs Switch IP Addition</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Synchronous Playback &amp; Watermark Export</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>
