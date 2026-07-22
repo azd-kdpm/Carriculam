@@ -1,0 +1,605 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 34: Nurse Call Systems (Hospital & Elderly Care)</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (34-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(34-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Nurse Call Systems (Hospital &amp; Elderly Care)</h1>
+        <p class="cover-subtitle">Patient Bedside Stations | Bathroom Pull Cords | Corridor Dome Lights | Duty Station Consoles</p>
+        <p class="cover-series">Stage 6: Building Communication Systems</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (34-2) -->
+    <div class="slide">
+      <div class="pill-badge">(34-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Life Safety Compliance: UL 1069 &amp; DIN VDE 0834</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">UL 1069 Standard:</span> Strict safety standard governing hospital nurse call equipment reliability and call response times.</li>
+            <li><span class="bullet-highlight">Supervised Wiring Circuits:</span> System continuously monitors field wiring for open-circuit breaks or short circuits 24/7.</li>
+            <li><span class="bullet-highlight">Fail-Safe Alarm:</span> Cable disconnection or station unplug instantly triggers high-priority supervisor trouble alarm.</li>
+          </ul>
+          <div class="callout-box"><span>Compliance Mandatory: Hospital nurse call systems MUST be UL 1069 certified with supervised wiring.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">UL 1069 Supervised Loop Circuit</text>
+            
+            <path d="M 70 140 L 330 140" stroke="#38bdf8" stroke-width="3"/>
+            <rect x="180" y="125" width="40" height="30" rx="4" fill="#1e293b" stroke="#f59e0b"/><text x="200" y="145" text-anchor="middle" fill="#f59e0b" font-size="10">EOL 10K</text>
+            
+            <text x="200" y="195" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">[PASS] Continuous Line Monitoring 24/7</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (34-3) -->
+    <div class="slide">
+      <div class="pill-badge">(34-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Patient Bedside Call Stations &amp; Pillow Speakers</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Multi-Function Pillow Speaker:</span> Ergonomic hand-held pendant with call button, TV volume control, and light switch.</li>
+            <li><span class="bullet-highlight">Magnetic Breakaway Connector:</span> Prevents station damage if patient bed is moved without unplugging cable.</li>
+            <li><span class="bullet-highlight">Sanitary Antibacterial Casing:</span> Sealed smooth plastic housing infused with antimicrobial additives for easy chemical disinfection.</li>
+          </ul>
+          <div class="callout-box"><span>Hospital Feature: Magnetic breakaway cables prevent wall jack damage during emergency bed transfers.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="50" y="50" width="120" height="200" rx="20" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <circle cx="110" cy="95" r="22" fill="#ef4444" stroke="#fff" stroke-width="2"/>
+            <text x="110" y="100" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">CALL</text>
+            
+            <rect x="75" y="135" width="70" height="20" rx="4" fill="#0f172a"/><text x="110" y="149" text-anchor="middle" fill="#38bdf8" font-size="9">TV Vol</text>
+            <rect x="75" y="165" width="70" height="20" rx="4" fill="#0f172a"/><text x="110" y="179" text-anchor="middle" fill="#f59e0b" font-size="9">Light</text>
+
+            <path d="M 170 150 L 250 150" stroke="#38bdf8" stroke-width="4"/>
+            <rect x="250" y="135" width="40" height="30" rx="4" fill="#10b981"/>
+            <text x="270" y="154" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">MAG</text>
+            <text x="320" y="154" fill="#10b981" font-size="10">Breakaway</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (34-4) -->
+    <div class="slide">
+      <div class="pill-badge">(34-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Bathroom Waterproof Emergency Pull Cord Stations</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">IP65 Waterproof Gasket:</span> Sealed membrane button and rubber gasket withstand direct shower spray.</li>
+            <li><span class="bullet-highlight">Floor-Length Pull Cord:</span> Luminous pull cord hangs within 10cm of floor so fallen patients can reach it.</li>
+            <li><span class="bullet-highlight">High-Priority Alarm:</span> Bathroom emergency calls register as top-priority Code Red alarms at nurse stations.</li>
+          </ul>
+          <div class="callout-box"><span>Installation Height: Bathroom pull cords MUST reach within 10cm of the floor for patient fall safety.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="140" y="40" width="120" height="80" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="70" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">IP65 Waterproof</text>
+            <circle cx="200" cy="95" r="12" fill="#ef4444"/>
+            
+            <line x1="200" y1="120" x2="200" y2="250" stroke="#f59e0b" stroke-width="3" stroke-dasharray="6,3"/>
+            <circle cx="200" cy="255" r="14" fill="#f59e0b"/>
+            <text x="200" y="260" text-anchor="middle" fill="#000" font-size="10" font-weight="bold">PULL</text>
+            
+            <line x1="100" y1="260" x2="300" y2="260" stroke="#64748b" stroke-width="2"/>
+            <text x="310" y="264" fill="#94a3b8" font-size="10">&lt; 10cm Floor</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (34-5) -->
+    <div class="slide">
+      <div class="pill-badge">(34-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Multi-Color Corridor Dome Lights &amp; Status Codes</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">4-Segment LED Light:</span> Mounted outside patient room doors for instant visual nurse guidance down hallways.</li>
+            <li><span class="bullet-highlight">Red (Emergency / Code Blue):</span> Flashing Red indicates critical emergency or cardiac arrest call.</li>
+            <li><span class="bullet-highlight">Orange (Bathroom) / Green (Nurse Present):</span> Orange indicates bathroom pull cord; Solid Green shows nurse is in room.</li>
+          </ul>
+          <div class="callout-box"><span>Visual Guidance: Multi-color corridor lights allow nurses to identify calling rooms instantly down long hallways.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="80" y="60" width="240" height="190" rx="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="90" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="bold">4-Color Dome Light</text>
+            
+            <rect x="100" y="110" width="90" height="55" rx="6" fill="#ef4444"/><text x="145" y="142" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">RED (Emergency)</text>
+            <rect x="210" y="110" width="90" height="55" rx="6" fill="#f97316"/><text x="255" y="142" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">ORANGE (Bath)</text>
+            
+            <rect x="100" y="175" width="90" height="55" rx="6" fill="#22c55e"/><text x="145" y="207" text-anchor="middle" fill="#fff" font-size="10" font-weight="bold">GREEN (Nurse)</text>
+            <rect x="210" y="175" width="90" height="55" rx="6" fill="#eab308"/><text x="255" y="207" text-anchor="middle" fill="#000" font-size="10" font-weight="bold">YELLOW (Bed)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (34-6) -->
+    <div class="slide">
+      <div class="pill-badge">(34-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Central Nurse Station Duty Consoles &amp; DECT Wireless</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Master Touch Screen Console:</span> Displays ward floor plan with active patient calls color-coded by urgency.</li>
+            <li><span class="bullet-highlight">DECT / Wi-Fi Mobile Paging:</span> Forwards patient call alert directly to assigned duty nurse's wireless DECT handset.</li>
+            <li><span class="bullet-highlight">Response Time Logging:</span> Records exact seconds between patient call press and nurse room entry for hospital audits.</li>
+          </ul>
+          <div class="callout-box"><span>Efficiency Saver: Mobile DECT paging forwards calls directly to assigned duty nurses on the move.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="200" height="190" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="140" y="80" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Ward Duty Console</text>
+            <rect x="60" y="100" width="160" height="110" rx="4" fill="#0f172a"/>
+            <text x="140" y="155" text-anchor="middle" fill="#10b981" font-size="11">Floor Map View</text>
+            
+            <path d="M 240 145 L 290 145" stroke="#10b981" stroke-width="2" stroke-dasharray="4,2"/>
+            
+            <rect x="290" y="90" width="70" height="130" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="325" y="120" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">DECT</text>
+            <text x="325" y="160" text-anchor="middle" fill="#fff" font-size="9">Rm 304</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (34-7) -->
+    <div class="slide">
+      <div class="pill-badge">(34-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Code Blue Emergency Panic Buttons &amp; Staff Duress</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Code Blue Push Button:</span> Dedicated blue panic button at bedside triggers immediate resuscitation team broadcast.</li>
+            <li><span class="bullet-highlight">Staff Duress Badges:</span> Wearable RTLS badges allow nurses to call for help during patient aggression.</li>
+            <li><span class="bullet-highlight">Override Priority:</span> Code Blue alarms automatically override all standard calls and play high-pitch siren tones.</li>
+          </ul>
+          <div class="callout-box"><span>Life Safety: Code Blue alarms override all lower-priority calls across the entire hospital wing.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#2563eb" stroke-width="3"/>
+            <text x="200" y="95" text-anchor="middle" fill="#60a5fa" font-size="16" font-weight="bold">CODE BLUE EMERGENCY</text>
+            
+            <circle cx="200" cy="155" r="30" fill="#2563eb" stroke="#fff" stroke-width="3"/>
+            <text x="200" y="162" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">PRESS</text>
+            
+            <text x="200" y="225" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">Instant Cardiac Team Broadcast</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (34-8) -->
+    <div class="slide">
+      <div class="pill-badge">(34-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Integration with HIS (Hospital Information Systems)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">HL7 / FHIR Protocol Sync:</span> Connects nurse call software to hospital electronic health record (EHR) databases.</li>
+            <li><span class="bullet-highlight">Patient Name Display:</span> Displays patient name, attending doctor, and dietary alerts on duty station screens.</li>
+            <li><span class="bullet-highlight">Automated Audit Reports:</span> Generates daily response time analytics to improve hospital accreditation scores.</li>
+          </ul>
+          <div class="callout-box"><span>Software Integration: HL7 protocol sync displays patient medical data on nurse duty consoles.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">HIS HL7 Data Sync Architecture</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Patient Medical EHR Database Sync</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">&#10003; Automated Response Time Analytics</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (34-9) -->
+    <div class="slide">
+      <div class="pill-badge">(34-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Supervised Cable Fault Isolation &amp; Maintenance</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">EOL (End-Of-Line) Resistors:</span> System measures precise loop resistance; broken wires alter resistance and trigger trouble alert.</li>
+            <li><span class="bullet-highlight">Bed Disconnect Alarm:</span> Unplugging pillow speaker without pressing staff cancel button fires instant supervisory chime.</li>
+            <li><span class="bullet-highlight">Battery Backup Testing:</span> Test 24V DC central power supply battery backup under full simulated load quarterly.</li>
+          </ul>
+          <div class="callout-box"><span>Maintenance Rule: Test End-Of-Line resistor loop supervision monthly to guarantee line integrity.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#f59e0b" font-size="15" font-weight="bold">EOL Resistor Fault Detection</text>
+            <line x1="60" y1="140" x2="340" y2="140" stroke="#ef4444" stroke-width="3" stroke-dasharray="8,4"/>
+            <text x="200" y="175" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">Cable Cut &rarr; Instantly Triggers Trouble Alert</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (34-10) -->
+    <div class="slide">
+      <div class="pill-badge">(34-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Nurse Call Wiring &amp; Code Blue Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Wire Patient Bedside Station, Bathroom Pull Cord, and 4-Color Corridor Light to Bus Controller.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Trigger Bathroom Pull Cord emergency call and verify Orange flashing light and high-priority console alert.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Simulate Code Blue cardiac arrest button press and verify system-wide emergency audio broadcast.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master supervised nurse call wiring, corridor light programming, and Code Blue panic testing.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Nurse Call Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Bedside &amp; Pull Cord Bus Wiring</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Bathroom Emergency Call Test</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Code Blue Siren Trigger</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

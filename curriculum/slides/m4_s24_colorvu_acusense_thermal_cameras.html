@@ -1,0 +1,619 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 25: ColorVu, AcuSense & Thermal Cameras</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (25-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(25-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">ColorVu, AcuSense &amp; Thermal Cameras</h1>
+        <p class="cover-subtitle">Full-Color Night Vision | AcuSense False Alarm Filtering | Thermal Microbolometer Radiometry</p>
+        <p class="cover-series">Stage 4: IP Camera Systems &amp; VMS</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (25-2) -->
+    <div class="slide">
+      <div class="pill-badge">(25-2)</div>
+      <div class="slide-header"><h1 class="slide-title">ColorVu Technology (Full-Color 24/7 Night Vision)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">F1.0 Super-Aperture Lens:</span> Gathers 4x more ambient light than standard F2.0 security lenses.</li>
+            <li><span class="bullet-highlight">Advanced BSI CMOS Sensor:</span> Back-Illuminated Structure sensor drastically increases light sensitivity in low-light environments.</li>
+            <li><span class="bullet-highlight">3000K Soft Warm LED Fill:</span> Auxiliary warm light illuminates pitch-black scenes without blinding eyes or washing out colors.</li>
+          </ul>
+          <div class="callout-box"><span>Forensic Value: ColorVu reveals vital clothing and vehicle colors at night where B/W IR cameras fail.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <circle cx="90" cy="150" r="30" fill="none" stroke="#38bdf8" stroke-width="3"/>
+            <text x="90" y="155" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">F1.0 Lens</text>
+            
+            <line x1="120" y1="150" x2="160" y2="150" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="160" y="115" width="70" height="70" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="195" y="155" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">BSI Sensor</text>
+
+            <line x1="230" y1="150" x2="270" y2="150" stroke="#f59e0b" stroke-width="3"/>
+            
+            <rect x="270" y="115" width="90" height="70" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+            <text x="315" y="145" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">3000K Warm LED</text>
+            <text x="315" y="165" text-anchor="middle" fill="#fff" font-size="10">24/7 Full Color</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (25-3) -->
+    <div class="slide">
+      <div class="pill-badge">(25-3)</div>
+      <div class="slide-header"><h1 class="slide-title">AcuSense Deep Learning Target Filtering</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Target Classification Engine:</span> Distinguishes humans and vehicles from background environmental noise in real time.</li>
+            <li><span class="bullet-highlight">98%+ False Alarm Reduction:</span> Prevents false alarms caused by rain, falling leaves, tree shadows, or small animals.</li>
+            <li><span class="bullet-highlight">Quick Target Search:</span> Allows VMS operators to filter recorded footage by "Human" or "Vehicle" categories instantly.</li>
+          </ul>
+          <div class="callout-box"><span>Efficiency Saver: AcuSense reduces security monitoring room alarm overload by 98%.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="340" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">AcuSense Target Filtering Engine</text>
+            
+            <rect x="60" y="125" width="130" height="90" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="125" y="165" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">Human / Vehicle</text>
+            <text x="125" y="190" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">&#10003;“ ALERT TRIGGER</text>
+
+            <rect x="210" y="125" width="130" height="90" rx="6" fill="#1e293b" stroke="#ef4444"/>
+            <text x="275" y="165" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">Rain / Leaves / Dog</text>
+            <text x="275" y="190" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">&#10003;• DROPPED</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (25-4) -->
+    <div class="slide">
+      <div class="pill-badge">(25-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Thermal Imaging Principles &amp; Microbolometer Sensors</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Uncooled VOx Microbolometer:</span> Vanadium Oxide sensor measures heat radiation emitted by objects instead of reflected light.</li>
+            <li><span class="bullet-highlight">Germanium Lens Optics:</span> Uses specialized Germanium glass transparent to long-wave thermal radiation (standard glass blocks thermal IR).</li>
+            <li><span class="bullet-highlight">Light-Independent Detection:</span> Operates in 100% total darkness, thick smoke, heavy fog, and blinding glare.</li>
+          </ul>
+          <div class="callout-box"><span>Physics Principle: Thermal cameras see heat energy emitted by objects, NOT light reflected off them.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <circle cx="80" cy="150" r="30" fill="none" stroke="#f59e0b" stroke-width="3"/>
+            <text x="80" y="155" text-anchor="middle" fill="#f59e0b" font-size="10" font-weight="bold">Germanium</text>
+            
+            <line x1="110" y1="150" x2="170" y2="150" stroke="#f59e0b" stroke-width="3"/>
+            
+            <rect x="170" y="105" width="180" height="90" rx="8" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+            <text x="260" y="145" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="bold">VOx Microbolometer</text>
+            <text x="260" y="170" text-anchor="middle" fill="#fff" font-size="11">LWIR Heat Radiation Array</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (25-5) -->
+    <div class="slide">
+      <div class="pill-badge">(25-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Electromagnetic Spectrum: Optical vs Thermal</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Visible Light Spectrum (0.4Âµm - 0.7Âµm):</span> Standard cameras depend on visible light rays reflected into the lens.</li>
+            <li><span class="bullet-highlight">Near-Infrared / IR (0.75Âµm - 1.0Âµm):</span> Night-vision IR illuminators project near-infrared light for B/W video.</li>
+            <li><span class="bullet-highlight">Long-Wave Thermal IR (8Âµm - 14Âµm):</span> Thermal sensors detect long-wave heat energy emitted naturally by humans, engines, and fires.</li>
+          </ul>
+          <div class="callout-box"><span>Spectrum Fact: Long-Wave Thermal IR (8-14Âµm) penetrates dust, smoke, and camouflage effortlessly.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="50" width="340" height="55" rx="6" fill="#1e293b" stroke="#38bdf8"/>
+            <text x="50" y="82" fill="#38bdf8" font-size="12" font-weight="bold">Visible Light (0.4Âµm - 0.7Âµm)</text>
+            
+            <rect x="30" y="130" width="340" height="55" rx="6" fill="#1e293b" stroke="#60a5fa"/>
+            <text x="50" y="162" fill="#60a5fa" font-size="12" font-weight="bold">Near-IR (0.75Âµm - 1.0Âµm)</text>
+            
+            <rect x="30" y="210" width="340" height="55" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="2.5"/>
+            <text x="50" y="242" fill="#f59e0b" font-size="13" font-weight="bold">LWIR Thermal IR (8Âµm - 14Âµm Heat)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (25-6) -->
+    <div class="slide">
+      <div class="pill-badge">(25-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Long-Range Perimeter Detection (Zero Light &amp; Fog)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Multi-Kilometer Perimeter Range:</span> Thermal lenses detect human heat signatures over 1,000+ meters away in total darkness.</li>
+            <li><span class="bullet-highlight">Fence Line Monitoring:</span> Unaffected by outdoor headlights, shadows, sun glare, or reflective water surfaces.</li>
+            <li><span class="bullet-highlight">Critical Infrastructure:</span> Mandatory perimeter security technology for solar farms, airports, and oil pipelines.</li>
+          </ul>
+          <div class="callout-box"><span>Perimeter Choice: Thermal cameras are the ultimate choice for long-distance perimeter fence protection.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#ef4444"/>
+            <text x="105" y="90" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">Optical Camera</text>
+            <text x="105" y="150" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">Pitch Black Screen</text>
+            <text x="105" y="175" text-anchor="middle" fill="#94a3b8" font-size="10">(Zero Detection)</text>
+            
+            <rect x="220" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Thermal Camera</text>
+            <text x="295" y="150" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Glowing Heat Target</text>
+            <text x="295" y="175" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">1,000m Away!</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (25-7) -->
+    <div class="slide">
+      <div class="pill-badge">(25-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Thermal Radiometry Temperature Spot Metering</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Temperature Measurement:</span> Radiometric thermal sensors accurately measure surface temperatures within Â±2Â°C accuracy.</li>
+            <li><span class="bullet-highlight">Early Fire Warning:</span> Detects smoldering heat spots in recycling facilities or warehouses BEFORE open flames erupt.</li>
+            <li><span class="bullet-highlight">Threshold Triggers:</span> Triggers relay alarm when temperature exceeds pre-set limits (e.g. 80Â°C threshold alert).</li>
+          </ul>
+          <div class="callout-box"><span>Safety Standard: Radiometric thermal cameras prevent catastrophic fires by detecting invisible heat build-up early.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#ef4444" stroke-width="2.5"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="16" font-weight="bold">Radiometric Temperature Spot Meter</text>
+            
+            <circle cx="200" cy="160" r="30" fill="rgba(239, 68, 68, 0.3)" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="165" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">82.4Â°C</text>
+            
+            <text x="200" y="225" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">ðŸ”¥ HIGH TEMPERATURE ALARM TRIGGER!</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (25-8) -->
+    <div class="slide">
+      <div class="pill-badge">(25-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Bi-Spectrum Fusion Cameras (Optical + Thermal)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Dual Lens Architecture:</span> Houses 4K Optical Lens + Thermal Microbolometer Lens in a single camera body.</li>
+            <li><span class="bullet-highlight">Image Fusion Overlay:</span> Merges thermal heat contours on top of high-res optical video for maximum situational awareness.</li>
+            <li><span class="bullet-highlight">Dual Stream Picture-in-Picture:</span> Allows operators to view side-by-side optical detail and thermal heat distribution simultaneously.</li>
+          </ul>
+          <div class="callout-box"><span>Best of Both: Bi-Spectrum fusion combines optical forensic detail with thermal heat detection.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="150" height="90" rx="6" fill="#1e293b" stroke="#38bdf8"/>
+            <text x="115" y="110" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">4K Optical Lens</text>
+            
+            <rect x="210" y="60" width="150" height="90" rx="6" fill="#1e293b" stroke="#f59e0b"/>
+            <text x="285" y="110" text-anchor="middle" fill="#f59e0b" font-size="12" font-weight="bold">Thermal Lens</text>
+            
+            <path d="M 115 150 L 200 190" stroke="#10b981" stroke-width="3"/>
+            <path d="M 285 150 L 200 190" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="90" y="190" width="220" height="70" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="2.5"/>
+            <text x="200" y="225" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">Bi-Spectrum Fusion Image</text>
+            <text x="200" y="248" text-anchor="middle" fill="#fff" font-size="11">Optical Detail + Heat Overlay</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (25-9) -->
+    <div class="slide">
+      <div class="pill-badge">(25-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Industrial Electrical Busbar Thermography Monitoring</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Substation Maintenance:</span> Monitors electrical transformers, busbars, and circuit breakers 24/7 for overheating joints.</li>
+            <li><span class="bullet-highlight">Predictive Maintenance:</span> Identifies loose terminal lugs or failing insulation before electrical explosions or blackouts occur.</li>
+            <li><span class="bullet-highlight">SCADA Integration:</span> Sends Modbus / MQTT temperature telemetry data directly to industrial SCADA systems.</li>
+          </ul>
+          <div class="callout-box"><span>Industrial Value: Continuous thermography monitoring eliminates unplanned factory power outages.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#f59e0b" font-size="15" font-weight="bold">Electrical Busbar Thermography</text>
+            
+            <rect x="100" y="120" width="200" height="50" rx="6" fill="#0f172a" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="150" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">Terminal Joint: 95Â°C Overheating</text>
+            
+            <text x="200" y="215" text-anchor="middle" fill="#10b981" font-size="12">Telemetry: Modbus / MQTT to SCADA</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (25-10) -->
+    <div class="slide">
+      <div class="pill-badge">(25-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical ColorVu &amp; Thermal Camera Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Test ColorVu camera low-light performance in dark room and adjust 3000K warm fill light intensity.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Configure AcuSense human target classification and verify 98% false alarm rejection.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Set up Radiometric Thermal camera temperature spot meter and test 80Â°C heat alarm trigger with heat gun.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master ColorVu fill light tuning, AcuSense target filtering, and Thermal radiometry alarm setup.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Special Optics Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">ColorVu Full-Color Night Test</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">AcuSense Target Filter Setup</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Thermal Radiometry 80Â°C Alarm</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

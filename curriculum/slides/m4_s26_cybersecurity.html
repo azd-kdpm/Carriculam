@@ -1,0 +1,498 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 27: Cybersecurity</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  /* Ultra-Narrow Glowing Bottom Seek Bar */
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+        <div class="slide active slide-cover">
+      <div class="pill-badge">(27-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Cybersecurity</h1>
+        <p class="cover-subtitle">Password Policies | HTTPS/TLS Encryption | Disable UPnP/P2P | Port Hardening</p>
+        <p class="cover-series">Stage 4: IP Camera Systems & VMS</p>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(27-2)</div>
+      <div class="slide-header"><h1 class="slide-title">System Architecture & Core Principles</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">System Architecture:</span> High performance IP video processing pipeline and network streaming.</li>
+            <li><span class="bullet-highlight">Digital Encoding:</span> Hardware SoC encoder converts raw sensor data into H.265 compressed streams.</li>
+            <li><span class="bullet-highlight">Network Transmission:</span> Gigabit Ethernet output interface delivers low-latency IP stream packets.</li>
+          </ul>
+          <div class="callout-box"><span>Key Concept: High performance IP digital processing ensures maximum image clarity and reliability.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="70" width="320" height="160" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/><text x="200" y="110" text-anchor="middle" fill="#38bdf8" font-size="16" font-weight="bold">Cybersecurity</text><text x="200" y="160" text-anchor="middle" fill="#10b981" font-size="14">IP Video Stream Architecture</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(27-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Key Technical Specifications & Formats</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Primary Specification:</span> Optimized parameter settings for commercial surveillance installations.</li>
+            <li><span class="bullet-highlight">Format Standardization:</span> IEEE and ONVIF compliant protocols for multi-vendor interoperability.</li>
+            <li><span class="bullet-highlight">Bandwidth Efficiency:</span> Smart compression algorithms minimize network storage footprints.</li>
+          </ul>
+          <div class="callout-box"><span>Standard Rule: Always adhere to open standards to guarantee multi-brand system integration.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="50" y="80" width="300" height="140" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="200" y="130" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Standard Specification</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(27-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Configuration & Network Integration</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Network Configuration:</span> Static IP binding and gateway routing for seamless VMS integration.</li>
+            <li><span class="bullet-highlight">Port Binding:</span> Dedicated service port mapping (RTSP 554, HTTP 80, SDK 8000).</li>
+            <li><span class="bullet-highlight">Traffic Prioritization:</span> QoS DSCP packet tagging protects video streams against network congestion.</li>
+          </ul>
+          <div class="callout-box"><span>Configuration Step: Assign static IP addresses and enable QoS video priority on all switches.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="90" width="320" height="120" rx="8" fill="#1e293b" stroke="#f59e0b"/><text x="200" y="135" text-anchor="middle" fill="#f59e0b" font-size="14" font-weight="bold">Network Integration Setup</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(27-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Advanced Performance Optimization</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Performance Tuning:</span> Optimize bitrate settings (VBR/CBR) and keyframe intervals (GOP).</li>
+            <li><span class="bullet-highlight">Hardware Acceleration:</span> Utilize dedicated NPU microprocessors for real-time video analytics.</li>
+            <li><span class="bullet-highlight">Storage Reduction:</span> Smart codecs reduce storage retention costs by up to 75%.</li>
+          </ul>
+          <div class="callout-box"><span>Performance Tip: Enable smart codecs to cut storage costs while preserving critical detail.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="70" width="320" height="160" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="200" y="110" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Performance Optimization</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(27-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Security & Cyber Hardening</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Cyber Hardening:</span> Replace default passwords with strong complex credentials.</li>
+            <li><span class="bullet-highlight">Encrypted Streams:</span> Enable HTTPS/TLS Web encryption and 802.1X port authentication.</li>
+            <li><span class="bullet-highlight">Service Hardening:</span> Disable unused vulnerable network services (UPnP, P2P, Telnet).</li>
+          </ul>
+          <div class="callout-box"><span>Security Standard: Harden all devices by disabling UPnP and enforcing HTTPS TLS encryption.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="60" y="80" width="280" height="140" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/><text x="200" y="120" text-anchor="middle" fill="#ef4444" font-size="16" font-weight="bold">Cyber Hardening Shield</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(27-7)</div>
+      <div class="slide-header"><h1 class="slide-title">VMS Integration & Enterprise Management</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">VMS Software:</span> Seamless integration with enterprise VMS platforms (Milestone, Genetec).</li>
+            <li><span class="bullet-highlight">Centralized Management:</span> Monitor camera health, storage status, and alarm triggers centrally.</li>
+            <li><span class="bullet-highlight">Failover Redundancy:</span> N+1 hot-spare NVR server redundancy for zero recording downtime.</li>
+          </ul>
+          <div class="callout-box"><span>Enterprise Rule: Implement N+1 failover server redundancy for mission-critical sites.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="80" width="320" height="140" rx="8" fill="#1e293b" stroke="#38bdf8"/><text x="200" y="125" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">VMS Enterprise Cluster</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(27-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Maintenance & Diagnostic Logs</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Diagnostic Logs:</span> Review system event logs for network drops, storage errors, and reboots.</li>
+            <li><span class="bullet-highlight">Firmware Maintenance:</span> Maintain regular scheduled firmware updates for security patches.</li>
+            <li><span class="bullet-highlight">Backup Configuration:</span> Export device configuration files to USB before system changes.</li>
+          </ul>
+          <div class="callout-box"><span>Maintenance Rule: Backup configuration files before applying firmware updates.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="60" width="320" height="180" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">System Diagnostic Logs</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(27-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Troubleshooting & Signal Testing</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Signal Diagnostics:</span> Use network test monitors to verify RTSP stream stability and latency.</li>
+            <li><span class="bullet-highlight">Packet Loss Analysis:</span> Identify bottleneck switches causing video frame stutter.</li>
+            <li><span class="bullet-highlight">PoE Watchdog:</span> Automatic PD Alive ping checks restart frozen cameras remotely.</li>
+          </ul>
+          <div class="callout-box"><span>Field Remedy: Use PoE Watchdog to automatically reboot frozen cameras without site visits.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="70" width="320" height="160" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/><text x="200" y="110" text-anchor="middle" fill="#f59e0b" font-size="15" font-weight="bold">Signal Troubleshooting</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(27-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Hands-On Lab Exercise</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Complete initial device setup and assign static IP address scheme.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Configure stream encoding parameters, smart codecs, and motion analytics.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Perform cyber hardening audit and verify HTTPS secure web access.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Successfully complete IP setup, stream optimization, and security audit.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="50" width="320" height="220" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="200" y="85" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Hands-On Lab Checklist</text><g transform="translate(65, 120)"><circle cx="12" cy="12" r="10" fill="#10b981"/><path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/><text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Configuration & Stream Setup</text></g><g transform="translate(65, 170)"><circle cx="12" cy="12" r="10" fill="#10b981"/><path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/><text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Cyber Hardening & Security Audit</text></g></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

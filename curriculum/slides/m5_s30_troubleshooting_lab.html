@@ -1,0 +1,587 @@
+﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 31: Stage 5 Capstone & Troubleshooting Lab</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (31-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(31-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Stage 5 Capstone &amp; Troubleshooting Lab</h1>
+        <p class="cover-subtitle">Master Fault Diagnosis | Multi-Subnet Packet Tracing | Fusion Splicing &amp; OTDR Test | System Recovery</p>
+        <p class="cover-series">Stage 5: Network &amp; Camera Troubleshooting</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (31-2) -->
+    <div class="slide">
+      <div class="pill-badge">(31-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Enterprise Trouble Ticket Simulation Matrix</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Ticket #101 (Perimeter Video Loss):</span> 4 perimeter cameras show "No Video" on NVR console at night.</li>
+            <li><span class="bullet-highlight">Ticket #102 (Fiber Link Outage):</span> 10GbE fiber trunk link between Switch B and Core Server is DOWN.</li>
+            <li><span class="bullet-highlight">Ticket #103 (ANPR Intermittent Drops):</span> Gate entrance ANPR camera drops RTSP video feed every 15 minutes.</li>
+          </ul>
+          <div class="callout-box"><span>Capstone Objective: Systematically diagnose and resolve 3 complex enterprise troubleshooting tickets.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="16" font-weight="bold">Enterprise Trouble Queue</text>
+            
+            <rect x="60" y="120" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="140" text-anchor="middle" fill="#ef4444" font-size="11">Ticket #101: Night Video Loss [PENDING]</text>
+            <rect x="60" y="155" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="175" text-anchor="middle" fill="#ef4444" font-size="11">Ticket #102: Fiber Backbone DOWN [PENDING]</text>
+            <rect x="60" y="190" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="210" text-anchor="middle" fill="#f59e0b" font-size="11">Ticket #103: ANPR RTSP Drops [PENDING]</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (31-3) -->
+    <div class="slide">
+      <div class="pill-badge">(31-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Ticket #101 Investigation: PoE Voltage Drop &amp; CCA Cable</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Symptom Analysis:</span> Cameras operate normally during daylight but reboot continuously when IR LEDs activate at night.</li>
+            <li><span class="bullet-highlight">PoE Tester Finding:</span> Measured voltage drops from 48V DC down to 37V DC under 800mA IR LED load on 85m CCA cable.</li>
+            <li><span class="bullet-highlight">Resolution Action:</span> Replaced 85m CCA cable with 100% Solid Bare Copper CAT6 cable; voltage remains stable at 46V DC.</li>
+          </ul>
+          <div class="callout-box"><span>Resolution #101: Replacing CCA cable with Solid Bare Copper CAT6 eliminated night-time IR rebooting.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="70" width="140" height="150" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="110" y="105" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">85m CCA Cable</text>
+            <text x="110" y="145" text-anchor="middle" fill="#ef4444" font-size="13" font-weight="bold">37V DC (Reboot)</text>
+            
+            <path d="M 180 145 L 220 145" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="220" y="70" width="140" height="150" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="290" y="105" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Solid Copper CAT6</text>
+            <text x="290" y="145" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">46V DC [RESOLVED]</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (31-4) -->
+    <div class="slide">
+      <div class="pill-badge">(31-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Ticket #102 Investigation: OTDR Fiber Break Distance Pinpointing</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Symptom Analysis:</span> Switch B SFP port link LED is unlit; 10GbE fiber backbone connection is completely severed.</li>
+            <li><span class="bullet-highlight">OTDR Trace Result:</span> OTDR trace indicates sharp non-reflective signal loss event at exactly 1,240 meters from patch panel.</li>
+            <li><span class="bullet-highlight">Resolution Action:</span> Technicians dispatched to 1,240m conduit vault, removed crushed cable section, and performed fusion splice (&lt; 0.02dB loss).</li>
+          </ul>
+          <div class="callout-box"><span>Resolution #102: OTDR pinpointed fiber break at 1,240 meters; fusion splice restored 10GbE trunk link.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">OTDR Fault Location: 1,240m</text>
+            
+            <path d="M 60 130 L 180 150 L 180 220" fill="none" stroke="#ef4444" stroke-width="3"/>
+            <text x="180" y="125" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">Break at 1,240m</text>
+            
+            <text x="200" y="240" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">[RESOLVED] Fusion Splice (&lt; 0.02dB Loss)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (31-5) -->
+    <div class="slide">
+      <div class="pill-badge">(31-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Ticket #103 Investigation: ARP Conflict &amp; Duplicate IP</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Symptom Analysis:</span> Gate ANPR camera video feed flickers and drops every 15 minutes on NVR console.</li>
+            <li><span class="bullet-highlight">ARP Table Inspection:</span> Running "arp -a" revealed IP 192.168.1.100 flapping between camera MAC and office printer MAC.</li>
+            <li><span class="bullet-highlight">Resolution Action:</span> Re-assigned gate ANPR camera to dedicated static IP 10.20.1.50 on isolated CCTV VLAN 20.</li>
+          </ul>
+          <div class="callout-box"><span>Resolution #103: Re-assigning static IP to isolated VLAN 20 eliminated duplicate IP collision.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Duplicate IP Conflict Resolution</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b" stroke="#ef4444"/><text x="200" y="147" text-anchor="middle" fill="#ef4444" font-size="11">192.168.1.100 (Printer vs Cam Conflict)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">[RESOLVED] Reassigned Cam to 10.20.1.50</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (31-6) -->
+    <div class="slide">
+      <div class="pill-badge">(31-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Wireshark Packet Capture Verification &amp; Protocol Audit</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">SPAN Port Audit:</span> Configured SPAN port mirror on core switch and captured 5-minute video stream payload.</li>
+            <li><span class="bullet-highlight">RTSP Handshake Check:</span> Verified clean RTSP/1.0 200 OK responses and TCP stream transport over Port 554.</li>
+            <li><span class="bullet-highlight">Zero Packet Drop:</span> Verified zero TCP retransmissions and 0% UDP frame loss across all 64 camera streams.</li>
+          </ul>
+          <div class="callout-box"><span>Audit Standard: Wireshark SPAN port packet capture confirms 100% clean RTSP streaming health.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Wireshark Audit Summary</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">&#10003;“ RTSP/1.0 200 OK (Clean Handshake)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">&#10003;“ TCP Port 554 (0% Retransmission)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (31-7) -->
+    <div class="slide">
+      <div class="pill-badge">(31-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Emergency Backup &amp; NVR Configuration Export</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">System State Backup:</span> Export NVR configuration database file (.bin / .cfg) to secure encrypted USB drive.</li>
+            <li><span class="bullet-highlight">Camera Password Vault:</span> Store all IP camera static IPs, MAC addresses, and ONVIF passwords in encrypted password manager.</li>
+            <li><span class="bullet-highlight">Disaster Recovery Readiness:</span> Enables 15-minute complete system restoration if NVR hardware suffers catastrophic failure.</li>
+          </ul>
+          <div class="callout-box"><span>Best Practice: Export NVR configuration backup files after completing any installation or maintenance.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Disaster Recovery Backup</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="12">ðŸ”’ Encrypted NVR Config (.bin / .cfg)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">&#10003;“ 15-Minute Complete Recovery</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (31-8) -->
+    <div class="slide">
+      <div class="pill-badge">(31-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Master Troubleshooting Decision Tree Flowchart</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Step 1 (Physical / Power):</span> Check Link LEDs + PoE Voltage Meter.</li>
+            <li><span class="bullet-highlight">Step 2 (Network / IP):</span> Ping Camera IP + Check ARP Table for Duplicate IP.</li>
+            <li><span class="bullet-highlight">Step 3 (Protocol / VMS):</span> Test Web GUI Access + Wireshark RTSP Stream Capture.</li>
+          </ul>
+          <div class="callout-box"><span>Reference Guide: Follow the 3-step decision tree for rapid fault isolation on any security system.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="50" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="90" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">Step 1: Physical Link &amp; PoE Voltage</text>
+            
+            <line x1="200" y1="110" x2="200" y2="135" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="40" y="135" width="320" height="50" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="165" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Step 2: IP Ping &amp; ARP Table Audit</text>
+
+            <line x1="200" y1="185" x2="200" y2="210" stroke="#10b981" stroke-width="3"/>
+
+            <rect x="40" y="210" width="320" height="50" rx="6" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+            <text x="200" y="240" text-anchor="middle" fill="#f59e0b" font-size="13" font-weight="bold">Step 3: Web GUI &amp; Wireshark RTSP</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (31-9) -->
+    <div class="slide">
+      <div class="pill-badge">(31-9)</div>
+      <div class="slide-header"><h1 class="slide-title">SLA Compliance &amp; Preventive Maintenance Schedule</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Quarterly Inspection:</span> Clean dome glass covers with microfiber, inspect silica desiccant packs, check PoE switch fans.</li>
+            <li><span class="bullet-highlight">Semi-Annual Audit:</span> Test RAID 6 HDD SMART health, verify NTP clock synchronization, audit camera passwords.</li>
+            <li><span class="bullet-highlight">Annual Fiber Test:</span> Perform OPM power meter tests on fiber backbones to verify optical safety margin.</li>
+          </ul>
+          <div class="callout-box"><span>SLA Protection: Preventive maintenance prevents 95% of unexpected CCTV system downtime.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Preventive Maintenance Schedule</text>
+            
+            <rect x="60" y="125" width="280" height="30" rx="4" fill="#0f172a"/><text x="200" y="145" text-anchor="middle" fill="#38bdf8" font-size="11">Quarterly: Dome Glass Clean &amp; Desiccant</text>
+            <rect x="60" y="160" width="280" height="30" rx="4" fill="#0f172a"/><text x="200" y="180" text-anchor="middle" fill="#f59e0b" font-size="11">Semi-Annual: RAID HDD SMART &amp; NTP Audit</text>
+            <rect x="60" y="195" width="280" height="30" rx="4" fill="#0f172a"/><text x="200" y="215" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Annual: OPM Fiber Power Test</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (31-10) -->
+    <div class="slide">
+      <div class="pill-badge">(31-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Final Capstone Lab Verification &amp; Stage 5 Graduation</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Resolve simulated PoE night reboot fault by replacing CCA cable with solid copper CAT6.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Locate simulated fiber break at 1,240m using OTDR and perform fusion splice repair.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Resolve duplicate IP conflict using ARP table inspection and export NVR configuration backup.</li>
+          </ul>
+          <div class="callout-box"><span>Congratulations! You have completed Stage 5: Network &amp; Camera Troubleshooting Mastery!</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2.5"/>
+            <text x="200" y="90" text-anchor="middle" fill="#10b981" font-size="18" font-weight="bold">STAGE 5 COMPLETED!</text>
+            
+            <circle cx="200" cy="160" r="35" fill="none" stroke="#f59e0b" stroke-width="3"/>
+            <text x="200" y="166" text-anchor="middle" fill="#f59e0b" font-size="28">&#127940;</text>
+            
+            <text x="200" y="235" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">Network &amp; Camera Troubleshooting Mastered</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

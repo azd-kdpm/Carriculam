@@ -1,0 +1,586 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 55: Smart Lighting Dimmers & Curtain Automation</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (55-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(55-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Smart Lighting Dimmers &amp; Curtain Automation</h1>
+        <p class="cover-subtitle">Phase-Cut TRIAC Dimmers (Leading/Trailing Edge) | 0-10V &amp; DALI | Motorized Curtain Tracks | Lighting Scenes</p>
+        <p class="cover-series">Stage 9: Smart Home Automation, IoT &amp; KNX</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (55-2) -->
+    <div class="slide">
+      <div class="pill-badge">(55-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Leading-Edge vs Trailing-Edge Phase-Cut TRIAC Dimming</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Leading-Edge (Forward Phase TRIAC):</span> Cuts front of AC sine wave; designed for legacy incandescent and magnetic transformer loads.</li>
+            <li><span class="bullet-highlight">Trailing-Edge (Reverse Phase MOSFET):</span> Cuts back of AC sine wave; essential for dimmable LED driver bulbs to prevent buzzing.</li>
+            <li><span class="bullet-highlight">Minimum Load Requirement:</span> Requires minimum 5W load or dummy load resistor to prevent LED flicker at 10% brightness.</li>
+          </ul>
+          <div class="callout-box"><span>Dimming Standard: Trailing-edge MOSFET dimmers eliminate annoying transformer buzzing in dimmable LED downlights.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">Leading-Edge TRIAC</text>
+            <text x="105" y="140" text-anchor="middle" fill="#fff" font-size="10">LED Buzzing Risk</text>
+            
+            <rect x="220" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Trailing-Edge MOSFET</text>
+            <text x="295" y="140" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">Silent LED Dimming</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (55-3) -->
+    <div class="slide">
+      <div class="pill-badge">(55-3)</div>
+      <div class="slide-header"><h1 class="slide-title">0-10V Analog vs DALI Digital Lighting Control</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">0-10V Analog Control (2-Wire Polarity):</span> 10V DC represents 100% brightness; 1V DC represents 10% dimming; simple non-addressable wiring.</li>
+            <li><span class="bullet-highlight">DALI-2 Digital Addressable Interface:</span> 2-wire unpolarized 16V bus addressing up to 64 individual light fixtures per gateway.</li>
+            <li><span class="bullet-highlight">Smooth Logarithmic Dimming Curve:</span> Matches human eye perception for natural ultra-smooth dimming down to 0.1%.</li>
+          </ul>
+          <div class="callout-box"><span>Commercial Lighting: DALI-2 digital buses allow individual addressable control of 64 fixtures on a single 2-wire loop.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">DALI-2 Digital Addressable Bus</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">64 Addressable LED Drivers on 2-Wire Loop</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Logarithmic Human Eye Dimming (0.1%)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (55-4) -->
+    <div class="slide">
+      <div class="pill-badge">(55-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Motorized Curtain Tracks &amp; Roller Blinds Wiring</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">AC 230V 4-Wire Motors:</span> Earth + Neutral + Live Open + Live Close wires connected to dual-relay curtain switch module.</li>
+            <li><span class="bullet-highlight">Dry Contact Pulse Motors:</span> Low-voltage pulse control for integration with automation controllers and smart switches.</li>
+            <li><span class="bullet-highlight">Manual Touch-Motion Release:</span> Gently pulling curtain fabric by hand triggers motor to open/close automatically.</li>
+          </ul>
+          <div class="callout-box"><span>Wiring Rule: Mechanical interlock on curtain relays prevents simultaneous OPEN and CLOSE live voltage feed.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">4-Wire AC Motor Interlock Wiring</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Earth + Neutral + Live OPEN + Live CLOSE</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Mechanical Relay Interlock Protection</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (55-5) -->
+    <div class="slide">
+      <div class="pill-badge">(55-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Travel Calibration &amp; Percentage Position Memory</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Automatic Travel Time Calibration:</span> Motor measures run duration from fully closed 0% to fully open 100%.</li>
+            <li><span class="bullet-highlight">Precise Percentage Positioning:</span> Allows setting curtain to exact position (e.g. "Open curtains to 45%").</li>
+            <li><span class="bullet-highlight">Electronic Limit Switches:</span> Stops motor automatically at track ends without straining belt gear drive.</li>
+          </ul>
+          <div class="callout-box"><span>App Precision: Travel time calibration enables slider controls for precise 50% open positioning.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Curtain 0% - 100% Position Calibration</text>
+            
+            <rect x="70" y="130" width="260" height="30" rx="15" fill="#1e293b"/>
+            <rect x="70" y="130" width="130" height="30" rx="15" fill="#10b981"/>
+            <text x="200" y="200" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Calibrated Position: 50% OPEN</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (55-6) -->
+    <div class="slide">
+      <div class="pill-badge">(55-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Circadian Rhythm Lighting &amp; Tunable White (CCT)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Correlated Color Temperature (CCT):</span> Shifts LED color temperature from 6500K Cool White (day) to 2700K Warm White (night).</li>
+            <li><span class="bullet-highlight">Automated Solar Sun Sync:</span> Automatically adjusts light color temperature based on local outdoor sun elevation angles.</li>
+            <li><span class="bullet-highlight">Melatonin Sleep Health:</span> Warm 2700K lighting in the evening boosts melatonin production for healthier sleep patterns.</li>
+          </ul>
+          <div class="callout-box"><span>Wellness Design: Automated circadian lighting shifts CCT smoothly to match natural sunlight progression.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#f59e0b" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#f59e0b" font-size="15" font-weight="bold">Circadian Rhythm Solar CCT Sync</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">12:00 PM &rarr; 6500K Cool White (Alertness)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">08:00 PM &rarr; 2700K Warm White (Melatonin Boost)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (55-7) -->
+    <div class="slide">
+      <div class="pill-badge">(55-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Lighting Scene Keypads &amp; Multi-Button Scenes</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Single-Touch Architectural Scenes:</span> Scene buttons (e.g. "Dinner", "Movie", "All Off") set 10 light circuits simultaneously.</li>
+            <li><span class="bullet-highlight">Engraved Backlit Keypads:</span> Custom laser-engraved glass/metal push-buttons with status LED indicators.</li>
+            <li><span class="bullet-highlight">Long-Press Dimming Logic:</span> Short press toggles scene ON/OFF; long press dims active lighting group up/down smoothly.</li>
+          </ul>
+          <div class="callout-box"><span>Architectural Comfort: Wall keypads reduce wall clutter by replacing 6 separate switches with 1 sleek scene plate.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="130" y="40" width="140" height="240" rx="12" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="70" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Architectural Keypad</text>
+            
+            <rect x="145" y="90" width="110" height="35" rx="4" fill="#1e293b"/><text x="200" y="112" text-anchor="middle" fill="#fff" font-size="10">DINNER</text>
+            <rect x="145" y="135" width="110" height="35" rx="4" fill="#1e293b"/><text x="200" y="157" text-anchor="middle" fill="#fff" font-size="10">MOVIE</text>
+            <rect x="145" y="180" width="110" height="35" rx="4" fill="#1e293b"/><text x="200" y="202" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="bold">ALL OFF</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (55-8) -->
+    <div class="slide">
+      <div class="pill-badge">(55-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Solar-Tracking Motorized Louver Pergolas &amp; Sun Sensors</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Motorized Roof Louvers:</span> Rotates aluminum roof slats 0&deg; to 135&deg; to track sunlight or seal against rain.</li>
+            <li><span class="bullet-highlight">Automatic Rain Sensor Interlock:</span> Optical rain sensor closes pergola roof automatically at first water drop detection.</li>
+            <li><span class="bullet-highlight">Wind Anemometer Safety Open:</span> High wind speed (&gt; 50 km/h) triggers louvers to open to prevent wind lift damage.</li>
+          </ul>
+          <div class="callout-box"><span>Outdoor Protection: Rain and wind sensors protect motorized outdoor pergolas from storm damage automatically.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Pergola Solar &amp; Rain Safety Interlock</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Rain Detected &rarr; Roof Louvers Auto-Seal (0&deg;)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#ef4444" font-size="11" font-weight="bold">Wind &gt; 50 km/h &rarr; Safety Open (90&deg;)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (55-9) -->
+    <div class="slide">
+      <div class="pill-badge">(55-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Troubleshooting LED Buzzing, Ghosting &amp; Motor Reversals</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">LED Buzzing / Humming:</span> Replace leading-edge TRIAC dimmer with trailing-edge MOSFET dimmer module.</li>
+            <li><span class="bullet-highlight">LED Ghosting / Glowing Off:</span> Install 0.1&mu;F 275V AC dummy load resistor across load terminals to drain leakage current.</li>
+            <li><span class="bullet-highlight">Curtain Motor Operates Backwards:</span> Reverse Open/Close wire terminals or toggle motor direction setting in app.</li>
+          </ul>
+          <div class="callout-box"><span>Field Troubleshooting: LED ghosting when turned off is solved 100% by adding a 0.1uF dummy load resistor.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">LED Ghosting &amp; Buzzing Repair</text>
+            <text x="200" y="140" fill="#fff" font-size="12" text-anchor="middle">LED Glows When Switch is OFF?</text>
+            <text x="200" y="175" fill="#10b981" font-size="13" font-weight="bold" text-anchor="middle">Fix: Install 0.1&mu;F Dummy Load Resistor</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (55-10) -->
+    <div class="slide">
+      <div class="pill-badge">(55-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Dimmer &amp; Curtain Motor Calibration Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Wire Trailing-Edge MOSFET Dimmer with dimmable LED downlight load and calibrate minimum brightness limit.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Wire 4-Wire AC Curtain Motor with mechanical relay interlock, perform 0-100% travel time calibration.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Create "Movie Mode" Scene (Curtains 100% Closed + LED Lights Dimmable to 15% + CCT 2700K).</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master trailing-edge LED dimming, curtain motor travel calibration, and CCT scene creation.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Lighting &amp; Curtain Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Trailing-Edge Dimmer Setup</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Curtain Motor Travel Calibration</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Movie Scene Creation (2700K @ 15%)</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

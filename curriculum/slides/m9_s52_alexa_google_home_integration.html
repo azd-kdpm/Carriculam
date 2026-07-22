@@ -1,0 +1,583 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 53: Voice AI (Alexa, Google Assistant & Siri)</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (53-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(53-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Voice AI (Alexa, Google Assistant &amp; Siri)</h1>
+        <p class="cover-subtitle">Cloud Smart Home Skills | Voice Intent Mapping | Local Echo Routines | Apple HomeKit Siri Shortcuts</p>
+        <p class="cover-series">Stage 9: Smart Home Automation, IoT &amp; KNX</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (53-2) -->
+    <div class="slide">
+      <div class="pill-badge">(53-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Voice Processing Pipeline (Acoustic Echo Cancellation to NLU)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Far-Field Microphone Array:</span> Multi-microphone beamforming isolates human speech from loud background music.</li>
+            <li><span class="bullet-highlight">Local Wake-Word Engine:</span> On-device DSP detects "Alexa", "Hey Google", or "Siri" locally without sending audio to cloud.</li>
+            <li><span class="bullet-highlight">Natural Language Understanding (NLU):</span> Converts audio speech into structured JSON Intent (e.g. Action: TURN_OFF, Device: BEDROOM_LIGHT).</li>
+          </ul>
+          <div class="callout-box"><span>Voice Tech: Local wake-word engines continuously process audio buffer locally until the trigger word is spoken.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="320" height="220" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="80" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="bold">Voice Speech-to-Intent Pipeline</text>
+            
+            <rect x="60" y="100" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="122" text-anchor="middle" fill="#fff" font-size="11">Far-Field Mic Beamforming + AEC</text>
+            <rect x="60" y="145" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="167" text-anchor="middle" fill="#10b981" font-size="11">Local DSP Wake-Word Engine</text>
+            <rect x="60" y="190" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="212" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">NLU Intent Parser &rarr; JSON Device Directive</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (53-3) -->
+    <div class="slide">
+      <div class="pill-badge">(53-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Amazon Alexa Smart Home Skill Architecture</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">AWS Lambda Event Handler:</span> Alexa voice Cloud triggers serverless AWS Lambda function in &lt; 200ms.</li>
+            <li><span class="bullet-highlight">OAuth 2.0 Account Linking:</span> Links user's Amazon account securely with Tuya/Smart Life smart home cloud.</li>
+            <li><span class="bullet-highlight">Proactive State Reporting:</span> Smart switch sends physical button state updates to Alexa cloud so app reflects real-time status.</li>
+          </ul>
+          <div class="callout-box"><span>Cloud Integration: Account linking via OAuth 2.0 allows Alexa cloud to send direct directives to smart relays.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Alexa Skill OAuth 2.0 Integration</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Alexa Voice Cloud &rarr; AWS Lambda Event Handler</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">OAuth 2.0 Account Link &rarr; Tuya Cloud Control</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (53-4) -->
+    <div class="slide">
+      <div class="pill-badge">(53-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Google Assistant Home Graph &amp; Device Types</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Google Home Graph API:</span> Stores real-time state of all smart devices across rooms, structures, and user accounts.</li>
+            <li><span class="bullet-highlight">Local Home SDK (JavaScript):</span> Executes voice commands locally on Google Nest Hub over LAN for 10x faster execution.</li>
+            <li><span class="bullet-highlight">Device Trait Standard:</span> Standardizes device capabilities (e.g. action.devices.traits.OnOff, action.devices.traits.Brightness).</li>
+          </ul>
+          <div class="callout-box"><span>Local Execution: Google's Local Home SDK routes voice control directly over local Wi-Fi when Nest Hub is present.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Google Local Home SDK LAN Route</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Google Nest Hub (Local JS Engine)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">&#10003; 10ms Direct Wi-Fi LAN Execution</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (53-5) -->
+    <div class="slide">
+      <div class="pill-badge">(53-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Apple HomeKit Siri &amp; Local Home Hub Security</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">100% Local Encrypted Architecture:</span> HomeKit commands route directly between Apple HomePod/TV hub and device over local LAN.</li>
+            <li><span class="bullet-highlight">End-to-End iCloud Sync:</span> Scene configurations and room layouts sync via encrypted iCloud keychain.</li>
+            <li><span class="bullet-highlight">Siri Voice Shortcuts:</span> Triggers multi-device custom scenes using custom Siri phrase ("Hey Siri, Movie Time").</li>
+          </ul>
+          <div class="callout-box"><span>Privacy Peak: Apple HomeKit processes voice scenes locally on HomePod hubs without cloud data harvesting.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Apple HomeKit Encrypted Siri</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">HomePod Mini Hub (Local LAN Control)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">&#10003; 100% Encrypted Local Voice Execution</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (53-6) -->
+    <div class="slide">
+      <div class="pill-badge">(53-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Voice Groups, Room Naming &amp; Aliases Optimization</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Contextual Room Awareness:</span> Assigning Echo dot to "Master Bedroom" group allows "Turn off lights" to turn off ONLY bedroom lights.</li>
+            <li><span class="bullet-highlight">Phonetic Device Naming:</span> Avoid confusing names like "Lamp 1"; use distinct phonetic names like "Chandelier" or "Desk Light".</li>
+            <li><span class="bullet-highlight">Device Aliases:</span> Adds synonyms in app (e.g. "TV Light" = "Backlight") to support natural family speech habits.</li>
+          </ul>
+          <div class="callout-box"><span>Naming Rule: Assign smart speakers to their specific physical room group for natural contextual voice commands.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Contextual Room Voice Grouping</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Speaker in "Bedroom" &rarr; "Turn Off Lights"</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">&#10003; Turns Off ONLY Bedroom Lights</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (53-7) -->
+    <div class="slide">
+      <div class="pill-badge">(53-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Voice Routines &amp; Multi-Device Macro Automation</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Single Trigger Word Macros:</span> "Alexa, Good Night" locks front door, sets thermostat to 22&deg;C, and turns off all lights.</li>
+            <li><span class="bullet-highlight">Time Delay Sequences:</span> Program 10-minute delay after "Good Morning" routine before starting coffee maker.</li>
+            <li><span class="bullet-highlight">Voice Announcement Broadcasts:</span> Broadcasts "Dinner is Ready" voice announcement across all smart speakers simultaneously.</li>
+          </ul>
+          <div class="callout-box"><span>Macro Efficiency: Voice routines execute multi-device sequences (locks + lights + AC) from a single phrase.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Voice Macro Routine ("Good Night")</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#10b981" font-size="11">Locks Front Door + Sets AC to 22&deg;C</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Turns OFF All House Lights</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (53-8) -->
+    <div class="slide">
+      <div class="pill-badge">(53-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Voice Security Interlocks (PIN Code Restrictions)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Voice PIN for Lock Unlocking:</span> Requires spoken 4-digit PIN code before Alexa/Google unlocks front door smart locks.</li>
+            <li><span class="bullet-highlight">Preventing Window Shouting Attacks:</span> Prevents intruders from shouting "Alexa, open garage door" through open ground floor windows.</li>
+            <li><span class="bullet-highlight">Disabling Voice Security Alarms:</span> Spoken security PIN mandatory to disarm intruder alarm panels via voice assistant.</li>
+          </ul>
+          <div class="callout-box"><span>Security Mandatory: ALWAYS require a spoken 4-digit PIN for high-security voice actions like unlocking doors.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">Spoken 4-Digit Voice PIN Interlock</text>
+            
+            <rect x="70" y="130" width="260" height="40" rx="6" fill="#1e293b" stroke="#ef4444"/><text x="200" y="155" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">SPOKEN PIN MANDATORY FOR UNLOCK</text>
+            <text x="200" y="210" text-anchor="middle" fill="#10b981" font-size="12">&#10003; Prevents Window Shouting Attacks</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (53-9) -->
+    <div class="slide">
+      <div class="pill-badge">(53-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Troubleshooting Unresponsive Alexa Skills &amp; Microphone Noise</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">"Device is Unresponsive" Error:</span> OAuth token expired; disable and re-enable smart home skill in Alexa app.</li>
+            <li><span class="bullet-highlight">Microphone Mute / Dust Clogging:</span> Clean far-field microphone holes with compressed air; verify physical mute button LED is OFF.</li>
+            <li><span class="bullet-highlight">Duplicate Device Name Conflict:</span> Delete duplicate device entries across Tuya and Alexa apps to prevent voice command confusion.</li>
+          </ul>
+          <div class="callout-box"><span>Field Troubleshooting: "Device Unresponsive" errors are 90% fixed by un-linking and re-linking the cloud account skill.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">Device Unresponsive Fix</text>
+            <text x="200" y="140" fill="#fff" font-size="12" text-anchor="middle">Alexa Says "Device Unresponsive"?</text>
+            <text x="200" y="175" fill="#10b981" font-size="13" font-weight="bold" text-anchor="middle">Fix: Re-link OAuth Skill in Alexa App</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (53-10) -->
+    <div class="slide">
+      <div class="pill-badge">(53-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Multi-Platform Voice Integration Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Link Tuya / Smart Life cloud account to Amazon Alexa and Google Assistant via OAuth 2.0.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Configure Contextual Room Groups and test "Alexa, turn on lights" inside specific room group.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Create "Good Night" multi-device voice macro routine and program 4-digit spoken PIN for smart lock unlocking.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master OAuth 2.0 skill linking, contextual room voice grouping, macro routine creation, and voice PIN locks.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Voice Integration Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">OAuth 2.0 Alexa &amp; Google Link</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Contextual Room Voice Grouping</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Voice Macro Routine &amp; PIN Code Setup</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

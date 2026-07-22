@@ -1,0 +1,588 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 23: ANPR (Automatic Number Plate Recognition)</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (23-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(23-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">ANPR (Automatic Number Plate Recognition)</h1>
+        <p class="cover-subtitle">OCR Optical Recognition | High-Speed Shutter | Plate Capture Angles | Barrier Gate Relays</p>
+        <p class="cover-series">Stage 4: IP Camera Systems &amp; VMS</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (23-2) -->
+    <div class="slide">
+      <div class="pill-badge">(23-2)</div>
+      <div class="slide-header"><h1 class="slide-title">ANPR System Architecture &amp; OCR Engine</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Plate Localization:</span> AI algorithm detects rectangular license plate bounding box in video frame.</li>
+            <li><span class="bullet-highlight">OCR Character Extraction:</span> Optical Character Recognition converts plate image pixels into ASCII text strings.</li>
+            <li><span class="bullet-highlight">Database Cross-Check:</span> Compares extracted text string against Whitelist / Blacklist database in under 50ms.</li>
+          </ul>
+          <div class="callout-box"><span>Speed Standard: ANPR engine completes OCR extraction and gate relay trigger in under 50ms.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="70" width="320" height="160" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="105" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">ANPR OCR Engine</text>
+            
+            <rect x="90" y="130" width="220" height="50" rx="6" fill="#ffffff"/>
+            <text x="200" y="162" text-anchor="middle" fill="#000000" font-size="20" font-weight="bold" font-family="monospace">ABC-1234</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (23-3) -->
+    <div class="slide">
+      <div class="pill-badge">(23-3)</div>
+      <div class="slide-header"><h1 class="slide-title">ANPR Camera Mounting Geometry &amp; Angles</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Maximum 30Â° Vertical Angle:</span> Camera tilt angle must not exceed 30Â° relative to road surface.</li>
+            <li><span class="bullet-highlight">Maximum 30Â° Horizontal Angle:</span> Horizontal approach angle must be kept under 30Â° to prevent character distortion.</li>
+            <li><span class="bullet-highlight">Pixels on Plate:</span> Ensure minimum 130 pixels width across license plate for 99%+ OCR accuracy.</li>
+          </ul>
+          <div class="callout-box"><span>Geometry Rule: Keep vertical and horizontal camera tilt angles under 30Â° for reliable OCR.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <circle cx="80" cy="80" r="16" fill="#38bdf8"/>
+            <line x1="80" y1="80" x2="320" y2="220" stroke="#38bdf8" stroke-width="3"/>
+            <line x1="80" y1="220" x2="320" y2="220" stroke="#64748b" stroke-dasharray="4,4"/>
+            <path d="M 140 220 A 60 60 0 0 0 135 190" fill="none" stroke="#ef4444" stroke-width="3"/>
+            <text x="160" y="195" fill="#ef4444" font-size="14" font-weight="bold">Max 30Â° Angle</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (23-4) -->
+    <div class="slide">
+      <div class="pill-badge">(23-4)</div>
+      <div class="slide-header"><h1 class="slide-title">High-Speed Shutter Tuning (1/1000s to 1/2000s)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Freeze Fast Motion:</span> Set shutter speed between 1/1000s and 1/2000s to eliminate vehicle motion blur.</li>
+            <li><span class="bullet-highlight">Headlight Glare Suppression:</span> Fast shutter prevents oncoming vehicle headlights from blinding the sensor.</li>
+            <li><span class="bullet-highlight">Traffic Lanes:</span> Captures vehicles traveling at speeds up to 160 km/h on highway lanes.</li>
+          </ul>
+          <div class="callout-box"><span>Shutter Rule: Set 1/1000s shutter speed for parking gates; 1/2000s for highway traffic.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="70" width="150" height="160" rx="8" fill="#1e293b" stroke="#ef4444"/>
+            <text x="115" y="110" text-anchor="middle" fill="#ef4444" font-size="14" font-weight="bold">1/50s Shutter</text>
+            <text x="115" y="150" text-anchor="middle" fill="#fff" font-size="12">Blurred Motion Ghost</text>
+            
+            <rect x="210" y="70" width="150" height="160" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="285" y="110" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">1/1000s Shutter</text>
+            <text x="285" y="150" text-anchor="middle" fill="#fff" font-size="12">Crisp Frozen Plate</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (23-5) -->
+    <div class="slide">
+      <div class="pill-badge">(23-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Retro-Reflective IR Night Plate Capture</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">850nm IR Flash:</span> High-power pulsed IR illuminator reflects brightly off retro-reflective license plate coatings.</li>
+            <li><span class="bullet-highlight">Black &amp; White Night Mode:</span> Camera switches to ICR B/W night mode for maximum infrared contrast.</li>
+            <li><span class="bullet-highlight">Headlight Rejection:</span> High IR reflection makes plate characters glow brightly while darkening headlight glare.</li>
+          </ul>
+          <div class="callout-box"><span>Night Optics: Pulsed 850nm IR illumination makes license plates glow brightly in pitch dark.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="180" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <rect x="100" y="110" width="200" height="60" fill="#000000" stroke="#10b981" stroke-width="3"/>
+            <text x="200" y="148" text-anchor="middle" fill="#10b981" font-size="22" font-weight="bold" font-family="monospace">KAA-9876</text>
+            <text x="200" y="210" text-anchor="middle" fill="#94a3b8" font-size="12">850nm Retro-Reflective Night IR Capture</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (23-6) -->
+    <div class="slide">
+      <div class="pill-badge">(23-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Whitelist Relay Barrier Gate Triggers</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Whitelist Database:</span> Authorized tenant license plates stored directly on camera memory or NVR.</li>
+            <li><span class="bullet-highlight">Relay Output Dry Contact:</span> Matched plate fires camera relay output to open automatic parking barrier gate.</li>
+            <li><span class="bullet-highlight">Blacklist Warning:</span> Unregistered or stolen plate triggers instant security guard console alert.</li>
+          </ul>
+          <div class="callout-box"><span>Automation: Whitelist plate match opens parking barrier gate without security guard intervention.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="80" width="100" height="100" rx="6" fill="#1e293b" stroke="#10b981"/>
+            <text x="90" y="135" text-anchor="middle" fill="#10b981" font-size="12">ANPR Cam</text>
+            
+            <line x1="140" y1="130" x2="260" y2="130" stroke="#10b981" stroke-width="4"/>
+            
+            <rect x="260" y="80" width="100" height="100" rx="6" fill="#1e293b" stroke="#f59e0b"/>
+            <text x="310" y="135" text-anchor="middle" fill="#f59e0b" font-size="12">Barrier Gate</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (23-7) -->
+    <div class="slide">
+      <div class="pill-badge">(23-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Vehicle Metadata Extraction (Color, Make, Model)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Multi-Attribute Deep Learning:</span> Extracts vehicle color (Red/Blue/White), body type (Sedan/SUV), and manufacturer brand.</li>
+            <li><span class="bullet-highlight">Forensic Search Filter:</span> Search 30-day recorded video for "Red Toyota Sedan" even if plate is dirty or missing.</li>
+            <li><span class="bullet-highlight">Traffic Intelligence:</span> Generates vehicle counting and peak traffic volume statistics.</li>
+          </ul>
+          <div class="callout-box"><span>Forensic Power: Metadata search locates target vehicles by color and body type in seconds.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="180" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">ANPR Metadata Extraction</text>
+            <text x="200" y="140" text-anchor="middle" fill="#fff" font-size="13">Plate: KAA-9876 | Type: SUV | Color: Black</text>
+            <text x="200" y="175" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Brand: Toyota | Speed: 42 km/h</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (23-8) -->
+    <div class="slide">
+      <div class="pill-badge">(23-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Parking Management &amp; Ticket Billing</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Ticketless Parking:</span> Entry camera records arrival timestamp; exit camera calculates stay duration and fee.</li>
+            <li><span class="bullet-highlight">Bay Occupancy Signs:</span> Displays real-time available parking space counts on outdoor LED entrance signs.</li>
+            <li><span class="bullet-highlight">Payment Kiosk Sync:</span> Drivers type plate number at pay station to settle parking bill.</li>
+          </ul>
+          <div class="callout-box"><span>Commercial Trend: ANPR ticketless parking systems replace paper barcode tickets.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="60" y="70" width="280" height="160" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="110" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Ticketless Parking Screen</text>
+            <text x="200" y="150" text-anchor="middle" fill="#fff" font-size="13">Entry: 10:15 AM | Exit: 12:45 PM</text>
+            <text x="200" y="185" text-anchor="middle" fill="#f59e0b" font-size="15" font-weight="bold">Duration: 2h 30m | Fee: .00</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (23-9) -->
+    <div class="slide">
+      <div class="pill-badge">(23-9)</div>
+      <div class="slide-header"><h1 class="slide-title">OCR Accuracy Factors &amp; Degradation Causes</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Clean vs Dirty Plates:</span> Muddy or covered plates degrade OCR recognition confidence from 99% down to 60%.</li>
+            <li><span class="bullet-highlight">Font Customization:</span> Non-standard localized plate fonts require custom OCR neural training.</li>
+            <li><span class="bullet-highlight">Extreme Weather:</span> Heavy rain, snow, or fog attenuates infrared light reflection.</li>
+          </ul>
+          <div class="callout-box"><span>Accuracy Standard: Train localized OCR neural networks to handle country-specific plate fonts.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="70" width="150" height="160" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="115" y="110" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">Clean Plate</text>
+            <text x="115" y="160" text-anchor="middle" fill="#10b981" font-size="18" font-weight="bold">99% OCR</text>
+            
+            <rect x="210" y="70" width="150" height="160" rx="8" fill="#1e293b" stroke="#ef4444"/>
+            <text x="285" y="110" text-anchor="middle" fill="#ef4444" font-size="14" font-weight="bold">Muddy / Cover</text>
+            <text x="285" y="160" text-anchor="middle" fill="#ef4444" font-size="18" font-weight="bold">60% Drop!</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (23-10) -->
+    <div class="slide">
+      <div class="pill-badge">(23-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical ANPR Alignment &amp; Barrier Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Mount ANPR camera at 2.5m height and align vertical/horizontal angles under 30Â°.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Set 1/1000s fast shutter speed and configure 850nm IR retro-reflective night capture mode.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Add test plate to Whitelist database and trigger relay output to open demo barrier gate.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Achieve 99%+ OCR accuracy on test vehicle passes and verify barrier relay trigger.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">ANPR Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Camera Angle &amp; 1/1000s Shutter</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Retro-Reflective Night IR Capture</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Whitelist Barrier Relay Test</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

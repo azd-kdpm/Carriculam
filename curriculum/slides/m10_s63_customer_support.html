@@ -1,0 +1,584 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 63: Customer Support & Sales/Negotiation</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (63-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(63-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Customer Support &amp; Sales/Negotiation</h1>
+        <p class="cover-subtitle">Consultative Technical Selling | Handling Price Objections | Value Engineering | High-Margin Service Negotiations</p>
+        <p class="cover-series">Stage 10: Advanced Integration, Business &amp; Capstone Projects</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (63-2) -->
+    <div class="slide">
+      <div class="pill-badge">(63-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Consultative Technical Sales: Pain Point Discovery</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Shifting from Product Seller to Trusted Advisor:</span> Stop selling "cheap 4MP cameras"; start selling "zero-theft warehouse perimeter protection".</li>
+            <li><span class="bullet-highlight">Discovery Questioning Framework:</span> Ask open questions ("What happens to operations when a break-in occurs?") to uncover true business losses.</li>
+            <li><span class="bullet-highlight">Quantifying Total Cost of Ownership (TCO):</span> Demonstrating how high-quality cameras eliminate annual ,000 inventory shrinkage losses.</li>
+          </ul>
+          <div class="callout-box"><span>Sales Rule: Clients don't buy megapixel resolution; they buy peace of mind and financial theft prevention.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">Product Seller</text>
+            <text x="105" y="140" text-anchor="middle" fill="#fff" font-size="10">Pushes Low Specs</text>
+            
+            <rect x="220" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Trusted Advisor</text>
+            <text x="295" y="140" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">Solves Business Loss</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (63-3) -->
+    <div class="slide">
+      <div class="pill-badge">(63-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Overcoming Client Price Objections &amp; "Competitor is Cheaper"</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">The "Feel, Felt, Found" Method:</span> "I understand how you feel about price; other clients felt the same, until they found cheap cameras failed in 6 months."</li>
+            <li><span class="bullet-highlight">Exposing Cheap Competitor Trap Quotes:</span> Educate clients on how lowball installers use copper-clad aluminum (CCA) cable and cheap non-WDR cameras.</li>
+            <li><span class="bullet-highlight">Isolating Price vs Value:</span> Demonstrate the difference between a 1-year failing setup and a 5-year reliable commercial system.</li>
+          </ul>
+          <div class="callout-box"><span>Negotiation Defense: Expose competitor CCA wire and uncertified power supplies to justify your premium price.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Competitor CCA Cable Trap Exposed</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#ef4444" font-size="11">Competitor: CCA Wire (Fails in 6 Months)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Your Quote: Solid Copper Cat6 (10-Yr Reliability)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (63-4) -->
+    <div class="slide">
+      <div class="pill-badge">(63-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Value Engineering: Reducing Costs Without Sacrificing Security</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Strategic Camera Positioning:</span> Replace 4 fixed dome cameras with 1 180&deg; Panoramic Fisheye camera to cover open lobby areas.</li>
+            <li><span class="bullet-highlight">Hybrid Storage Tiering:</span> Use high-end AcuSense AI cameras on perimeter zones and basic IP cameras on internal office hallways.</li>
+            <li><span class="bullet-highlight">Optimizing Switch Channel Density:</span> Use 24-port PoE switches instead of multiple 8-port switches to save cabinet space and cost.</li>
+          </ul>
+          <div class="callout-box"><span>Value Strategy: Value engineering saves 20% budget for price-sensitive clients while maintaining core perimeter security.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Value Engineering: 4 Domes vs 1 Fisheye</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#ef4444" font-size="11">Standard: 4x Domes + 4x Cable Runs ()</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Optimized: 1x 180&deg; Fisheye Camera ()</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (63-5) -->
+    <div class="slide">
+      <div class="pill-badge">(63-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Upselling High-Margin Add-Ons (UPS, Remote Viewing &amp; Maintenance)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Online Double-Conversion UPS (60% Margin):</span> Protecting ,000 NVR equipment against power surge damage for an extra .</li>
+            <li><span class="bullet-highlight">Mobile Remote Access Setup Fee:</span> Offering secure multi-user mobile phone app setup and cloud DDNS configuration.</li>
+            <li><span class="bullet-highlight">Multi-Year Comprehensive AMC:</span> Bundling 3-year extended warranty and quarterly PM visits at time of initial sales closing.</li>
+          </ul>
+          <div class="callout-box"><span>Margin Multiplier: Upselling UPS surge backup and 3-year AMC contracts increases project profitability by 25%.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <polygon points="200,50 320,250 80,250" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="120" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">3-Yr AMC Contract</text>
+            <text x="200" y="160" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Online UPS Surge Protection</text>
+            <text x="200" y="210" text-anchor="middle" fill="#fff" font-size="11">Base CCTV / NVR Hardware</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (63-6) -->
+    <div class="slide">
+      <div class="pill-badge">(63-6)</div>
+      <div class="slide-header"><h1 class="slide-title">SLA Contract Negotiation &amp; Response Time Pricing Tiers</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Gold Tier (4-Hour Response, 24/7):</span> Premium SLA for banks and critical server rooms (/month recurring).</li>
+            <li><span class="bullet-highlight">Silver Tier (12-Hour Response, Business Hours):</span> Standard SLA for retail shops and offices (/month recurring).</li>
+            <li><span class="bullet-highlight">Bronze Tier (24-Hour Response, Best Effort):</span> Entry-level SLA for residential clients (/month recurring).</li>
+          </ul>
+          <div class="callout-box"><span>SLA Pricing: Tiered response SLA contracts allow clients to choose their required emergency response speed.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="320" height="220" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="80" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="bold">3-Tier SLA Response Matrix</text>
+            
+            <rect x="60" y="100" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="122" text-anchor="middle" fill="#f59e0b" font-size="11" font-weight="bold">Gold (4-Hr Response 24/7) &rarr; /mo</text>
+            <rect x="60" y="145" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="167" text-anchor="middle" fill="#38bdf8" font-size="11">Silver (12-Hr Response) &rarr; /mo</text>
+            <rect x="60" y="190" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="212" text-anchor="middle" fill="#fff" font-size="11">Bronze (24-Hr Response) &rarr; /mo</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (63-7) -->
+    <div class="slide">
+      <div class="pill-badge">(63-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Customer Support Helpdesk Ticketing &amp; Remote Troubleshooting</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Helpdesk Ticketing System (Freshdesk / Zendesk):</span> Track client service tickets with automated SLA countdown timers.</li>
+            <li><span class="bullet-highlight">Remote Diagnostics First (WireGuard / VPN):</span> Resolve 60% of client software issues (password resets, IP changes) remotely in 10 minutes.</li>
+            <li><span class="bullet-highlight">Field Technician Dispatch:</span> Dispatch field engineers with exact replacement spare parts if remote reboot fails.</li>
+          </ul>
+          <div class="callout-box"><span>Support Efficiency: Remote VPN diagnostics resolve 60% of client issues without sending a service truck.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Support Ticket &amp; VPN Diagnostic</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Client Ticket Log &rarr; Remote VPN Diagnostic</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">&#10003; 60% Resolved Remotely (Zero Truck Roll)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (63-8) -->
+    <div class="slide">
+      <div class="pill-badge">(63-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Winning Key Accounts &amp; Enterprise RFP Presentations</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Executive C-Level Presentation Skills:</span> Presenting financial ROI, system longevity, and risk mitigation to CEOs and CFOs.</li>
+            <li><span class="bullet-highlight">Live System Demonstration Kiosk:</span> Bringing a working 4K AI camera + NVR demo kit to executive pitch meetings.</li>
+            <li><span class="bullet-highlight">Reference Site Visits:</span> Taking enterprise prospective clients to visit your completed high-profile installations.</li>
+          </ul>
+          <div class="callout-box"><span>Enterprise Winning Secret: A live 5-minute AI camera demonstration in the boardroom closes multi-thousand dollar contracts.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Boardroom Live AI Demo Pitch</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Live 4K AI Camera Demo &rarr; C-Level Pitch</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">&#10003; Reference Site Visit Closes Key Account</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (63-9) -->
+    <div class="slide">
+      <div class="pill-badge">(63-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Handling Disgruntled Clients &amp; Conflict Resolution Protocols</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">De-escalation Protocol (LAST Method):</span> Listen actively, Apologize sincerely, Solve problem fast, Thank client for feedback.</li>
+            <li><span class="bullet-highlight">Handling System Failure During Warranty:</span> Replace failing NVR unit immediately with loaner unit to restore client security.</li>
+            <li><span class="bullet-highlight">Protecting Company Reputation:</span> Turn negative experiences into positive Google Reviews by delivering exceptional emergency support.</li>
+          </ul>
+          <div class="callout-box"><span>Conflict Resolution: Deploying a loaner NVR within 2 hours turns angry clients into lifelong brand advocates.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">LAST De-escalation &amp; Loaner NVR</text>
+            <text x="200" y="140" fill="#fff" font-size="12" text-anchor="middle">Client Angry Over Hardware Failure?</text>
+            <text x="200" y="175" fill="#10b981" font-size="13" font-weight="bold" text-anchor="middle">Fix: Deploy Emergency Loaner NVR in 2 Hrs</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (63-10) -->
+    <div class="slide">
+      <div class="pill-badge">(63-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Sales Negotiation &amp; Customer Support Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Conduct roleplay sales discovery meeting for a 32-camera factory site and overcome 30% price objection using "Feel, Felt, Found".</li>
+            <li><span class="bullet-highlight">Task 2:</span> Execute Value Engineering exercise replacing 6 static cameras with 1 Panoramic Fisheye + 1 PTZ camera.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Draft 3-Tier SLA Contract (Gold, Silver, Bronze) and log mock remote VPN diagnostic support ticket.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master consultative selling, objection handling, value engineering, tiered SLA pricing, and support ticketing.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Sales &amp; Support Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Objection Handling ("Feel, Felt, Found")</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Panoramic Fisheye Value Engineering</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">3-Tier SLA &amp; Support Ticket Test</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

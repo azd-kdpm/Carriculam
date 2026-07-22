@@ -1,0 +1,588 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 49: Stage 8 Capstone Project & Vehicle Gate Integration</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (49-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(49-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Stage 8 Capstone Project &amp; Vehicle Gate Integration</h1>
+        <p class="cover-subtitle">Enterprise Vehicle Access Control + Boom Barriers + Safety Loops + ANPR + Parking Software</p>
+        <p class="cover-series">Stage 8: Boom Barriers &amp; Vehicle Gate Systems</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (49-2) -->
+    <div class="slide">
+      <div class="pill-badge">(49-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Multi-Lane Vehicle Entrance Topology Architecture</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Dedicated Entry &amp; Exit Lanes:</span> Separate physical lanes equipped with 24V BLDC boom barriers, safety loops, ANPR, and LED VMD signs.</li>
+            <li><span class="bullet-highlight">Dual Verification Technology:</span> UHF RFID primary fast tag pass + ANPR license plate secondary backup verification.</li>
+            <li><span class="bullet-highlight">Central Parking Server:</span> Live IP network database coordinating lane controllers, payment kiosks, and spot counting.</li>
+          </ul>
+          <div class="callout-box"><span>Architecture Goal: Multi-lane vehicle access processing up to 600 vehicles per hour without bottlenecking.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <circle cx="200" cy="150" r="45" fill="#1e293b" stroke="#10b981" stroke-width="3"/>
+            <text x="200" y="155" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Parking Server</text>
+            
+            <circle cx="80" cy="80" r="28" fill="#0f172a" stroke="#38bdf8"/><text x="80" y="85" text-anchor="middle" fill="#38bdf8" font-size="9">BLDC Barrier</text>
+            <circle cx="320" cy="80" r="28" fill="#0f172a" stroke="#38bdf8"/><text x="320" y="85" text-anchor="middle" fill="#38bdf8" font-size="9">ANPR Cam</text>
+            <circle cx="80" cy="220" r="28" fill="#0f172a" stroke="#f59e0b"/><text x="80" y="225" text-anchor="middle" fill="#f59e0b" font-size="9">Safety Loop</text>
+            <circle cx="320" cy="220" r="28" fill="#0f172a" stroke="#ef4444"/><text x="320" y="225" text-anchor="middle" fill="#ef4444" font-size="9">UHF Reader</text>
+
+            <line x1="103" y1="95" x2="160" y2="130" stroke="#38bdf8" stroke-width="2"/>
+            <line x1="297" y1="95" x2="240" y2="130" stroke="#38bdf8" stroke-width="2"/>
+            <line x1="103" y1="205" x2="160" y2="170" stroke="#f59e0b" stroke-width="2"/>
+            <line x1="297" y1="205" x2="240" y2="170" stroke="#ef4444" stroke-width="2"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (49-3) -->
+    <div class="slide">
+      <div class="pill-badge">(49-3)</div>
+      <div class="slide-header"><h1 class="slide-title">3-Layer Safety Interlock Protocol (Anti-Hit &amp; Trailing-Edge)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Layer 1 (Inductive Safety Loop):</span> Keeps barrier arm 100% open while metallic vehicle body sits directly under arm.</li>
+            <li><span class="bullet-highlight">Layer 2 (Infrared Photocell Beam):</span> Redundant optical beam 50cm above ground prevents arm drop if non-metallic trailer breaks beam.</li>
+            <li><span class="bullet-highlight">Layer 3 (Motor Auto-Reverse):</span> BLDC motor controller detects physical resistance on descent and reverses arm in 0.1s.</li>
+          </ul>
+          <div class="callout-box"><span>Safety Standard: Triple-layer safety interlocks eliminate vehicle roof strike liabilities completely.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">3-Layer Anti-Hit Safety Protocol</text>
+            <rect x="60" y="120" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="140" text-anchor="middle" fill="#38bdf8" font-size="10">Layer 1: Inductive Safety Ground Loop</text>
+            <rect x="60" y="155" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="175" text-anchor="middle" fill="#f59e0b" font-size="10">Layer 2: Infrared Photocell Optical Beam</text>
+            <rect x="60" y="190" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="210" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">Layer 3: 0.1s BLDC Motor Auto-Reverse</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (49-4) -->
+    <div class="slide">
+      <div class="pill-badge">(49-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Fire Evacuation &amp; Emergency Gate Override Protocol</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Hardwired FACP Trip Input:</span> Dedicated dry contact from Fire Alarm Control Panel connects to all barrier motherboards.</li>
+            <li><span class="bullet-highlight">Instant Arm Auto-Open:</span> FACP alarm signal forces all exit and entrance boom barrier arms to rise to 90Â° immediately.</li>
+            <li><span class="bullet-highlight">Power Outage Auto-Open:</span> Integrated 24V battery backup or mechanical drop-arm mechanism ensures open gates during blackouts.</li>
+          </ul>
+          <div class="callout-box"><span>Fire Code: Vehicle entrance barriers MUST auto-open upon fire alarm trip to allow emergency vehicle access.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">FACP Fire Gate Auto-Open Interlock</text>
+            
+            <rect x="60" y="130" width="280" height="40" rx="6" fill="#0f172a" stroke="#ef4444"/><text x="200" y="155" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">FIRE ALARM TRIP &rarr; ALL BARRIER ARMS AUTO-RISE (90&deg;)</text>
+            <text x="200" y="210" text-anchor="middle" fill="#10b981" font-size="12">&#10003; NFPA Emergency Egress Compliant</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (49-5) -->
+    <div class="slide">
+      <div class="pill-badge">(49-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Stage 8 Master Vehicle BOQ &amp; Civil Engineering Take-Off</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Barrier &amp; Loop Schedule:</span> 6x 24V BLDC Speed Barriers, 12x Saw-Cut Safety Loops, 6x 79GHz Radars, 6x UHF RFID Readers.</li>
+            <li><span class="bullet-highlight">ANPR &amp; Display Schedule:</span> 6x AI ANPR Bullet Cameras with IR strobes, 4x Entrance LED VMD Display Boards.</li>
+            <li><span class="bullet-highlight">Civil Works Budget:</span> Concrete islands (2.5m x 0.6m x 0.15m), 4mm asphalt saw-cutting, and polyurethane cold-pour sealant.</li>
+          </ul>
+          <div class="callout-box"><span>Civil Rule: Always pour 15cm elevated concrete pedestals to protect barrier housing from flooding rain.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#f59e0b" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#f59e0b" font-size="15" font-weight="bold">Stage 8 Master Vehicle BOQ</text>
+            <text x="200" y="140" fill="#fff" font-size="11" text-anchor="middle">6x BLDC Barriers | 12x Safety Loops</text>
+            <text x="200" y="165" fill="#fff" font-size="11" text-anchor="middle">6x ANPR AI Cams | 6x UHF RFID Readers</text>
+            <text x="200" y="200" fill="#10b981" font-size="12" font-weight="bold">&#10003; 15cm Elevated Anti-Flood Concrete Islands</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (49-6) -->
+    <div class="slide">
+      <div class="pill-badge">(49-6)</div>
+      <div class="slide-header"><h1 class="slide-title">System Testing, Commissioning &amp; Acceptance Sign-Off</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">45Â° Spring Balance Test:</span> Verify boom arm stays stationary when disengaged at 45Â° angle.</li>
+            <li><span class="bullet-highlight">Anti-Tailgating &amp; Loop Test:</span> Verify trailing-edge loop auto-close drops barrier immediately after car clears loop.</li>
+            <li><span class="bullet-highlight">ANPR Night Recognition Audit:</span> Test license plate capture in 0-lux total darkness with IR strobe illuminator.</li>
+          </ul>
+          <div class="callout-box"><span>Commissioning Rule: Test ANPR night recognition with high-beam headlights aimed directly at the camera.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Vehicle Barrier Commissioning Matrix</text>
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">45&deg; Spring Balance &amp; 3-Layer Anti-Hit [PASS]</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">&#10003; 98.5% ANPR Night Accuracy Sign-Off</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (49-7) -->
+    <div class="slide">
+      <div class="pill-badge">(49-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Preventive Maintenance SLA &amp; Mechanical Lubrication</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Monthly Spring Tension Check:</span> Inspect counterbalance steel springs for metal fatigue and adjust tensioning bolts.</li>
+            <li><span class="bullet-highlight">Quarterly Gearbox Lubrication:</span> Grease mechanical linkage joints and check 24V BLDC gearbox oil seal.</li>
+            <li><span class="bullet-highlight">Asphalt Slot Sealant Inspection:</span> Inspect loop saw-cut slots for sealant cracks to prevent water ingress.</li>
+          </ul>
+          <div class="callout-box"><span>Maintenance Tip: Regular quarterly spring tension checks extend barrier motor life by 300%.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Preventive Maintenance Schedule</text>
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Monthly Spring Tension &amp; 45&deg; Balance Check</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Quarterly Linkage Greasing &amp; Slot Seal Inspection</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (49-8) -->
+    <div class="slide">
+      <div class="pill-badge">(49-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Stage 8 Master Review &amp; Skills Certification</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Session 46:</span> Mastered 24V BLDC motors, speed settings (1.5s-6s), 45Â° spring balancing, and articulated garage arms.</li>
+            <li><span class="bullet-highlight">Session 47:</span> Mastered LC oscillator physics, asphalt saw-cutting, 20-turn lead-in twisting, and anti-tailgating trailing-edge loops.</li>
+            <li><span class="bullet-highlight">Session 48-49:</span> Mastered 900MHz UHF RFID, AI ANPR camera white-listing, ticket dispensers, and fire gate overrides.</li>
+          </ul>
+          <div class="callout-box"><span>Milestone Achieved: You have mastered all sessions of Stage 8 Boom Barriers &amp; Vehicle Gate Systems!</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <polygon points="200,40 320,110 320,250 200,310 80,250 80,110" fill="#0f172a" stroke="#10b981" stroke-width="3"/>
+            <text x="200" y="145" text-anchor="middle" fill="#10b981" font-size="18" font-weight="bold">STAGE 8</text>
+            <text x="200" y="180" text-anchor="middle" fill="#fff" font-size="13" font-weight="bold">BOOM BARRIERS &amp; GATES</text>
+            <text x="200" y="210" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="bold">&#10003; MASTERED</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (49-9) -->
+    <div class="slide">
+      <div class="pill-badge">(49-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Hands-on Capstone Lab: Enterprise Vehicle Gate Integration</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Assemble 24V BLDC Boom Barrier, perform 45Â° spring balance test, and connect Inductive Safety Ground Loop.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Configure 900MHz UHF Long-Range RFID Reader and AI ANPR Camera for white-list barrier release.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Simulate Fire Alarm input trip and verify barrier auto-opens to 90Â° and cloud parking server logs transaction.</li>
+          </ul>
+          <div class="callout-box"><span>Capstone Goal: Demonstrate full vehicle barrier, loop detector, ANPR camera, and fire override integration.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Stage 8 Capstone Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">BLDC Barrier &amp; Loop Wiring</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">UHF RFID &amp; ANPR Interlock</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Fire Alarm Gate Auto-Open Test</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (49-10) -->
+    <div class="slide">
+      <div class="pill-badge">(49-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Course Completion Certificate &amp; Stage Transition</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Congratulations!</span> You have successfully completed Stage 8: Boom Barriers &amp; Vehicle Gate Systems.</li>
+            <li><span class="bullet-highlight">Next Stage:</span> Stage 9: Smart Home Automation, IoT &amp; KNX (Sessions 50 - 57).</li>
+            <li><span class="bullet-highlight">Action:</span> Click anywhere or press Next to return to the Content Overview Hub.</li>
+          </ul>
+          <div class="callout-box"><span>Next Step: Proceed to Stage 9 Smart Home Automation &amp; IoT Fundamentals.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="320" height="220" rx="12" fill="#0f172a" stroke="#10b981" stroke-width="3"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="18" font-weight="bold">STAGE 8 COMPLETE</text>
+            <text x="200" y="145" text-anchor="middle" fill="#fff" font-size="13">Vehicle Gate &amp; ANPR Specialist</text>
+            
+            <rect x="80" y="180" width="240" height="45" rx="22" fill="#10b981"/>
+            <text x="200" y="208" text-anchor="middle" fill="#000" font-size="14" font-weight="bold">PROCEED TO STAGE 9 &rarr;</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

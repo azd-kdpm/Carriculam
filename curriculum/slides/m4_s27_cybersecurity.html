@@ -1,0 +1,594 @@
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 27: Stage 4 Capstone & System Integration Project</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (27-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(27-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Stage 4 Capstone &amp; System Integration Project</h1>
+        <p class="cover-subtitle">Enterprise 64-Camera IP &amp; VMS Architecture | RAID 6 Sizing | AI Analytics &amp; ANPR Integration | Master Lab</p>
+        <p class="cover-series">Stage 4: IP Camera Systems &amp; VMS</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (27-2) -->
+    <div class="slide">
+      <div class="pill-badge">(27-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Enterprise 64-Camera Project Requirements &amp; Scope</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Facility Scope:</span> 4-story commercial corporate headquarters requiring 64 high-resolution IP cameras.</li>
+            <li><span class="bullet-highlight">Mixed Camera Profile:</span> 48x 4MP ColorVu Domes (Indoors), 12x 8MP AcuSense Bullets (Perimeter), 2x ANPR Cameras (Gates), 2x 32x PTZs.</li>
+            <li><span class="bullet-highlight">Mandatory Compliance:</span> 30 days continuous H.265+ recording with RAID 6 storage failover and 99.999% uptime.</li>
+          </ul>
+          <div class="callout-box"><span>Capstone Goal: Design and specify a complete enterprise IP CCTV solution meeting strict customer requirements.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">64-Camera System Scope</text>
+            
+            <rect x="60" y="120" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="140" text-anchor="middle" fill="#38bdf8" font-size="12">48x 4MP ColorVu Domes (Indoor)</text>
+            <rect x="60" y="155" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="175" text-anchor="middle" fill="#38bdf8" font-size="12">12x 8MP AcuSense Bullets (Perimeter)</text>
+            <rect x="60" y="190" width="280" height="30" rx="4" fill="#1e293b"/><text x="200" y="210" text-anchor="middle" fill="#f59e0b" font-size="12">2x ANPR + 2x 32x PTZ Speed Domes</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (27-3) -->
+    <div class="slide">
+      <div class="pill-badge">(27-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Network Bandwidth &amp; PoE Power Budget Calculation</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Total Throughput Bandwidth:</span> 64 cameras at 3Mbps average (H.265+) = 192 Mbps continuous recording bandwidth.</li>
+            <li><span class="bullet-highlight">10GbE Uplink Requirement:</span> Requires 10GbE SFP+ fiber trunk links between edge switches and core VMS server.</li>
+            <li><span class="bullet-highlight">PoE Budget Sizing:</span> Total 64-camera PoE load = 850 Watts across four 24-port PoE+ managed switches.</li>
+          </ul>
+          <div class="callout-box"><span>Network Standard: Size edge switch fiber uplinks to 10GbE to prevent bottlenecking VMS recording streams.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="70" width="120" height="150" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="100" y="105" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">64 IP Cams</text>
+            <text x="100" y="145" text-anchor="middle" fill="#fff" font-size="11">192 Mbps Total</text>
+            <text x="100" y="175" text-anchor="middle" fill="#f59e0b" font-size="11">850W PoE Load</text>
+            
+            <line x1="160" y1="145" x2="240" y2="145" stroke="#10b981" stroke-width="3"/>
+            <text x="200" y="135" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">10GbE Fiber</text>
+            
+            <rect x="240" y="70" width="120" height="150" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="300" y="105" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Core VMS</text>
+            <text x="300" y="145" text-anchor="middle" fill="#fff" font-size="11">Recording Server</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (27-4) -->
+    <div class="slide">
+      <div class="pill-badge">(27-4)</div>
+      <div class="slide-header"><h1 class="slide-title">RAID 6 Enterprise Storage Sizing &amp; Drive Selection</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Net Storage Needed:</span> 192 Mbps total stream bitrate for 30 days = 62.2 Terabytes net storage.</li>
+            <li><span class="bullet-highlight">RAID 6 Dual-Parity Array:</span> 8x 12TB Surveillance Hard Drives in RAID 6 configuration (72TB net usable storage).</li>
+            <li><span class="bullet-highlight">Enterprise Drive Grade:</span> Mandatory 24/7 Enterprise Surveillance HDDs (7,200 RPM, 550TB/year workload rating).</li>
+          </ul>
+          <div class="callout-box"><span>Storage Formula: 64 Cams x 3Mbps x 30 Days = 62.2 Terabytes Net (Deploy 8x 12TB HDDs in RAID 6).</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">RAID 6 Enterprise Storage Array</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#fff" font-size="12">8x 12TB Enterprise HDDs (96TB Gross)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">RAID 6 Usable: 72TB Net (Dual Parity)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (27-5) -->
+    <div class="slide">
+      <div class="pill-badge">(27-5)</div>
+      <div class="slide-header"><h1 class="slide-title">ANPR Gate Integration &amp; Whitelist Automation</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Vehicle Entrance Integration:</span> 2x ANPR cameras deployed at North &amp; South vehicle barrier gates.</li>
+            <li><span class="bullet-highlight">Centralized Whitelist Sync:</span> VMS server syncs 500-vehicle employee whitelist to camera memory every 60 seconds.</li>
+            <li><span class="bullet-highlight">Relay Gate Automation:</span> Direct camera dry contact relay opens barrier arm in &lt; 50ms upon valid plate match.</li>
+          </ul>
+          <div class="callout-box"><span>Gate Automation: ANPR relay integration reduces entry queue delays during peak morning rush hours.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="80" width="100" height="100" rx="6" fill="#1e293b" stroke="#10b981"/>
+            <text x="90" y="135" text-anchor="middle" fill="#10b981" font-size="12">ANPR Cam</text>
+            
+            <line x1="140" y1="130" x2="260" y2="130" stroke="#10b981" stroke-width="4"/>
+            
+            <rect x="260" y="80" width="100" height="100" rx="6" fill="#1e293b" stroke="#f59e0b"/>
+            <text x="310" y="135" text-anchor="middle" fill="#f59e0b" font-size="12">Barrier Gate</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (27-6) -->
+    <div class="slide">
+      <div class="pill-badge">(27-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Perimeter AI Analytics &amp; Active Deterrence Tuning</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Outer Fence Defense:</span> 12x 8MP AcuSense cameras cover 600-meter outer fence line with virtual tripwires.</li>
+            <li><span class="bullet-highlight">Active Deterrence Strobe:</span> Triggers red/blue flashing LED strobe and 110dB speaker warning on intruder breach.</li>
+            <li><span class="bullet-highlight">PTZ Handoff Target Tracking:</span> Perimeter tripwire breach automatically commands 32x PTZ to zoom in and track intruder.</li>
+          </ul>
+          <div class="callout-box"><span>Integration Power: Link AcuSense perimeter tripwires to PTZ cameras for hands-free auto-tracking.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="140" height="90" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="110" y="105" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">AcuSense Tripwire</text>
+            
+            <path d="M 180 105 L 260 105" stroke="#10b981" stroke-width="3"/>
+            
+            <rect x="260" y="60" width="100" height="90" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="310" y="105" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">32x PTZ Handoff</text>
+            
+            <rect x="90" y="180" width="220" height="60" rx="8" fill="#0f172a" stroke="#10b981"/>
+            <text x="200" y="215" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">Auto-Zooms &amp; Tracks Target</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (27-7) -->
+    <div class="slide">
+      <div class="pill-badge">(27-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Multi-Monitor VMS Control Room Console Layout</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Monitor 1 (Live Video Grid):</span> Displays 16x 4K high-priority camera feeds in 4x4 matrix view.</li>
+            <li><span class="bullet-highlight">Monitor 2 (Alarm &amp; Graphic Map):</span> Interactive CAD facility floor plan showing real-time camera icons and red alarm pop-ups.</li>
+            <li><span class="bullet-highlight">Monitor 3 (ANPR &amp; Smart Search):</span> Live vehicle plate log feed and instant AI forensic metadata search.</li>
+          </ul>
+          <div class="callout-box"><span>Console Ergonomics: Multi-monitor VMS layouts allow operators to monitor live video while handling active alarms.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="20" y="100" width="105" height="80" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="72" y="145" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold">Mon 1: Live Grid</text>
+            
+            <rect x="145" y="100" width="105" height="80" rx="6" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="197" y="145" text-anchor="middle" fill="#ef4444" font-size="10" font-weight="bold">Mon 2: CAD Map</text>
+
+            <rect x="270" y="100" width="105" height="80" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="322" y="145" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">Mon 3: ANPR Search</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (27-8) -->
+    <div class="slide">
+      <div class="pill-badge">(27-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Cybersecurity Hardening &amp; VLAN Segmentation</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">CCTV Network Isolation:</span> Isolate all 64 IP cameras onto dedicated VLAN 20 (10.20.0.0/23) away from corporate LAN.</li>
+            <li><span class="bullet-highlight">802.1X Port Authentication:</span> Prevents unauthorized laptops from connecting to camera wall jacks.</li>
+            <li><span class="bullet-highlight">HTTPS &amp; Strong Passwords:</span> Force HTTPS TLS 1.3 encryption and disable default manufacturer passwords.</li>
+          </ul>
+          <div class="callout-box"><span>Cybersecurity Rule: ALWAYS isolate IP CCTV cameras onto dedicated VLANs to prevent corporate network breaches.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Network VLAN Isolation Shield</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b" stroke="#ef4444"/>
+            <text x="200" y="147" text-anchor="middle" fill="#ef4444" font-size="11">Corporate LAN (VLAN 10) - BLOCKED</text>
+
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">ðŸ”’ Isolated CCTV Net (VLAN 20: 10.20.0.0/23)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (27-9) -->
+    <div class="slide">
+      <div class="pill-badge">(27-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Complete Master Design Bill of Materials (BOM)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Cameras:</span> 48x 4MP Domes, 12x 8MP Bullets, 2x ANPR Cams, 2x 32x PTZ Speed Domes.</li>
+            <li><span class="bullet-highlight">Switches &amp; Storage:</span> 4x 24-Port Managed PoE+ Switches, 1x Enterprise VMS Server, 8x 12TB HDDs (RAID 6).</li>
+            <li><span class="bullet-highlight">Control Console:</span> 1x 3-Axis IP Joystick, 3x 32" 4K Monitors, 1x 1500VA Online Double-Conversion UPS.</li>
+          </ul>
+          <div class="callout-box"><span>BOM Verification: Verify all items against project specifications before submitting final tender proposal.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#38bdf8" font-size="16" font-weight="bold">Master Project BOM Summary</text>
+            
+            <text x="60" y="120" fill="#fff" font-size="12">â€¢ 64x IP Cameras (ColorVu / AcuSense / ANPR / PTZ)</text>
+            <text x="60" y="155" fill="#fff" font-size="12">â€¢ 4x 24-Port Managed PoE+ Switches</text>
+            <text x="60" y="190" fill="#fff" font-size="12">â€¢ 1x Enterprise VMS Server (8x 12TB HDDs RAID 6)</text>
+            <text x="60" y="225" fill="#fff" font-size="12">â€¢ 3-Axis Joystick + 3x 4K Monitors + 1500VA UPS</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (27-10) -->
+    <div class="slide">
+      <div class="pill-badge">(27-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Final Capstone Design Presentation &amp; Hands-on Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Calculate complete network bandwidth and RAID 6 storage for a 64-camera enterprise deployment.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Configure VMS event rule linking AcuSense perimeter tripwire breach to PTZ auto-tracking handoff.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Build multi-monitor VMS control room workspace with live video grid, CAD map, and ANPR plate log.</li>
+          </ul>
+          <div class="callout-box"><span>Congratulations! You have completed Stage 4: IP Camera Systems &amp; VMS Mastery!</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2.5"/>
+            <text x="200" y="90" text-anchor="middle" fill="#10b981" font-size="18" font-weight="bold">STAGE 4 COMPLETED!</text>
+            
+            <circle cx="200" cy="160" r="35" fill="none" stroke="#f59e0b" stroke-width="3"/>
+            <text x="200" y="166" text-anchor="middle" fill="#f59e0b" font-size="28">ðŸ†</text>
+            
+            <text x="200" y="235" text-anchor="middle" fill="#38bdf8" font-size="13" font-weight="bold">IP Camera Systems &amp; VMS Mastered</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

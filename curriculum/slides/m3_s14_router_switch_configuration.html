@@ -1,0 +1,498 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 14: Router & Switch Configuration</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  /* Ultra-Narrow Glowing Bottom Seek Bar */
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+        <div class="slide active slide-cover">
+      <div class="pill-badge">(14-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Router & Switch Configuration</h1>
+        <p class="cover-subtitle">Layer 2 vs Layer 3 | Managed Switch Setup | Port Forwarding | Gateway Routing</p>
+        <p class="cover-series">Stage 3: Networking Fundamentals & Infrastructure</p>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(14-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Layer 2 Switches vs Layer 3 Routers</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Layer 2 Switches:</span> Forward Ethernet frames based on MAC addresses; connect devices inside the same VLAN.</li>
+            <li><span class="bullet-highlight">Layer 3 Routers:</span> Forward IP packets based on destination IP addresses; route traffic between different subnets.</li>
+            <li><span class="bullet-highlight">Layer 3 Managed Switches:</span> Combine high-speed wire-rate Layer 2 switching with hardware Inter-VLAN routing.</li>
+          </ul>
+          <div class="callout-box"><span>Core Difference: Layer 2 switches use MAC tables; Layer 3 routers use IP routing tables.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="70" width="150" height="160" rx="8" fill="#1e293b" stroke="#38bdf8"/><text x="115" y="110" text-anchor="middle" fill="#38bdf8" font-size="14" font-weight="bold">Layer 2 Switch</text><text x="115" y="150" text-anchor="middle" fill="#fff" font-size="12">MAC Table Lookup</text><rect x="210" y="70" width="150" height="160" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="285" y="110" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">Layer 3 Router</text><text x="285" y="150" text-anchor="middle" fill="#fff" font-size="12">IP Packet Routing</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(14-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Managed Switch Access (Web GUI, CLI & Console)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Console Cable Access:</span> Out-of-band RS232 / USB-to-RJ45 console connection for initial out-of-box setup.</li>
+            <li><span class="bullet-highlight">Web Management GUI:</span> User-friendly browser interface for port status, VLANs, and PoE power monitoring.</li>
+            <li><span class="bullet-highlight">SSH / Telnet CLI:</span> Command Line Interface for automated configuration scripting and enterprise management.</li>
+          </ul>
+          <div class="callout-box"><span>Security Standard: Disable insecure HTTP/Telnet and use HTTPS/SSH for switch management.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="60" y="80" width="280" height="150" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="200" y="120" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Switch Management Access</text><text x="200" y="160" text-anchor="middle" fill="#fff" font-size="13">[Console RJ45] [HTTPS Web GUI] [SSH CLI]</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(14-4)</div>
+      <div class="slide-header"><h1 class="slide-title">Port Speed, Duplex & Autonegotiation</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Speed Ratings:</span> FastEthernet (100Mbps) for IP cameras vs Gigabit (1000Mbps) for NVR and uplink ports.</li>
+            <li><span class="bullet-highlight">Full-Duplex:</span> Simultaneous bi-directional data transmission (sending and receiving at full bandwidth).</li>
+            <li><span class="bullet-highlight">Autonegotiation Mismatch:</span> Mismatched speed/duplex settings cause high packet collisions and video stutter.</li>
+          </ul>
+          <div class="callout-box"><span>Uplink Sizing: Ensure switch uplink ports to NVRs are minimum 1Gbps (Gigabit).</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="50" y="90" width="300" height="120" rx="8" fill="#1e293b" stroke="#38bdf8"/><line x1="80" y1="130" x2="320" y2="130" stroke="#10b981" stroke-width="4"/><line x1="320" y1="170" x2="80" y2="170" stroke="#38bdf8" stroke-width="4"/><text x="200" y="70" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">Full-Duplex Bidirectional Channel</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(14-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Router LAN & WAN Interface Configuration</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">LAN Interface:</span> Internal gateway IP address connecting to local switches and security cameras.</li>
+            <li><span class="bullet-highlight">WAN Interface:</span> External interface connected to ISP modem (Static Public IP or PPPoE).</li>
+            <li><span class="bullet-highlight">Network Address Translation (NAT):</span> Translates internal private IPs (192.168.x.x) into a single public WAN IP.</li>
+          </ul>
+          <div class="callout-box"><span>NAT Purpose: Allows hundreds of internal IP cameras to share a single ISP public internet line.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="90" width="100" height="80" rx="6" fill="#1e293b" stroke="#38bdf8"/><text x="90" y="135" text-anchor="middle" fill="#38bdf8" font-size="12">LAN Subnet</text><rect x="180" y="80" width="80" height="100" rx="6" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="220" y="135" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">NAT Engine</text><rect x="290" y="90" width="80" height="80" rx="6" fill="#1e293b" stroke="#f59e0b"/><text x="330" y="135" text-anchor="middle" fill="#f59e0b" font-size="12">WAN IP</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(14-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Port Forwarding (NAT) & Virtual Servers</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Port Mapping:</span> Maps external public WAN ports to internal NVR service ports (e.g. Public 8000 &rarr; NVR 192.168.1.100:8000).</li>
+            <li><span class="bullet-highlight">Standard Service Ports:</span> HTTP Port 80, RTSP Port 554, and SDK/Media Port 8000.</li>
+            <li><span class="bullet-highlight">Security Risk:</span> Direct port forwarding exposes NVRs to internet brute-force attacks; VPN is preferred.</li>
+          </ul>
+          <div class="callout-box"><span>Security Warning: Always change default HTTP (80) and Media (8000) ports when port forwarding.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="70" width="320" height="160" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/><text x="200" y="105" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">Port Forwarding Rule</text><text x="200" y="145" text-anchor="middle" fill="#fff" font-size="13">Public WAN Port 8000 &rarr; Internal NVR 192.168.1.100:8000</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(14-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Quality of Service (QoS) Video Prioritization</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">DSCP / CoS Tagging:</span> Tags video stream packets with high priority (e.g. DSCP 34 / AF41).</li>
+            <li><span class="bullet-highlight">Congestion Prevention:</span> Ensures video streams are not dropped when office PCs download large files.</li>
+            <li><span class="bullet-highlight">Egress Queue Schedulers:</span> Switches process high-priority video queues before low-priority web traffic.</li>
+          </ul>
+          <div class="callout-box"><span>QoS Benefit: Prevents camera video dropping during peak office network bandwidth usage.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="70" width="320" height="60" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="200" y="105" text-anchor="middle" fill="#10b981" font-size="13" font-weight="bold">High Priority Video Queue (DSCP 34)</text><rect x="40" y="150" width="320" height="60" fill="#1e293b" stroke="#64748b"/><text x="200" y="185" text-anchor="middle" fill="#94a3b8" font-size="13">Low Priority PC Web Traffic</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(14-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Spanning Tree Protocol (STP / RSTP)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Loop Prevention:</span> Prevents catastrophic broadcast storms caused by accidental redundant cable loops between switches.</li>
+            <li><span class="bullet-highlight">RSTP Convergence (IEEE 802.1w):</span> Rapid Spanning Tree block/forward state convergence in under 2 seconds.</li>
+            <li><span class="bullet-highlight">Redundant Uplinks:</span> Enables active-standby backup network links between core and edge switches.</li>
+          </ul>
+          <div class="callout-box"><span>Network Protection: ALWAYS enable RSTP on all managed switches to prevent loop crashes.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="60" y="80" width="100" height="80" fill="#334155" stroke="#38bdf8"/><rect x="240" y="80" width="100" height="80" fill="#334155" stroke="#38bdf8"/><line x1="160" y1="100" x2="240" y2="100" stroke="#10b981" stroke-width="3"/><line x1="160" y1="140" x2="240" y2="140" stroke="#ef4444" stroke-width="3" stroke-dasharray="4,4"/><text x="200" y="185" text-anchor="middle" fill="#ef4444" font-size="12" font-weight="bold">RSTP Blocked Loop Link</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(14-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Network Topologies (Star vs Tree vs Ring)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Star Topology:</span> All camera edge switches connect back directly to a central core switch (CCTV Standard).</li>
+            <li><span class="bullet-highlight">Tree / Hierarchical Topology:</span> Access switches connect to Distribution switches, which connect to Core.</li>
+            <li><span class="bullet-highlight">Ring Topology (ERPS):</span> Industrial fiber ring topology providing sub-50ms self-healing failover.</li>
+          </ul>
+          <div class="callout-box"><span>CCTV Standard: Star topology is recommended for minimum latency and simple troubleshooting.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><circle cx="200" cy="150" r="30" fill="#10b981"/><circle cx="100" cy="80" r="16" fill="#38bdf8"/><circle cx="300" cy="80" r="16" fill="#38bdf8"/><circle cx="100" cy="220" r="16" fill="#38bdf8"/><circle cx="300" cy="220" r="16" fill="#38bdf8"/><line x1="200" y1="150" x2="100" y2="80" stroke="#38bdf8"/><line x1="200" y1="150" x2="300" y2="80" stroke="#38bdf8"/><line x1="200" y1="150" x2="100" y2="220" stroke="#38bdf8"/><line x1="200" y1="150" x2="300" y2="220" stroke="#38bdf8"/><text x="200" y="270" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">Star Topology</text></svg>
+        </div>
+      </div>
+    </div>
+    <div class="slide">
+      <div class="pill-badge">(14-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Router & Switch Configuration Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Access managed switch web GUI via console cable and set static management IP.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Configure port speed to 100Mbps Full-Duplex on camera ports and 1Gbps on NVR uplink.</li>
+            <li><span class="bullet-highlight">Task 3:</span> Configure router port forwarding rules for NVR RTSP (554) and Web (80) ports.</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Successfully complete switch initial setup, port speed tuning, and router port forwarding.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%"><rect x="40" y="50" width="320" height="220" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/><text x="200" y="85" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Switch & Router Lab</text><g transform="translate(65, 120)"><circle cx="12" cy="12" r="10" fill="#10b981"/><path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/><text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Switch Web GUI Management IP</text></g><g transform="translate(65, 170)"><circle cx="12" cy="12" r="10" fill="#10b981"/><path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/><text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Gigabit Uplink & Port Forwarding</text></g></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container">
+    <div class="seek-bar-fill" id="progressBar"></div>
+  </div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>

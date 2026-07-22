@@ -1,0 +1,585 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Session 62: Testing, Commissioning & AMC</title>
+<style>
+  :root {
+    --bg-color: #060a12;
+    --card-bg: #0d1527;
+    --accent: #60a5fa;
+    --accent-bright: #38bdf8;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+
+  .deck-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  .slide {
+    display: none;
+    width: 98%;
+    max-width: 1600px;
+    height: 100%;
+    max-height: calc(100vh - 30px);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 40px 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .slide.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+
+  .slide-cover {
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  .cover-content {
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cover-title {
+    font-size: 46px;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 25px 0 15px 0;
+    letter-spacing: -0.5px;
+  }
+
+  .cover-subtitle {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+  }
+
+  .cover-series {
+    font-size: 15px;
+    color: #64748b;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.99); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  .slide-header {
+    margin-bottom: 25px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 15px;
+    position: relative;
+  }
+
+  .pill-badge {
+    position: absolute;
+    top: 40px;
+    right: 50px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(37, 99, 235, 0.15);
+    border: 1px solid #2563eb;
+    color: #60a5fa;
+    padding: 4px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    z-index: 10;
+  }
+
+  .slide-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: #ffffff;
+    padding-right: 80px;
+  }
+
+  .slide-body {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 45px;
+    align-items: center;
+    flex: 1;
+    height: calc(100% - 90px);
+  }
+
+  .slide-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .slide-content ul { list-style: none; padding: 0; }
+
+  .slide-content li {
+    font-size: 19px;
+    line-height: 1.65;
+    margin-bottom: 20px;
+    position: relative;
+    padding-left: 28px;
+    color: #cbd5e1;
+  }
+
+  .slide-content li::before {
+    content: "\2022";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 26px;
+    top: -2px;
+  }
+
+  .bullet-highlight { color: #60a5fa; font-weight: 700; }
+
+  .callout-box {
+    background: rgba(30, 41, 59, 0.5);
+    border-left: 4px solid var(--accent-bright);
+    padding: 16px 20px;
+    border-radius: 8px;
+    font-style: italic;
+    color: #f1f5f9;
+    font-size: 16px;
+    margin-top: 15px;
+  }
+
+  .slide-visual {
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 16px;
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    height: 100%;
+    max-height: 100%;
+  }
+
+  .seek-bar-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .seek-bar-fill {
+    height: 100%;
+    background: #38bdf8;
+    box-shadow: 0 0 12px #38bdf8, 0 0 24px #38bdf8;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+</style>
+</head>
+<body>
+
+  <div class="deck-container">
+    <!-- SLIDE 1 (62-1) -->
+    <div class="slide active slide-cover">
+      <div class="pill-badge">(62-1)</div>
+      <div class="cover-content">
+        <h1 class="cover-title">Testing, Commissioning &amp; AMC</h1>
+        <p class="cover-subtitle">Pre-Commissioning Test Procedures | System Handover Documentation | Client Sign-off Protocols | Annual Maintenance Contracts (AMC)</p>
+        <p class="cover-series">Stage 10: Advanced Integration, Business &amp; Capstone Projects</p>
+      </div>
+    </div>
+
+    <!-- SLIDE 2 (62-2) -->
+    <div class="slide">
+      <div class="pill-badge">(62-2)</div>
+      <div class="slide-header"><h1 class="slide-title">Pre-Commissioning Physical &amp; Electrical Integrity Audit</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Insulation Resistance Testing (500V Megger):</span> Verify zero short circuits between phase, neutral, and earth conductors (&gt; 100 M&Omega;).</li>
+            <li><span class="bullet-highlight">PoE Voltage Load Inspection:</span> Measure PoE voltage at distant camera RJ45 plugs (44V - 57V DC) under full infrared night-load draw.</li>
+            <li><span class="bullet-highlight">Polymorphic Ground Resistance Check:</span> Ensure earth ground resistance is &lt; 5&Omega; across all outdoor camera poles and rack busbars.</li>
+          </ul>
+          <div class="callout-box"><span>Testing Rule: ALWAYS measure PoE voltage at distant camera plugs during IR night-mode when power draw is highest.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">500V Megger Insulation &amp; PoE Audit</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Insulation Resistance: &gt; 100 M&Omega; Passed</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Night IR PoE Load Voltage: 48V DC Passed</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 3 (62-3) -->
+    <div class="slide">
+      <div class="pill-badge">(62-3)</div>
+      <div class="slide-header"><h1 class="slide-title">Functional Commissioning: Video, Analytics &amp; Storage Audits</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Camera Field of View &amp; Focus Audit:</span> Adjust motorized varifocal lenses for pin-sharp focus at target DORI distances.</li>
+            <li><span class="bullet-highlight">AI Analytics Calibration:</span> Verify line-crossing and ANPR trigger accuracy by walking across virtual tripwires.</li>
+            <li><span class="bullet-highlight">RAID Failover &amp; Retention Test:</span> Pull out one hard drive from RAID 5 array to verify zero video data loss and auto-rebuild.</li>
+          </ul>
+          <div class="callout-box"><span>RAID Verification: Pulling a hard drive from a live RAID 5 NVR proves zero-loss fault tolerance to the client.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">Live RAID 5 Hot-Swap Drive Pull Test</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#ef4444" font-size="11">HDD 2 Pulled Out &rarr; RAID 5 Degraded Mode</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">&#10003; Zero Video Loss (Parity Auto-Rebuild)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4 (62-4) -->
+    <div class="slide">
+      <div class="pill-badge">(62-4)</div>
+      <div class="slide-header"><h1 class="slide-title">System Handover Documentation &amp; Comprehensive As-Built Drawings</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">As-Built CAD Floorplans:</span> Updated floorplan drawings reflecting actual camera locations, conduit runs, and rack placement.</li>
+            <li><span class="bullet-highlight">System Configuration Matrix:</span> Spreadsheet detailing IP addresses, MAC addresses, switch port numbers, and admin passwords.</li>
+            <li><span class="bullet-highlight">User Operation &amp; Administrator Manual:</span> Easy 2-page cheat sheet for daily video playback, export, and password resets.</li>
+          </ul>
+          <div class="callout-box"><span>Handover Standard: Handover documentation package MUST include as-built drawings, IP credentials, and warranties.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="50" width="320" height="220" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="80" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">System Handover Package Binder</text>
+            
+            <rect x="60" y="100" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="122" text-anchor="middle" fill="#38bdf8" font-size="11">As-Built CAD Architectural Drawings</text>
+            <rect x="60" y="145" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="167" text-anchor="middle" fill="#10b981" font-size="11">IP Address &amp; Password Matrix Spreadsheet</text>
+            <rect x="60" y="190" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="212" text-anchor="middle" fill="#f59e0b" font-size="11">Operator 2-Page Quick Reference Guide</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5 (62-5) -->
+    <div class="slide">
+      <div class="pill-badge">(62-5)</div>
+      <div class="slide-header"><h1 class="slide-title">Formal Client Sign-Off &amp; Acceptance Certificate (FAC)</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Provisional Acceptance Certificate (PAC):</span> Signed upon 100% hardware installation and successful 72-hour burn-in period.</li>
+            <li><span class="bullet-highlight">Snag List (Punch List) Clearance:</span> Documenting minor cosmetic defects (e.g. 1 un-labeled wire) and fixing them within 7 days.</li>
+            <li><span class="bullet-highlight">Final Acceptance Certificate (FAC):</span> Triggers final 10% payment release and starts the 1-year warranty coverage clock.</li>
+          </ul>
+          <div class="callout-box"><span>Payment Release: Clearing the client Punch List within 7 days guarantees prompt 10% final payment release.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#38bdf8" font-size="15" font-weight="bold">PAC &rarr; Punch List &rarr; FAC Process</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#10b981" font-size="11">Provisional Acceptance (PAC) Signed</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">Punch List Cleared &rarr; Final Acceptance (FAC)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6 (62-6) -->
+    <div class="slide">
+      <div class="pill-badge">(62-6)</div>
+      <div class="slide-header"><h1 class="slide-title">Comprehensive End-User Training &amp; Operator Certification</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Security Guard Operator Training:</span> Teaching security guards how to view 16-channel grids, control PTZ cameras, and export USB video clips.</li>
+            <li><span class="bullet-highlight">System Administrator Training:</span> Training IT managers on user permission levels, firmware updates, and RAID status monitoring.</li>
+            <li><span class="bullet-highlight">Signed Training Attendance Log:</span> Documenting client attendance to prevent future "we were never trained" disputes.</li>
+          </ul>
+          <div class="callout-box"><span>Training Best Practice: Obtain signed training logs from security staff to confirm successful knowledge transfer.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">2-Tier Training Model</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">Tier 1: Guards (Playback, PTZ, USB Export)</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#1e293b"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">Tier 2: IT Admins (RAID, Users, Backups)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7 (62-7) -->
+    <div class="slide">
+      <div class="pill-badge">(62-7)</div>
+      <div class="slide-header"><h1 class="slide-title">Annual Maintenance Contracts (AMC): Comprehensive vs Non-Comprehensive</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Comprehensive AMC (15% - 20% of Project Value):</span> Covers quarterly preventive maintenance, emergency callouts, AND free spare parts replacement.</li>
+            <li><span class="bullet-highlight">Non-Comprehensive AMC (8% - 12% of Project Value):</span> Covers preventive maintenance and labor only; spare parts are billed separately to client.</li>
+            <li><span class="bullet-highlight">Predictable Recurring Revenue:</span> AMCs create steady annual recurring revenue (ARR) for your system integration business.</li>
+          </ul>
+          <div class="callout-box"><span>Business Strategy: AMC service contracts convert one-off project installs into multi-year recurring cash flow.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="30" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="105" y="90" text-anchor="middle" fill="#10b981" font-size="12" font-weight="bold">Comprehensive AMC</text>
+            <text x="105" y="140" text-anchor="middle" fill="#10b981" font-size="10" font-weight="bold">15-20% (Parts + Labor)</text>
+            
+            <rect x="220" y="60" width="150" height="190" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2"/>
+            <text x="295" y="90" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Non-Comprehensive</text>
+            <text x="295" y="140" text-anchor="middle" fill="#fff" font-size="10">8-12% (Labor Only)</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 8 (62-8) -->
+    <div class="slide">
+      <div class="pill-badge">(62-8)</div>
+      <div class="slide-header"><h1 class="slide-title">Quarterly Preventive Maintenance (PM) Checklist &amp; Audit</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Camera Lens &amp; Housing Cleaning:</span> Wipe camera dome glass with anti-static lens cleaner; check IP67 gasket seals for moisture.</li>
+            <li><span class="bullet-highlight">HDD S.M.A.R.T Health Check:</span> Inspect hard drive bad sectors and temperature logs; replace failing drives before total crash.</li>
+            <li><span class="bullet-highlight">UPS Battery &amp; Server Fan Audit:</span> Test UPS battery backup runtime under load; clean dust filters in server rack fans.</li>
+          </ul>
+          <div class="callout-box"><span>Preventive Value: Quarterly S.M.A.R.T health checks catch failing NVR hard drives weeks before video data loss occurs.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#10b981" font-size="15" font-weight="bold">Quarterly PM Audit Checklist</text>
+            
+            <rect x="60" y="125" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="147" text-anchor="middle" fill="#38bdf8" font-size="11">HDD S.M.A.R.T Bad Sector Health Test</text>
+            <rect x="60" y="170" width="280" height="35" rx="4" fill="#0f172a"/><text x="200" y="192" text-anchor="middle" fill="#10b981" font-size="11" font-weight="bold">&#10003; Camera Lens Cleaning &amp; UPS Load Test</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9 (62-9) -->
+    <div class="slide">
+      <div class="pill-badge">(62-9)</div>
+      <div class="slide-header"><h1 class="slide-title">Troubleshooting Intermittent Video Loss &amp; False Alarm Spike Diagnostics</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Intermittent Camera Dropping at Night:</span> PoE switch power budget exceeded when camera IR LEDs switch ON at dusk; upgrade PoE switch.</li>
+            <li><span class="bullet-highlight">NVR Rebooting Randomly:</span> Overheated NVR CPU due to clogged fan filters or failing 12V DC power supply adapter.</li>
+            <li><span class="bullet-highlight">Spike in Motion False Alarms:</span> Spider webs across IR lens reflecting light; clean dome lens and apply anti-insect spray.</li>
+          </ul>
+          <div class="callout-box"><span>Field Diagnostics: Cameras dropping only at 06:00 PM indicates PoE switch power budget overload from IR night lights.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="60" width="320" height="190" rx="10" fill="#1e293b" stroke="#ef4444" stroke-width="2"/>
+            <text x="200" y="95" text-anchor="middle" fill="#ef4444" font-size="15" font-weight="bold">Night IR PoE Overload Diagnostic</text>
+            <text x="200" y="140" fill="#fff" font-size="12" text-anchor="middle">Camera Offline Only At Night (06:00 PM)?</text>
+            <text x="200" y="175" fill="#10b981" font-size="13" font-weight="bold" text-anchor="middle">Fix: Upgrade PoE Switch Total Wattage Budget</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 10 (62-10) -->
+    <div class="slide">
+      <div class="pill-badge">(62-10)</div>
+      <div class="slide-header"><h1 class="slide-title">Practical Testing, Commissioning &amp; AMC Engineering Lab</h1></div>
+      <div class="slide-body">
+        <div class="slide-content">
+          <ul>
+            <li><span class="bullet-highlight">Task 1:</span> Perform 500V Megger insulation test, measure PoE night-load voltage at 80m camera, and test RAID 5 hot-swap drive pull.</li>
+            <li><span class="bullet-highlight">Task 2:</span> Compile complete Handover Package (As-Built CAD drawings, IP Address Matrix, 2-page Administrator Cheat Sheet, and PAC certificate).</li>
+            <li><span class="bullet-highlight">Task 3:</span> Draft 1-Year Comprehensive AMC Service Agreement (15% annual value, 4-hour SLA response, quarterly PM schedule).</li>
+          </ul>
+          <div class="callout-box"><span>Lab Goal: Master pre-commissioning load tests, handover binder compilation, client PAC sign-off, and AMC contract drafting.</span></div>
+        </div>
+        <div class="slide-visual">
+          <svg viewBox="0 0 400 320" width="100%" height="100%">
+            <rect x="40" y="40" width="320" height="240" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2"/>
+            <text x="200" y="75" text-anchor="middle" fill="#10b981" font-size="16" font-weight="bold">Testing &amp; AMC Lab Checklist</text>
+            
+            <g transform="translate(65, 105)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Megger &amp; RAID 5 Hot-Swap Test</text>
+            </g>
+            
+            <g transform="translate(65, 155)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Handover Package &amp; PAC Sign-Off</text>
+            </g>
+
+            <g transform="translate(65, 205)">
+              <circle cx="12" cy="12" r="10" fill="#10b981"/>
+              <path d="M 7 12 L 10 15 L 17 8" stroke="#fff" stroke-width="2.5" fill="none"/>
+              <text x="32" y="16" fill="#fff" font-size="14" font-weight="600">Comprehensive AMC Contract Draft</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="seek-bar-container"><div class="seek-bar-fill" id="progressBar"></div></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const deckContainer = document.querySelector('.deck-container');
+  
+  let currentSlide = 0;
+
+  function updateSlides() {
+    slides.forEach((slide, index) => {
+      if (index === currentSlide) {
+        slide.classList.add('active');
+      } else {
+        slide.classList.remove('active');
+      }
+    });
+
+    if (progressBar && slides.length > 1) {
+      const progress = (currentSlide / (slides.length - 1)) * 100;
+      progressBar.style.width = progress + "%";
+    }
+  }
+
+  function goToMenu() {
+    window.location.href = '../content_overview.html';
+  }
+
+  if (deckContainer) {
+    deckContainer.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+
+    deckContainer.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      if (e.target.closest('a')) return;
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide < slides.length - 1) {
+        currentSlide++;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) {
+      e.preventDefault();
+      if (currentSlide > 0) {
+        currentSlide--;
+        updateSlides();
+      } else {
+        goToMenu();
+      }
+    } else if (e.key === 'Escape') {
+      goToMenu();
+    }
+  });
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', (e) => {
+    if (e.touches && e.touches.length > 0) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    if (!e.changedTouches || e.changedTouches.length === 0) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const touchEndY = e.changedTouches[0].clientY;
+    
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX < 0) {
+        if (currentSlide < slides.length - 1) {
+          currentSlide++;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      } else {
+        if (currentSlide > 0) {
+          currentSlide--;
+          updateSlides();
+        } else {
+          goToMenu();
+        }
+      }
+    }
+  }, { passive: true });
+
+  updateSlides();
+</script>
+</body>
+</html>
